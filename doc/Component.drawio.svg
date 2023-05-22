@@ -1,0 +1,133 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="731px" height="641px" viewBox="-0.5 -0.5 731 641" content="&lt;mxfile scale=&quot;1&quot; border=&quot;10&quot;&gt;&lt;diagram id=&quot;tDn1baP7sBtapOxQbPJx&quot; name=&quot;Page-1&quot;&gt;7Vlbk5owFP41PtYh3HQfvexuO92d2a2d6XOECJnGhIbgZX99EwgCgopdWdeZ+qDw5SQ55ztfTgL2rMly88hhFD4zH5GeafibnjXtmebQvZPfCthmgGM4GRBw7GcQKIAZfkMaNDSaYB/FFUPBGBE4qoIeoxR5ooJBztm6arZgpDprBANUA2YeJHX0F/ZFqMNyjAL/inAQ5jMDQ7fMofc74Cyher6eaT2kn6x5CfOxtH0cQp+tS5B137MmnDGRXS03E0QUtTltWb+HA607vzmiok0HM+uwgiTRoX+jseDJUvbvvyZMoP6MJdxD/VGE+7/QXP5oz8U2Z0sGEanLJfMThY0hwQGVAEEL6cU4jqCHafCU3k2lR4WFJ+dBXAIrxAWWCRjpBsEiidbD0REqc7QpQTq8R8SWSPCtNNGtrmZaK9HMM7Uu8mraGgtLOc1zDbWUgt3IBZ3yQjN6IB3t6Z2FMki//x1xCkl/CgUcwxjdFtX2oMq15da5toyuuHZqXPdMl2hSaIVG90+iFth4waj4staOjKSJbRgpFbmBvArU76GsTRhd4CDhUGBG8+mkp9mMWd+DOVRVKU2IcmOm20GRxJ8qL1OgPBJwntchW9/v6g+wM+CFxTh1YyeGUCyJHrI553vikdVUQEyVT2knjxECoxjPU8/UvBzF+A3Od55y5CU8xiv0QzXkVheQ0p6SHNCgpGGDkixwCSm5HUqpWNr/1XJILc65cgFVudgNanEb1LLbHN6jlkFNLJJbwdHs9ekDy/c/c+2ey7V5kmvguN3U+HqJb1WYP8l2ejbTe6oGZoOsuzq63NW4Qr48IutbyiiqlozD8cZpRiprRUAeIFHJqRr9KCccEZnMVfWA/p4I60X+GQeZYOL+A/QE0+PdkmBOH3ZBUyG8hGKGnSjG/USKAcMOzwWHn7uimz8qNG9Gpw8QDRI5d0nsP5K0raFgcIElYdf0MmH8yrvQ8FwGzb2iAhrO4qCrpzqr9Y6frpObIvb0odXs7GHZfn+xzut9qVhb9WJtX61YG0dDZFyELGAUkvsCLUeMyDx9MZfn/1g5KnPgfAAHadcR53BbMogYpiIujfyigEJu1t7B3d1/NXievbzIPCiysQulXYLA0QS10mArCQ6uJkHrgyLM3zNeIcQLPCfUQ7SvGKK8LV6/Z7Iu/uKw7v8C&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
+    <defs/>
+    <g>
+        <path d="M 20 10 L 250 10 L 250 60 L 20 60 L 20 50 L 10 50 L 10 40 L 20 40 L 20 30 L 10 30 L 10 20 L 20 20 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 20 20 L 30 20 L 30 30 L 20 30 M 20 40 L 30 40 L 30 50 L 20 50" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="139.5" y="27.5">
+                Instrument.Quote.Source.Api.WebApi
+            </text>
+        </g>
+        <path d="M 430 170 L 720 170 L 720 220 L 430 220 L 430 210 L 420 210 L 420 200 L 430 200 L 430 190 L 420 190 L 420 180 L 430 180 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 430 180 L 440 180 L 440 190 L 430 190 M 430 200 L 440 200 L 440 210 L 430 210" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="579.5" y="187.5">
+                Instrument.Quote.Source.Shared.Kernal.DataBase
+            </text>
+        </g>
+        <path d="M 20 334 L 20 320 L 60 320 L 60 334 M 20 334 L 400 334 L 400 630 L 20 630 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 1px; height: 1px; padding-top: 337px; margin-left: 22px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: nowrap;">
+                                <span style="font-weight: 400;">
+                                    Instrument.Quote.Source.Configuration
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="22" y="349" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Instrument.Quote.Source.Configuration
+                </text>
+            </switch>
+        </g>
+        <path d="M 30 374 L 30 360 L 70 360 L 70 374 M 30 374 L 390 374 L 390 620 L 30 620 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 1px; height: 1px; padding-top: 377px; margin-left: 32px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: nowrap;">
+                                <span style="font-weight: 400;">
+                                    DataBase
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="32" y="389" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    DataBase
+                </text>
+            </switch>
+        </g>
+        <path d="M 60 400 L 206 400 L 206 450 L 60 450 L 60 440 L 50 440 L 50 430 L 60 430 L 60 420 L 50 420 L 50 410 L 60 410 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 60 410 L 70 410 L 70 420 L 60 420 M 60 430 L 70 430 L 70 440 L 60 440" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="137.5" y="417.5">
+                PostreSQL
+            </text>
+        </g>
+        <path d="M 50 480 L 380 480 L 380 530 L 50 530 L 50 520 L 40 520 L 40 510 L 50 510 L 50 500 L 40 500 L 40 490 L 50 490 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 50 490 L 60 490 L 60 500 L 50 500 M 50 510 L 60 510 L 60 520 L 50 520" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="219.5" y="497.5">
+                Instrument.Quote.Source.Configuration.DataBase
+            </text>
+        </g>
+        <path d="M 153.63 450 L 179.82 475.55" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 183.57 479.22 L 176.12 476.84 L 179.82 475.55 L 181.01 471.83 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 140 560 L 290 560 L 290 610 L 140 610 L 140 600 L 130 600 L 130 590 L 140 590 L 140 580 L 130 580 L 130 570 L 140 570 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 140 570 L 150 570 L 150 580 L 140 580 M 140 590 L 150 590 L 150 600 L 140 600" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="219.5" y="577.5">
+                Migrations.Factory
+            </text>
+        </g>
+        <path d="M 210 560 L 210 536.37" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 210 531.12 L 213.5 538.12 L 210 536.37 L 206.5 538.12 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 20 144 L 20 130 L 60 130 L 60 144 M 20 144 L 360 144 L 360 300 L 20 300 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 1px; height: 1px; padding-top: 147px; margin-left: 22px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: nowrap;">
+                                <span style="font-weight: 400;">
+                                    Instrument.Quote.Source.App
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="22" y="159" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Instrument.Quote.Source.App
+                </text>
+            </switch>
+        </g>
+        <path d="M 230 240 L 320 240 L 320 290 L 230 290 L 230 280 L 220 280 L 220 270 L 230 270 L 230 260 L 220 260 L 220 250 L 230 250 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 230 250 L 240 250 L 240 260 L 230 260 M 230 270 L 240 270 L 240 280 L 230 280" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="279.5" y="257.5">
+                Core
+            </text>
+        </g>
+        <path d="M 40 170 L 230 170 L 230 220 L 40 220 L 40 210 L 30 210 L 30 200 L 40 200 L 40 190 L 30 190 L 30 180 L 40 180 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 40 180 L 50 180 L 50 190 L 40 190 M 40 200 L 50 200 L 50 210 L 40 210" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" text-anchor="middle" font-size="12px">
+            <text x="139.5" y="187.5">
+                Instrument.Quote.Source.App
+            </text>
+        </g>
+        <path d="M 180 220 L 214.3 237.15" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 219 239.5 L 211.17 239.5 L 214.3 237.15 L 214.3 233.24 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 270 480 L 270 440 Q 270 430 270 420 L 270 296.37" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 270 291.12 L 273.5 298.12 L 270 296.37 L 266.5 298.12 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 129.78 220 L 128.27 393.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 128.23 398.88 L 124.79 391.85 L 128.27 393.63 L 131.79 391.91 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 230 195 L 413.63 195" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 418.88 195 L 411.88 198.5 L 413.63 195 L 411.88 191.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 320 253.33 L 456.66 221.45" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 461.77 220.25 L 455.75 225.25 L 456.66 221.45 L 454.16 218.44 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
+</svg>
