@@ -1,4 +1,4 @@
-name: .NET Core
+name: Project Unit tests
 
 on:
   push:
@@ -7,18 +7,19 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  testing:
     runs-on: ubuntu-latest
-
-    db:
-      image: postgres:14.3
-      restart: unless-stopped
-      volumes:
-        - postgres-data:/var/lib/postgresql/data
-      environment:
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: postgres
+    
+    services:
+      db:
+        image: postgres:14.3
+        restart: unless-stopped
+        volumes:
+          - postgres-data:/var/lib/postgresql/data
+        environment:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
 
     steps:
     - uses: actions/checkout@v2
