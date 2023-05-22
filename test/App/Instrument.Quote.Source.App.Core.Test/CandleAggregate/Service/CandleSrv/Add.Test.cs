@@ -45,7 +45,7 @@ public class Add_Test
     loadedPeriodRep.Received().AddAsync(Arg.Is<LoadedPeriod>(e =>
         e.FromDate == expectedFrom &&
         e.UntillDate == expectedUntill &&
-        e.InstrumentId == 0 &&
+        e.InstrumentId == 99 &&
         e.TimeFrameId == (int)TimeFrame.Enum.D1 &&
         e.Candles.Count() == expectedCandleDto.Count()),
     Arg.Any<IDbContextTransaction>(),
