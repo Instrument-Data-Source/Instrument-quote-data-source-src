@@ -32,3 +32,5 @@
   - Naming convention: Name contain word Try
   - Return value or Null
 
+## UnitTesting
+- Don't use DB in tests. GitHub workflows doesn't handled it.
