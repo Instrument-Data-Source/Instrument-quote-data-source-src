@@ -7,25 +7,14 @@ on:
 jobs:
   testing:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/devcontainers/dotnet:0-7.0
-    
-    services:
-      db:
-        image: postgres:14.3
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: postgres
-        ports:
-          - 5432:5432
-        options: 
-          --health-cmd pg_isready 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 3
+    container: mcr.microsoft.com/dotnet/sdk:7.0
 
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
       - name: Run tests
-        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release
+        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity m --no-restore
