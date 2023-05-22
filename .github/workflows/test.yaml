@@ -1,7 +1,7 @@
 name: Test WF
 
 on:
-  release:
+  push:
     branches: [ workflow ]
 
 env:
