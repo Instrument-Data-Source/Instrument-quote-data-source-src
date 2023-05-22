@@ -13,9 +13,6 @@ jobs:
     services:
       db:
         image: postgres:14.3
-        restart: unless-stopped
-        volumes:
-          - postgres-data:/var/lib/postgresql/data
         environment:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
