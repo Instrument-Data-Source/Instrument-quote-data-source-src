@@ -9,8 +9,7 @@ RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-#FROM mcr.microsoft.com/dotnet/aspnet:7.0
-#WORKDIR /src
-#COPY --from=build-env /out .
-#ENTRYPOINT ["dotnet", "Instrument.Quote.Source.Api.WebApi.dll"]
-ENTRYPOINT ["sh"]
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /src
+COPY --from=build-env /out .
+ENTRYPOINT ["dotnet", "Instrument.Quote.Source.Api.WebApi.dll"]
