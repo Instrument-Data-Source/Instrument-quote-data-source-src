@@ -1,0 +1,1 @@
+docker build -t instrument-quote-source-srv ../..
