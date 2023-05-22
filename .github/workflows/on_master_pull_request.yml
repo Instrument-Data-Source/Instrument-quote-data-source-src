@@ -10,7 +10,7 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     
-    servicess:
+    servicesss:
       db:
         image: postgres:14.3
         restart: unless-stopped
