@@ -25,6 +25,12 @@ jobs:
       - name: Display release version aly
         run: echo ${{ env.RELEASE_VERSION }}
 
+      - name: TagName
+        run: echo "DOCKER_IMAGE_NAME_WITH_TAG=$(echo ${IMAGE_NAME}:${RELEASE_VERSION} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Display TagName
+        run: echo $DOCKER_IMAGE_NAME_WITH_TAG
+
       - name: Checkout code
         uses: actions/checkout@v3
       
@@ -40,5 +46,5 @@ jobs:
      
       - name: Build and Push Docker image
         run: |
-          docker buildx build --platform linux/amd64 -t $IMAGE_NAME:${{ env.RELEASE_VERSION }} .
-          docker push $IMAGE_NAME:${{ env.RELEASE_VERSION }}
+          docker buildx build --platform linux/amd64 -t $DOCKER_IMAGE_NAME_WITH_TAG .
+          docker push $DOCKER_IMAGE_NAME_WITH_TAG
