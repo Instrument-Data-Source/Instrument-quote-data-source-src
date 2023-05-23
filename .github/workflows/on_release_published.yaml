@@ -24,7 +24,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    
+    needs: build
     steps:
       - name: Print Image Name
         run: echo $IMAGE_NAME
