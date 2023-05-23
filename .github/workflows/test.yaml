@@ -21,6 +21,9 @@ jobs:
 
       - name: Display release version
         run: echo $RELEASE_VERSION
+      
+      - name: Display release version aly
+        run: echo ${{ env.RELEASE_VERSION }}
 
       - name: Checkout code
         uses: actions/checkout@v3
