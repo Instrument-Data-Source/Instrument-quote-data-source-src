@@ -25,29 +25,9 @@ jobs:
       - name: Display release version aly
         run: echo ${{ env.RELEASE_VERSION }}
 
-      - name: TagName
-        run: echo "DOCKER_IMAGE_NAME_WITH_TAG=$(echo ${IMAGE_NAME}:${RELEASE_VERSION} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Display TagName
-        run: echo $DOCKER_IMAGE_NAME_WITH_TAG
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Build and Publish head Docker image
+        uses: VaultVulp/gp-docker-action@1.1.12
         with:
-          driver: docker-container
-          driver_opts: image=moby/buildkit:v0.9.0
-      
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PACKAGE_PUSH_TOKEN }}
-     
-      - name: Build and Push Docker image
-        run: |
-          docker buildx build --platform linux/amd64 -t $DOCKER_IMAGE_NAME_WITH_TAG .
-          docker push $DOCKER_IMAGE_NAME_WITH_TAG
+            github-token: ${{ secrets.PACKAGE_PUSH_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
+            image-name: $IMAGE_NAME
+            
