@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: docker pull ghcr.io/instrument-data-source/instrument-quote-data-source-srv:v0.1
+    image: docker pull ghcr.io/instrument-data-source/instrument-quote-data-source-srv
     restart: always
     ports:
       - 300100:80
