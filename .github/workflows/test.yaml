@@ -15,7 +15,15 @@ jobs:
       - name: Print Image Name
         run: echo $IMAGE_NAME
 
-      - name: Print Image Name
-        run: echo ${{ github.event.release.name }}
+      - name: Retrieve release version
+        id: release_info
+        run: echo "RELEASE_VERSION=v0.1" >> $GITHUB_ENV
 
+      - name: Display release version
+        run: echo $RELEASE_VERSION
       
+      - name: Build image
+        run: docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$RELEASE_VERSION .
+
+      - name: Get list of docker images
+        run: docker images
