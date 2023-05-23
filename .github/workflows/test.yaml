@@ -1,0 +1,21 @@
+name: Test WF
+
+on:
+  push:
+    branches: [ workflow ]
+
+env:
+  IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv/instrument-quote-data-source-srv
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Print Image Name
+        run: echo $IMAGE_NAME
+
+      - name: Print Image Name
+        run: echo ${{ github.event.release.name }}
+
+      
