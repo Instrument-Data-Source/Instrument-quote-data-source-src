@@ -5,7 +5,7 @@ services:
     image: docker pull ghcr.io/instrument-data-source/instrument-quote-data-source-srv
     restart: always
     ports:
-      - 300100:80
+      - 30100:80
     links:
       - db
     depends_on:
