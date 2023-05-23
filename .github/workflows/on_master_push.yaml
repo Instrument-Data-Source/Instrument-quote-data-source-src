@@ -8,6 +8,20 @@ env:
   IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv
 
 jobs:
+  testing:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/sdk:7.0
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Run tests
+        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity m --no-restore
+
   build:
     runs-on: ubuntu-latest
     
