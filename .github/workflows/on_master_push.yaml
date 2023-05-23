@@ -5,7 +5,7 @@ on:
     types: released
 
 env:
-  IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv/instrument-quote-data-source-srv
+  IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv
 
 jobs:
   build:
