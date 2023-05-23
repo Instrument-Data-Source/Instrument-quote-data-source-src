@@ -17,7 +17,7 @@ jobs:
 
       - name: Retrieve release version
         id: release_info
-        run: echo "RELEASE_VERSION=v0.1" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=1" >> $GITHUB_ENV
 
       - name: Display release version
         run: echo $RELEASE_VERSION
@@ -42,5 +42,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: $DOCKER_IMAGE_NAME_WITH_TAG
+          tags: ${{ env.DOCKER_IMAGE_NAME_WITH_TAG }}
             
