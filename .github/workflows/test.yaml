@@ -35,10 +35,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGE_PUSH_TOKEN }}
      
-      - name: Build image
+      - name: Build and Push Docker image
         run: |
-          docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$RELEASE_VERSION .
-          docker images
-
-      - name: Get list of docker images
-        run: docker images
+          docker buildx build --platform linux/amd64 -t $IMAGE_NAME:${{ env.RELEASE_VERSION }} .
+          docker push $IMAGE_NAME:${{ env.RELEASE_VERSION }}
