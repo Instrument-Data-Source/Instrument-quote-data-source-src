@@ -25,11 +25,15 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGE_PUSH_TOKEN }}
       
-      - name: GITHUB_REF
-        run: echo $GITHUB_REF
+      - name: Retrieve release version
+        id: release_info
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Display release version
+        run: echo "Release version: $RELEASE_VERSION"
 
       - name: Build image
-        run: docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$GITHUB_REF .
+        run: docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$RELEASE_VERSION .
       
       - name: Push image
-        run: docker push $IMAGE_NAME:$GITHUB_REF
+        run: docker push $IMAGE_NAME:$RELEASE_VERSION
