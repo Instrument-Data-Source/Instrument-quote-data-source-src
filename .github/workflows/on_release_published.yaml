@@ -53,6 +53,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: 
-            - ${IMAGE_NAME}:${RELEASE_VERSION}
-            - ${IMAGE_NAME}:latest
+          tags: |
+            ${IMAGE_NAME}:${RELEASE_VERSION}
+            ${IMAGE_NAME}:latest
