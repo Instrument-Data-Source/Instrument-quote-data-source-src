@@ -5,12 +5,12 @@
 
 ## Solutions
 ### Using TimeFrame Code
-- &#x2705; Do not need changes
-- &#x274C; It could be problem because Code is string variable
+- Do not need changes
+- It could be problem because Code is string variable
 
 ### Using TimeFrame in Seconds
-- &#x2705; integer value is more uniqufied for unique ID
-- &#x274C; Need changes into service
+- Integer value is more uniqufied for unique ID
+- Need changes into service
 
 ## Decision
 - Use Code untill new insides
