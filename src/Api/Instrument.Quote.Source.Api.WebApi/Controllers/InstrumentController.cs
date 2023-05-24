@@ -43,7 +43,7 @@ public class InstrumentController : ControllerBase
   }
 
   [HttpGet("{instrumentStr}")]
-  public async Task<ActionResult<IReadOnlyDictionary<string, PeriodResponseDto>>> GetInstrumentByIdOrCode(string instrumentStr, CancellationToken cancellationToken = default)
+  public async Task<ActionResult<InstrumentResponseDto?>> GetInstrumentByIdOrCode(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
     var result_body = await instrumentSrv.TryGetInstrumentByIdAsync(instrumentId, cancellationToken);
