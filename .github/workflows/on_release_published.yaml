@@ -54,5 +54,5 @@ jobs:
         with:
           push: true
           tags: |
-            ${IMAGE_NAME}:${RELEASE_VERSION}
-            ${IMAGE_NAME}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+            ${{ env.IMAGE_NAME }}:latest
