@@ -58,5 +58,13 @@ public class InstrumentController : ControllerBase
     return Ok(result_body);
   }
 
+  [HttpDelete("{instrumentStr}")]
+  public async Task<ActionResult> RemoveInstrument(string instrumentStr, CancellationToken cancellationToken = default)
+  {
+    var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
+    await instrumentSrv.RemoveInstrumentAsync(instrumentId, cancellationToken);
+    return Ok();
+  }
+
 
 }
