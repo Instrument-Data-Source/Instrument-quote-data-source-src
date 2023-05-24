@@ -8,6 +8,7 @@
 ### [Instruments](./src/App/Instrument.Quote.Source.App.Core/InstrumentAggregate/Interface/IInstrumentSrv.cs)
 - Add instrument
 - Get List of instruments
+- Remove instrument
 
 ### [TimeFrame](./src/App/Instrument.Quote.Source.App.Core/TimeFrameAggregate/Interface/ITimeFrameSrv.cs)
 - Get all Timeframes

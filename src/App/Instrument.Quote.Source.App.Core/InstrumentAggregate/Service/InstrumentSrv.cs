@@ -41,6 +41,12 @@ public class InstrumentSrv : IInstrumentSrv
     return await instrumentRep.GetAsDto(cancellationToken);
   }
 
+  public async Task RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
+  {
+    var result = await instrumentRep.TryRemoveAsync(instrumentId, cancellationToken: cancellationToken);
+    if (!result)
+      throw new ArgumentOutOfRangeException(nameof(instrumentId), instrumentId, "Unknown Id");
+  }
 
   public async Task<InstrumentResponseDto?> TryGetInstrumentByCodeAsync(string instrumentCode, CancellationToken cancellationToken = default)
   {
