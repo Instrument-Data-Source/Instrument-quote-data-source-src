@@ -1,7 +1,7 @@
 # Instrument Quote Source Service
 - [Principles](./doc/Principles.md)
-- [Components](./doc/Component.md)
-
+- [Components](./doc/Component.drawio.svg)
+- API on URL/swagger/index.html
 
 ## Functions
 ### [Instruments](./src/App/Instrument.Quote.Source.App.Core/InstrumentAggregate/Interface/IInstrumentSrv.cs)
@@ -15,3 +15,4 @@
 - Get candles for period
 - Upload new candles
 - Get all loaded periods
+
