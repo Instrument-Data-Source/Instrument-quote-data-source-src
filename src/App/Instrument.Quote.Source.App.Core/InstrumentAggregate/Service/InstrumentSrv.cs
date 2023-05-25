@@ -55,13 +55,15 @@ public class InstrumentSrv : IInstrumentSrv
     return !result ? Result.Success() : Result.NotFound();
   }
 
-  public async Task<InstrumentResponseDto?> TryGetInstrumentByCodeAsync(string instrumentCode, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(string instrumentCode, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Code == instrumentCode, cancellationToken);
-    return findedEnt != null ? await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken) : null;
+    if (findedEnt == null) return Result.NotFound();
+    var res_dto = await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken);
+    return Result.Success(res_dto);
   }
 
-  public async Task<Result<InstrumentResponseDto>> GetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
     if (findedEnt == null)

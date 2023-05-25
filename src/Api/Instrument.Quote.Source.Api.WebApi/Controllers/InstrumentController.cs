@@ -1,7 +1,5 @@
 using Ardalis.Result;
-using Ardalis.Result.AspNetCore;
 using Instrument.Quote.Source.Api.WebApi.Dto;
-using Instrument.Quote.Source.Api.WebApi.Tools;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
@@ -18,17 +16,14 @@ public class InstrumentController : ControllerBase
   public const string Route = "api/instrument";
   private readonly ILogger<InstrumentController> _logger;
   private readonly IInstrumentSrv instrumentSrv;
-  private readonly ParameterParser parameterParser;
   private readonly ICandleSrv candleSrv;
 
   public InstrumentController(ILogger<InstrumentController> logger,
                               IInstrumentSrv instrumentSrv,
-                              ParameterParser parameterParser,
                               ICandleSrv candleSrv)
   {
     _logger = logger;
     this.instrumentSrv = instrumentSrv;
-    this.parameterParser = parameterParser;
     this.candleSrv = candleSrv;
   }
 
@@ -64,8 +59,7 @@ public class InstrumentController : ControllerBase
   [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
   public async Task<ActionResult<InstrumentResponseDto?>> GetInstrumentByIdOrCode(string instrumentStr, CancellationToken cancellationToken = default)
   {
-    var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
-    var result = await instrumentSrv.GetInstrumentByIdAsync(instrumentId, cancellationToken);
+    var result = await instrumentSrv.GetInstrumentByIdOrCodeAsync(instrumentStr, cancellationToken);
     switch (result.Status)
     {
       case ResultStatus.Ok:
@@ -79,12 +73,22 @@ public class InstrumentController : ControllerBase
 
   [HttpGet("{instrumentStr}/periods")]
   [SwaggerOperation("Get all loaded periods for instrument")]
-  [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(IReadOnlyDictionary<string, PeriodResponseDto>))]
+  [SwaggerResponse(StatusCodes.Status200OK, "Instrument period getted", typeof(IReadOnlyDictionary<string, PeriodResponseDto>))]
   [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
   public async Task<ActionResult<IReadOnlyDictionary<string, PeriodResponseDto>>> GetPeriods(string instrumentStr, CancellationToken cancellationToken = default)
   {
-    var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
-    var result = await candleSrv.GetExistPeriodAsync(instrumentId, cancellationToken);
+    var instrumentResult = await instrumentSrv.GetInstrumentByIdOrCodeAsync(instrumentStr, cancellationToken);
+    switch (instrumentResult.Status)
+    {
+      case ResultStatus.Ok:
+        break;
+      case ResultStatus.NotFound:
+        return NotFound("Instrument not found");
+      default:
+        throw new ApplicationException("Unexpected result status");
+    }
+
+    var result = await candleSrv.GetExistPeriodAsync(instrumentResult.Value.Id, cancellationToken);
     switch (result.Status)
     {
       case ResultStatus.Ok:
@@ -102,8 +106,8 @@ public class InstrumentController : ControllerBase
   [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
   public async Task<ActionResult> RemoveInstrument(string instrumentStr, CancellationToken cancellationToken = default)
   {
-    var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
-    var result = await instrumentSrv.RemoveInstrumentAsync(instrumentId, cancellationToken);
+
+    var result = await instrumentSrv.RemoveInstrumentByIdOrStrAsync(instrumentStr, cancellationToken);
     switch (result.Status)
     {
       case ResultStatus.Ok:
