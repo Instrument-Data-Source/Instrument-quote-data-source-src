@@ -21,7 +21,7 @@ public static class NewInstrumentRequestDtoValidatorBuilder
   }
   public static bool IsValid(this NewInstrumentRequestDto dto, out ValidationResult validationResult)
   {
-    validationResult = new NewInstrumentRequestDtoValidator().Validate(dto);
+    validationResult = dto.Validate();
     return validationResult.IsValid;
   }
 }
