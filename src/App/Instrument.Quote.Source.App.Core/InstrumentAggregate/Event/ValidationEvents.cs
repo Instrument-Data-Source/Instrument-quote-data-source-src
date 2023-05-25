@@ -7,7 +7,7 @@ namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Event;
 public static class InstrumentValidationEvents
 {
 
-  public static EventId NameIsEmptyEvent => new EventId(11000, "Name is empty");
-  public static EventId CodeIsEmptyEvent => new EventId(11001, "Code is empty");
-  public static EventId WrongInstrumentType => new EventId(11002, "Wrong event type");
+  public static EventId IsEmptyEvent => new EventId(11000, "Value is empty");
+  public static EventId WrongInstrumentType => new EventId(11001, "Invalid instrument type");
+  public static EventId IsTooLongEvent => new EventId(11002, "Value is too long");
 }
