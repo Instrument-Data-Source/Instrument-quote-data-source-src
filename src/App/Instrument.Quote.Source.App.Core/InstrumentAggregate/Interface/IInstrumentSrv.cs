@@ -12,7 +12,7 @@ public interface IInstrumentSrv
   /// <param name="cancellationToken"></param>
   /// <exception cref="FluentValidation.ValidationException">One of argument has wrong value</exception>
   /// <returns></returns>
-  Task<Result<InstrumentResponseDto>> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRquest, CancellationToken cancellationToken = default);
+  Task<InstrumentResponseDto> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRquest, CancellationToken cancellationToken = default);
   /// <summary>
   /// Get all instruments
   /// </summary>
