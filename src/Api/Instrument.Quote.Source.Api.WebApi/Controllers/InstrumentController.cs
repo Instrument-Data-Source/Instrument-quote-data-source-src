@@ -4,13 +4,15 @@ using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route(Route)]
 public class InstrumentController : ControllerBase
 {
+  public const string Route = "api/instrument";
   private readonly ILogger<InstrumentController> _logger;
   private readonly IInstrumentSrv instrumentSrv;
   private readonly ParameterParser parameterParser;
@@ -35,11 +37,21 @@ public class InstrumentController : ControllerBase
   }
 
   [HttpPost()]
+  [SwaggerOperation("Create new Instrument")]
+  [SwaggerResponse(StatusCodes.Status201Created, "Instrument created", typeof(InstrumentResponseDto))]
+  [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid request")]
   public async Task<ActionResult<InstrumentResponseDto>> CreateInstument([FromBody] NewInstrumentRequestDto instrumentRquest,
       CancellationToken cancellationToken = new())
   {
-    InstrumentResponseDto newInstrument = await instrumentSrv.CreateInstrumentAsync(instrumentRquest, cancellationToken);
-    return Ok(newInstrument);
+    try
+    {
+      InstrumentResponseDto newInstrument = await instrumentSrv.CreateInstrumentAsync(instrumentRquest, cancellationToken);
+      return Created($"~/{Route}/{newInstrument.Code}", newInstrument);
+    }
+    catch (FluentValidation.ValidationException ex)
+    {
+      return BadRequest(ex);
+    }
   }
 
   [HttpGet("{instrumentStr}")]
