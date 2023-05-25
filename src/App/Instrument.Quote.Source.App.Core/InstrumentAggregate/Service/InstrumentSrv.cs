@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Tool;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Event;
+using Microsoft.Extensions.Logging;
+using Ardalis.Result;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 
