@@ -4,6 +4,7 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Tool;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
+using Instrument.Quote.Source.App.Core.InstrumentAggregate.Event;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 
@@ -22,7 +23,7 @@ public class InstrumentSrv : IInstrumentSrv
   public async Task<InstrumentResponseDto> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
   {
     ent.Instrument newInstrument;
-    newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep);
+    newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
 
     try
     {

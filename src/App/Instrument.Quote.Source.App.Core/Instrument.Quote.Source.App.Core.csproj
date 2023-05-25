@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.Kernal.DataBase\Instrument.Quote.Source.Shared.Kernal.DataBase.csproj" />
+    <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.FluentValidation.Extension\Instrument.Quote.Source.Shared.FluentValidation.Extension.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
