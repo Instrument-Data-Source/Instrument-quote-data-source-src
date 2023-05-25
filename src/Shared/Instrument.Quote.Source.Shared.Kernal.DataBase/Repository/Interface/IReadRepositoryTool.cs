@@ -29,4 +29,14 @@ public static class IReadRepositoryTool
   {
     return await readRep.Table.SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
   }
+
+  /// <summary>
+  /// Contain entity with Id
+  /// </summary>
+  /// <param name="id">Id of elemtnt</param>
+  /// <returns></returns>
+  public static async Task<bool> ContainIdAsync<TEntity>(this IReadRepository<TEntity> readRep, int id, CancellationToken cancellationToken = default) where TEntity : EntityBase
+  {
+    return (await readRep.Table.Select(e => new { e.Id }).SingleOrDefaultAsync(e => e.Id == id, cancellationToken)) != null;
+  }
 }

@@ -47,11 +47,10 @@ public class InstrumentController : ControllerBase
       CancellationToken cancellationToken = new())
   {
     var createResult = await instrumentSrv.CreateInstrumentAsync(instrumentRquest, cancellationToken);
-    if (createResult.IsSuccess)
-      return Created($"~/{Route}/{createResult.Value.Code}", createResult.Value);
-
     switch (createResult.Status)
     {
+      case ResultStatus.Ok:
+        return Created($"~/{Route}/{createResult.Value.Code}", createResult.Value);
       case ResultStatus.Invalid:
         return BadRequest(new BadRequestDto(createResult.ValidationErrors));
       default:
@@ -60,27 +59,60 @@ public class InstrumentController : ControllerBase
   }
 
   [HttpGet("{instrumentStr}")]
+  [SwaggerOperation("Get Instrument by Id or Code")]
+  [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(InstrumentResponseDto))]
+  [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
   public async Task<ActionResult<InstrumentResponseDto?>> GetInstrumentByIdOrCode(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
-    var result_body = await instrumentSrv.TryGetInstrumentByIdAsync(instrumentId, cancellationToken);
-    return Ok(result_body);
+    var result = await instrumentSrv.GetInstrumentByIdAsync(instrumentId, cancellationToken);
+    switch (result.Status)
+    {
+      case ResultStatus.Ok:
+        return Ok(result.Value);
+      case ResultStatus.NotFound:
+        return NotFound("Instrument not found");
+      default:
+        throw new ApplicationException("Unexpected result status");
+    }
   }
 
   [HttpGet("{instrumentStr}/periods")]
+  [SwaggerOperation("Get all loaded periods for instrument")]
+  [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(IReadOnlyDictionary<string, PeriodResponseDto>))]
+  [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
   public async Task<ActionResult<IReadOnlyDictionary<string, PeriodResponseDto>>> GetPeriods(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
-    var result_body = await candleSrv.GetExistPeriodAsync(instrumentId, cancellationToken);
-    return Ok(result_body);
+    var result = await candleSrv.GetExistPeriodAsync(instrumentId, cancellationToken);
+    switch (result.Status)
+    {
+      case ResultStatus.Ok:
+        return Ok(result.Value);
+      case ResultStatus.NotFound:
+        return NotFound("Instrument not found");
+      default:
+        throw new ApplicationException("Unexpected result status");
+    }
   }
 
   [HttpDelete("{instrumentStr}")]
+  [SwaggerOperation("Delete instrument")]
+  [SwaggerResponse(StatusCodes.Status200OK, "Instrument deleted")]
+  [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
   public async Task<ActionResult> RemoveInstrument(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var instrumentId = await parameterParser.getInstrumentIdAsync(instrumentStr, cancellationToken);
-    await instrumentSrv.RemoveInstrumentAsync(instrumentId, cancellationToken);
-    return Ok();
+    var result = await instrumentSrv.RemoveInstrumentAsync(instrumentId, cancellationToken);
+    switch (result.Status)
+    {
+      case ResultStatus.Ok:
+        return Ok("Instrument deleted");
+      case ResultStatus.NotFound:
+        return NotFound("Instrument not found");
+      default:
+        throw new ApplicationException("Unexpected result status");
+    }
   }
 
 

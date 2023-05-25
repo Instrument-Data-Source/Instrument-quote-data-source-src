@@ -47,11 +47,12 @@ public class InstrumentSrv : IInstrumentSrv
     return await instrumentRep.GetAsDto(cancellationToken);
   }
 
-  public async Task RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result> RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var result = await instrumentRep.TryRemoveAsync(instrumentId, cancellationToken: cancellationToken);
     if (!result)
-      throw new ArgumentOutOfRangeException(nameof(instrumentId), instrumentId, "Unknown Id");
+      return Result.Success();
+    return !result ? Result.Success() : Result.NotFound();
   }
 
   public async Task<InstrumentResponseDto?> TryGetInstrumentByCodeAsync(string instrumentCode, CancellationToken cancellationToken = default)
@@ -60,9 +61,12 @@ public class InstrumentSrv : IInstrumentSrv
     return findedEnt != null ? await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken) : null;
   }
 
-  public async Task<InstrumentResponseDto?> TryGetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
-    return findedEnt != null ? await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken) : null;
+    if (findedEnt == null)
+      return Result.NotFound();
+    var _ret_dto = await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken);
+    return Result.Success(_ret_dto);
   }
 }

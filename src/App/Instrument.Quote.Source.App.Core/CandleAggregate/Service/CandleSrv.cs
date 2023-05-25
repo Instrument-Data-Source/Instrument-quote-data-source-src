@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
@@ -78,10 +79,13 @@ public class CandleSrv : ICandleSrv
     return loadedPer != null ? loadedPer.ToDto() : null;
   }
 
-  public async Task<IReadOnlyDictionary<string, PeriodResponseDto>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<IReadOnlyDictionary<string, PeriodResponseDto>>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
-    return await loadedPeriodRep.Table
-                  .Where(e => e.InstrumentId == instrumentId)
-                  .ToDictionaryAsync(e => Enum.GetName((TimeFrame.Enum)e.TimeFrameId)!, e => e.ToDto(), cancellationToken);
+    var periods = await loadedPeriodRep.Table.Where(e => e.InstrumentId == instrumentId).ToArrayAsync(cancellationToken);
+    if (periods.Count() == 0 && !await instrumentRep.ContainIdAsync(instrumentId, cancellationToken))
+      return Result.NotFound();
+
+    IReadOnlyDictionary<string, PeriodResponseDto> _ret_dto = periods.ToDictionary(e => Enum.GetName((TimeFrame.Enum)e.TimeFrameId)!, e => e.ToDto());
+    return Result.Success(_ret_dto);
   }
 }

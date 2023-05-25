@@ -32,12 +32,12 @@ public interface IInstrumentSrv
   /// <param name="instrumentId">Instrument Id</param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  Task<InstrumentResponseDto?> TryGetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default);
+  Task<Result<InstrumentResponseDto>> GetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default);
   /// <summary>
   /// Remove instrument from service
   /// </summary>
   /// <param name="instrumentId"></param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  Task RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default);
+  Task<Result> RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default);
 }

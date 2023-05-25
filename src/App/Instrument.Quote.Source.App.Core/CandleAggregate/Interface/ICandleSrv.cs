@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 
@@ -35,7 +36,7 @@ public interface ICandleSrv
   /// </summary>
   /// <param name="instrumentId">Instrument Id</param>
   /// <returns></returns>
-  Task<IReadOnlyDictionary<string, PeriodResponseDto>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default);
+  Task<Result<IReadOnlyDictionary<string, PeriodResponseDto>>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default);
   /// <summary>
   /// Add new candles
   /// </summary>

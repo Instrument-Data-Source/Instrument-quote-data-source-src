@@ -1,15 +1,13 @@
 namespace Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Tool.Mapper;
 
-using System.Net;
 using System.Threading.Tasks;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Tool;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
-using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
-using ent = Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
+using ent=Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
 public class ToEntity_Test
 {
   IReadRepository<ent.InstrumentType> instrumentTypeRep = Substitute.For<IReadRepository<ent.InstrumentType>>();
