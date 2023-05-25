@@ -33,7 +33,7 @@ public class InstrumentSrv : IInstrumentSrv
       throw new ApplicationException("Error when add instument", ex);
     }
 
-    return new InstrumentResponseDto(newInstrument);
+    return await newInstrument.ToDtoAsync(instrumentTypeRep, cancellationToken);
   }
 
   public async Task<IEnumerable<InstrumentResponseDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -51,12 +51,12 @@ public class InstrumentSrv : IInstrumentSrv
   public async Task<InstrumentResponseDto?> TryGetInstrumentByCodeAsync(string instrumentCode, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Code == instrumentCode, cancellationToken);
-    return findedEnt != null ? new InstrumentResponseDto(findedEnt) : null;
+    return findedEnt != null ? await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken) : null;
   }
 
   public async Task<InstrumentResponseDto?> TryGetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
-    return findedEnt != null ? new InstrumentResponseDto(findedEnt) : null;
+    return findedEnt != null ? await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken) : null;
   }
 }

@@ -9,7 +9,10 @@ class NameValidator : AbstractValidator<string>
   public NameValidator()
   {
     RuleFor(e => e)
-      .Must(e => string.IsNullOrEmpty(e)).WithEventId(InstrumentValidationEvents.IsEmptyEvent)
+      .Must(e =>
+      {
+        return !string.IsNullOrEmpty(e);
+      }).WithEventId(InstrumentValidationEvents.IsEmptyEvent)
       .Length(1, 50).WithEventId(InstrumentValidationEvents.IsTooLongEvent);
   }
 }

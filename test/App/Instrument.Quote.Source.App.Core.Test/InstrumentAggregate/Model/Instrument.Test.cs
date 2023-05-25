@@ -34,8 +34,11 @@ public class Instument_Constructor_Test
 
   [Theory]
   [InlineData("Instrument", null)]
+  [InlineData("Instrument", "")]
   [InlineData(null, "I1")]
+  [InlineData("", "I1")]
   [InlineData(null, null)]
+  [InlineData("", "")]
   public void WHEN_null_THEN_Expection(string expected_name, string expected_code)
   {
     // Array
@@ -60,15 +63,6 @@ public class Instument_Constructor_Test
     // Act
 
     // Assert
-    try
-    {
-      new m.Instrument(expected_name, expected_code, expected_PriceDec, expected_VolDec, expected_Type);
-    }
-    catch (System.Exception ex)
-    {
-
-      throw;
-    }
     Assert.Throws<FluentValidation.ValidationException>(() => new m.Instrument(expected_name, expected_code, expected_PriceDec, expected_VolDec, expected_Type));
 
   }

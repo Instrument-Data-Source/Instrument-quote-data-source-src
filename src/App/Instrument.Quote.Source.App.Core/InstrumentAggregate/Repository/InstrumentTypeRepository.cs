@@ -18,4 +18,12 @@ public static class InstrumentTypeRepository
   {
     return await readRepository.Table.SingleOrDefaultAsync(e => e.Name == Type, cancellationToken);
   }
-}
+
+  public static async Task<string> GetNameByIdAsync(this IReadRepository<ent.InstrumentType> readRepository,int id, CancellationToken cancellationToken = default)
+  {
+    var _ret = await readRepository.Table.Select(e=>new{e.Id, e.Name}).SingleOrDefaultAsync(e=>e.Id== id, cancellationToken);
+    if (_ret == null){
+      throw new ArgumentOutOfRangeException(nameof(id), id, "Instrument Id is unknown");
+    }
+    return _ret.Name;
+}}

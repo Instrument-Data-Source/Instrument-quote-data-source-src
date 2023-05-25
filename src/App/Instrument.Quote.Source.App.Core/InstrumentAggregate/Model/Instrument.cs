@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
-using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator;
+using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 using Microsoft.EntityFrameworkCore;
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;

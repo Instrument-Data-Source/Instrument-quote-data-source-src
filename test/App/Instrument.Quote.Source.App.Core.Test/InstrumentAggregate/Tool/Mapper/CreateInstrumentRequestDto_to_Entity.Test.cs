@@ -40,7 +40,6 @@ public class ToEntity_Test
     // Assert
     Assert.Equal(using_Dto.Name, asserted_ent.Name);
     Assert.Equal(using_Dto.Code, asserted_ent.Code);
-    Assert.Equal(using_IntstrumentTypes[0], asserted_ent.InstrumentType);
     Assert.Equal(using_IntstrumentTypes[0].Id, asserted_ent.InstrumentTypeId);
     Assert.Equal(using_Dto.PriceDecimalLen, asserted_ent.PriceDecimalLen);
     Assert.Equal(using_Dto.VolumeDecimalLen, asserted_ent.VolumeDecimalLen);
@@ -67,7 +66,6 @@ public class ToEntity_Test
     // Assert
     Assert.Equal(using_Dto.Name, asserted_ent.Name);
     Assert.Equal(using_Dto.Code, asserted_ent.Code);
-    Assert.Equal(using_IntstrumentTypes[0], asserted_ent.InstrumentType);
     Assert.Equal(using_IntstrumentTypes[0].Id, asserted_ent.InstrumentTypeId);
     Assert.Equal(using_Dto.PriceDecimalLen, asserted_ent.PriceDecimalLen);
     Assert.Equal(using_Dto.VolumeDecimalLen, asserted_ent.VolumeDecimalLen);
@@ -94,7 +92,6 @@ public class ToEntity_Test
     // Assert
     Assert.Equal(using_Dto.Name, asserted_ent.Name);
     Assert.Equal(using_Dto.Code, asserted_ent.Code);
-    Assert.Equal(using_IntstrumentTypes[1], asserted_ent.InstrumentType);
     Assert.Equal(using_IntstrumentTypes[1].Id, asserted_ent.InstrumentTypeId);
     Assert.Equal(using_Dto.PriceDecimalLen, asserted_ent.PriceDecimalLen);
     Assert.Equal(using_Dto.VolumeDecimalLen, asserted_ent.VolumeDecimalLen);
@@ -117,7 +114,7 @@ public class ToEntity_Test
     // Act
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
+    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
   }
 
   [Fact]
@@ -138,7 +135,7 @@ public class ToEntity_Test
     // Act
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
+    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
   }
 
   [Fact]
@@ -160,6 +157,6 @@ public class ToEntity_Test
     // Act
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
+    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
   }
 }

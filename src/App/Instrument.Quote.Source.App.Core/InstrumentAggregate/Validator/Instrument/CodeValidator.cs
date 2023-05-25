@@ -9,7 +9,10 @@ class CodeValidator : AbstractValidator<string>
   public CodeValidator()
   {
     RuleFor(e => e)
-      .Must(e => string.IsNullOrEmpty(e)).WithEventId(InstrumentValidationEvents.IsEmptyEvent)
+      .Must(e =>
+      {
+        return !string.IsNullOrEmpty(e);
+      }).WithEventId(InstrumentValidationEvents.IsEmptyEvent)
       .Length(1, 10).WithEventId(InstrumentValidationEvents.IsTooLongEvent);
   }
 }
