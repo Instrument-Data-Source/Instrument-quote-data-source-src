@@ -26,23 +26,9 @@ public static class Mapper
     if (dto.TypeId != 0)
       typeByCode = await readRepository.TryGetByIdAsync(dto.TypeId, cancellationToken);
 
-    InstrumentType? typeByName = null;
-    if (!string.IsNullOrEmpty(dto.Type))
-      typeByName = await readRepository.TryGetByTypeAsync(dto.Type);
-
-    if (typeByCode != null && typeByName != null)
-    {
-      if (typeByCode != typeByName)
-        return -1;
-
-      return typeByCode.Id;
-    }
 
     if (typeByCode != null)
       return typeByCode.Id;
-
-    if (typeByName != null)
-      return typeByName.Id;
 
     return -1;
 

@@ -1,3 +1,6 @@
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
+using Instrument.Quote.Source.Api.WebApi.Dto;
 using Instrument.Quote.Source.Api.WebApi.Tools;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
@@ -39,18 +42,20 @@ public class InstrumentController : ControllerBase
   [HttpPost()]
   [SwaggerOperation("Create new Instrument")]
   [SwaggerResponse(StatusCodes.Status201Created, "Instrument created", typeof(InstrumentResponseDto))]
-  [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid request")]
+  [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid request", typeof(BadRequestDto))]
   public async Task<ActionResult<InstrumentResponseDto>> CreateInstument([FromBody] NewInstrumentRequestDto instrumentRquest,
       CancellationToken cancellationToken = new())
   {
-    try
+    var createResult = await instrumentSrv.CreateInstrumentAsync(instrumentRquest, cancellationToken);
+    if (createResult.IsSuccess)
+      return Created($"~/{Route}/{createResult.Value.Code}", createResult.Value);
+
+    switch (createResult.Status)
     {
-      InstrumentResponseDto newInstrument = await instrumentSrv.CreateInstrumentAsync(instrumentRquest, cancellationToken);
-      return Created($"~/{Route}/{newInstrument.Code}", newInstrument);
-    }
-    catch (FluentValidation.ValidationException ex)
-    {
-      return BadRequest(ex);
+      case ResultStatus.Invalid:
+        return BadRequest(new BadRequestDto(createResult.ValidationErrors));
+      default:
+        throw new ApplicationException("Unexpected result status");
     }
   }
 

@@ -4,6 +4,9 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Tool;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
+using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
+using Ardalis.Result;
+using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 
@@ -19,10 +22,13 @@ public class InstrumentSrv : IInstrumentSrv
     this.instrumentTypeRep = instrumentTypeRep;
   }
 
-  public async Task<InstrumentResponseDto> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
   {
-    ent.Instrument newInstrument;
-    newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
+    if (!instrumentRequest.IsValid(out var validationResult))
+    {
+      return Result.Invalid(validationResult.Errors.ToErrorList());
+    }
+    ent.Instrument newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
 
     try
     {
@@ -33,7 +39,7 @@ public class InstrumentSrv : IInstrumentSrv
       throw new ApplicationException("Error when add instument", ex);
     }
 
-    return await newInstrument.ToDtoAsync(instrumentTypeRep, cancellationToken);
+    return Result.Success(await newInstrument.ToDtoAsync(instrumentTypeRep, cancellationToken));
   }
 
   public async Task<IEnumerable<InstrumentResponseDto>> GetAllAsync(CancellationToken cancellationToken = default)

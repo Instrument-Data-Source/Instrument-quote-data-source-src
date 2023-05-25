@@ -14,4 +14,3 @@ class InstrumentValidator : AbstractValidator<m.Instrument>
   }
 }
 
-

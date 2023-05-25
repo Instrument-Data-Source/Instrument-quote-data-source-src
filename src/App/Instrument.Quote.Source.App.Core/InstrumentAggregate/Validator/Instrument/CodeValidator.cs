@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Event;
 using Instrument.Quote.Source.Shared.FluentValidation.Extension;
