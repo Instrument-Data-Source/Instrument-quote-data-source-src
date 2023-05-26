@@ -13,13 +13,13 @@ public static class IInstrumentSrvExtension
   /// <returns></returns>
   public static async Task<Result> RemoveInstrumentByIdOrStrAsync(this IInstrumentSrv service, string instrumentStr, CancellationToken cancellationToken = default)
   {
-    var result = await service.GetInstrumentByAsync(instrumentStr, cancellationToken);
+    var result = await service.GetByAsync(instrumentStr, cancellationToken);
 
     if (result.IsSuccess)
-      return await service.RemoveInstrumentAsync(result.Value.Id, cancellationToken);
+      return await service.RemoveAsync(result.Value.Id, cancellationToken);
 
     if (Int32.TryParse(instrumentStr, out int instrumentId))
-      return await service.RemoveInstrumentAsync(instrumentId, cancellationToken);
+      return await service.RemoveAsync(instrumentId, cancellationToken);
 
     return Result.NotFound();
   }
@@ -31,13 +31,13 @@ public static class IInstrumentSrvExtension
   /// <returns></returns>
   public static async Task<Result<InstrumentResponseDto>> GetInstrumentByIdOrCodeAsync(this IInstrumentSrv service, string instrumentStr, CancellationToken cancellationToken = default)
   {
-    var result = await service.GetInstrumentByAsync(instrumentStr, cancellationToken);
+    var result = await service.GetByAsync(instrumentStr, cancellationToken);
 
     if (result.IsSuccess)
       return result;
 
     if (Int32.TryParse(instrumentStr, out int instrumentId))
-      return await service.GetInstrumentByAsync(instrumentId);
+      return await service.GetByAsync(instrumentId);
 
     return Result.NotFound();
   }
