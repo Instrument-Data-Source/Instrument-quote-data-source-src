@@ -50,9 +50,7 @@ public class InstrumentSrv : IInstrumentSrv
   public async Task<Result> RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var result = await instrumentRep.TryRemoveAsync(instrumentId, cancellationToken: cancellationToken);
-    if (!result)
-      return Result.Success();
-    return !result ? Result.Success() : Result.NotFound();
+    return result ? Result.Success() : Result.NotFound();
   }
 
   public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(string instrumentCode, CancellationToken cancellationToken = default)
