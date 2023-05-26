@@ -15,14 +15,14 @@ public interface IReadInstrumentSrv
   /// <param name="instrumentCode">Instrument Code</param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(string instrumentCode, CancellationToken cancellationToken = default);
+  Task<Result<InstrumentResponseDto>> GetByAsync(string instrumentCode, CancellationToken cancellationToken = default);
   /// <summary>
   /// Get instrument by Id
   /// </summary>
   /// <param name="instrumentId">Instrument Id</param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(int instrumentId, CancellationToken cancellationToken = default);
+  Task<Result<InstrumentResponseDto>> GetByAsync(int instrumentId, CancellationToken cancellationToken = default);
 }
 public interface IInstrumentSrv:IReadInstrumentSrv
 {
@@ -33,13 +33,13 @@ public interface IInstrumentSrv:IReadInstrumentSrv
   /// <param name="cancellationToken"></param>
   /// <exception cref="FluentValidation.ValidationException">One of argument has wrong value</exception>
   /// <returns></returns>
-  Task<Result<InstrumentResponseDto>> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRquest, CancellationToken cancellationToken = default);
-  
+  Task<Result<InstrumentResponseDto>> CreateAsync(NewInstrumentRequestDto instrumentRquest, CancellationToken cancellationToken = default);
+
   /// <summary>
   /// Remove instrument from service
   /// </summary>
   /// <param name="instrumentId"></param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  Task<Result> RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default);
+  Task<Result> RemoveAsync(int instrumentId, CancellationToken cancellationToken = default);
 }

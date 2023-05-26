@@ -41,7 +41,7 @@ public class InstrumentController : ControllerBase
   public async Task<ActionResult<InstrumentResponseDto>> CreateInstument([FromBody] NewInstrumentRequestDto instrumentRquest,
       CancellationToken cancellationToken = new())
   {
-    var createResult = await instrumentSrv.CreateInstrumentAsync(instrumentRquest, cancellationToken);
+    var createResult = await instrumentSrv.CreateAsync(instrumentRquest, cancellationToken);
     switch (createResult.Status)
     {
       case ResultStatus.Ok:

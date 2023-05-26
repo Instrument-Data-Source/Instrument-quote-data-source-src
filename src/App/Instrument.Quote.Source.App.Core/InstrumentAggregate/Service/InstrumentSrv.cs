@@ -22,7 +22,7 @@ public class InstrumentSrv : IInstrumentSrv
     this.instrumentTypeRep = instrumentTypeRep;
   }
 
-  public async Task<Result<InstrumentResponseDto>> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> CreateAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
   {
     if (!instrumentRequest.IsValid(out var validationResult))
     {
@@ -47,15 +47,13 @@ public class InstrumentSrv : IInstrumentSrv
     return await instrumentRep.GetAsDto(cancellationToken);
   }
 
-  public async Task<Result> RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result> RemoveAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var result = await instrumentRep.TryRemoveAsync(instrumentId, cancellationToken: cancellationToken);
-    if (!result)
-      return Result.Success();
-    return !result ? Result.Success() : Result.NotFound();
+    return result ? Result.Success() : Result.NotFound();
   }
 
-  public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(string instrumentCode, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetByAsync(string instrumentCode, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Code == instrumentCode, cancellationToken);
     if (findedEnt == null) return Result.NotFound();
@@ -63,7 +61,7 @@ public class InstrumentSrv : IInstrumentSrv
     return Result.Success(res_dto);
   }
 
-  public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetByAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
     if (findedEnt == null)
