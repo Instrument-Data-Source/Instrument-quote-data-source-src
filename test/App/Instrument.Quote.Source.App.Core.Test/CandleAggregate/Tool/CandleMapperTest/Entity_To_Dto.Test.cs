@@ -1,15 +1,11 @@
 namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Tool.MapperTest;
 
-using System.Net;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
-using Microsoft.EntityFrameworkCore;
-using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
-using ent = Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
 public class Entity_ToDto_Test
 {
 

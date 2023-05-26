@@ -1,7 +1,7 @@
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using m = Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 namespace Instrument.Quote.Source.Api.WebApi.Tools;
-
+/*
 public class ParameterParser
 {
   private readonly ILogger<ParameterParser> logger;
@@ -33,4 +33,4 @@ public class ParameterParser
       return timeframeParseId != null ? (int)timeframeParseId : -1;
     }
   }
-}
+}*/

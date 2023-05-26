@@ -1,6 +1,5 @@
 using FluentValidation;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
-using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
 

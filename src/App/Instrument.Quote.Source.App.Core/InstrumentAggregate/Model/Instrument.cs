@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
+using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 using Microsoft.EntityFrameworkCore;
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
@@ -7,9 +9,19 @@ namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
 /// <summary>
 /// Instrument entity
 /// </summary>
+/// <exception cref="FluentValidation.ValidationException">Invalid data/exception>
 [Index(nameof(Code), IsUnique = true)]
 public class Instrument : EntityBase
 {
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="name"></param>
+  /// <param name="code"></param>
+  /// <param name="priceDecimalLen"></param>
+  /// <param name="volumeDecimalLen"></param>
+  /// <param name="instrumentTypeId"></param>
+  /// <exception cref="FluentValidation.ValidationException">Invalid data/exception>
   public Instrument(
     string name,
     string code,
@@ -17,22 +29,22 @@ public class Instrument : EntityBase
     byte volumeDecimalLen,
     int instrumentTypeId)
   {
-    if (string.IsNullOrEmpty(name))
-    {
-      throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
-    }
-
-    if (string.IsNullOrEmpty(code))
-    {
-      throw new ArgumentException($"'{nameof(code)}' cannot be null or empty.", nameof(code));
-    }
-
     Name = name;
     Code = code;
     PriceDecimalLen = priceDecimalLen;
     VolumeDecimalLen = volumeDecimalLen;
     InstrumentTypeId = instrumentTypeId;
+    new InstrumentValidator().ValidateAndThrow(this);
   }
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="name"></param>
+  /// <param name="code"></param>
+  /// <param name="priceDecimalLen"></param>
+  /// <param name="volumeDecimalLen"></param>
+  /// <param name="instrumentTypeId"></param>
+  /// <exception cref="FluentValidation.ValidationException">Invalid data/exception>
   public Instrument(
       string name,
       string code,

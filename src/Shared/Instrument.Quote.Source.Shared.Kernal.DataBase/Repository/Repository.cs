@@ -70,5 +70,18 @@ public class Repository<TEntity, TDbContext> : IRepository<TEntity> where TEntit
     }
   }
 
+  public async Task RemoveAsync(TEntity entity, IDbContextTransaction? dbContextTransaction = null, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      dbContext.Set<TEntity>().Remove(entity);
+    }
+    catch (Exception ex)
+    {
+      ProcessingExceptionOnSave(ex);
+    }
+    await SaveChangesAsync(cancellationToken);
+  }
+
   public IQueryable<TEntity> Table => dbContext.Set<TEntity>();
 }
