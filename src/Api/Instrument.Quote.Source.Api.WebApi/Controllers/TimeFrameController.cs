@@ -35,7 +35,7 @@ public class TimeFrameController : ControllerBase
     }
   }
 
-  [HttpGet("{timeFrameStr}")]
+  [HttpGet("{timeframeStr}")]
   [SwaggerOperation("Get Instrument by Code")]
   [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(TimeFrameResponseDto))]
   [SwaggerResponse(StatusCodes.Status404NotFound, "Timeframe not found")]
