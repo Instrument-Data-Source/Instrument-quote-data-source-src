@@ -34,10 +34,11 @@ public class TimeFrameSrv_Test
     var asserted_res = timeFrameSrv.GetAllAsync().Result;
 
     // Assert
-    Assert.Equal(expected_arr.Count(), asserted_res.Count());
+    Assert.True(asserted_res.IsSuccess);
+    Assert.Equal(expected_arr.Count(), asserted_res.Value.Count());
     foreach (var expected_el in expected_arr)
     {
-      Assert.Contains(new TimeFrameResponseDto(expected_el), asserted_res);
+      Assert.Contains(new TimeFrameResponseDto(expected_el), asserted_res.Value);
     }
   }
 }

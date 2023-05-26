@@ -1,4 +1,3 @@
-using Instrument.Quote.Source.Api.WebApi.Tools;
 using Instrument.Quote.Source.App;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
@@ -7,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.InitApp();
-builder.Services.RegisterApiTool();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {

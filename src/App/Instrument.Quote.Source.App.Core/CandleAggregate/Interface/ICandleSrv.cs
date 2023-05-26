@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 
@@ -28,14 +29,14 @@ public interface ICandleSrv
   /// <param name="timeFrameId">TimeFrane Id</param>
   /// <exception cref="ArgumentException">One of argument has wrong value</exception>
   /// <returns></returns>
-  Task<PeriodResponseDto?> TryGetExistPeriodAsync(int instrumentId, int timeFrameId, CancellationToken cancellationToken = default);
+  Task<Result<PeriodResponseDto>> TryGetExistPeriodAsync(int instrumentId, int timeFrameId, CancellationToken cancellationToken = default);
 
   /// <summary>
   /// Get loaded period for instrument
   /// </summary>
   /// <param name="instrumentId">Instrument Id</param>
   /// <returns></returns>
-  Task<IReadOnlyDictionary<string, PeriodResponseDto>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default);
+  Task<Result<IReadOnlyDictionary<string, PeriodResponseDto>>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default);
   /// <summary>
   /// Add new candles
   /// </summary>
@@ -46,5 +47,13 @@ public interface ICandleSrv
   /// <param name="candles">new candles</param>
   /// <exception cref="ArgumentException">One of argument has wrong value</exception>
   /// <returns></returns>
-  Task<int> AddAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<CandleDto> candles, CancellationToken cancellationToken = default);
+  Task<Result<int>> AddAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<CandleDto> candles, CancellationToken cancellationToken = default);
+
+  /// <summary>
+  /// Get loaded period
+  /// </summary>
+  /// <param name="instrumentStr">Instrument Id or Str</param>
+  /// <param name="timeFrameStr">TimeFrane Id or Str</param>
+  /// <returns></returns>
+  //Task<Result<PeriodResponseDto>> TryGetExistPeriodAsync(string instrumentStr, string timeframeStr, CancellationToken cancellationToken = default);
 }
