@@ -1,12 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using FluentValidation;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
-using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 

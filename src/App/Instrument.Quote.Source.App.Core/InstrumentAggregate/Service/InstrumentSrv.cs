@@ -4,6 +4,9 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Tool;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
+using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
+using Ardalis.Result;
+using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 
@@ -19,10 +22,13 @@ public class InstrumentSrv : IInstrumentSrv
     this.instrumentTypeRep = instrumentTypeRep;
   }
 
-  public async Task<InstrumentResponseDto> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> CreateInstrumentAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
   {
-    ent.Instrument newInstrument;
-    newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep);
+    if (!instrumentRequest.IsValid(out var validationResult))
+    {
+      return Result.Invalid(validationResult.Errors.ToErrorList());
+    }
+    ent.Instrument newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
 
     try
     {
@@ -33,7 +39,7 @@ public class InstrumentSrv : IInstrumentSrv
       throw new ApplicationException("Error when add instument", ex);
     }
 
-    return new InstrumentResponseDto(newInstrument);
+    return Result.Success(await newInstrument.ToDtoAsync(instrumentTypeRep, cancellationToken));
   }
 
   public async Task<IEnumerable<InstrumentResponseDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -41,22 +47,28 @@ public class InstrumentSrv : IInstrumentSrv
     return await instrumentRep.GetAsDto(cancellationToken);
   }
 
-  public async Task RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result> RemoveInstrumentAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var result = await instrumentRep.TryRemoveAsync(instrumentId, cancellationToken: cancellationToken);
     if (!result)
-      throw new ArgumentOutOfRangeException(nameof(instrumentId), instrumentId, "Unknown Id");
+      return Result.Success();
+    return !result ? Result.Success() : Result.NotFound();
   }
 
-  public async Task<InstrumentResponseDto?> TryGetInstrumentByCodeAsync(string instrumentCode, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(string instrumentCode, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Code == instrumentCode, cancellationToken);
-    return findedEnt != null ? new InstrumentResponseDto(findedEnt) : null;
+    if (findedEnt == null) return Result.NotFound();
+    var res_dto = await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken);
+    return Result.Success(res_dto);
   }
 
-  public async Task<InstrumentResponseDto?> TryGetInstrumentByIdAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentResponseDto>> GetInstrumentByAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
-    return findedEnt != null ? new InstrumentResponseDto(findedEnt) : null;
+    if (findedEnt == null)
+      return Result.NotFound();
+    var _ret_dto = await findedEnt.ToDtoAsync(instrumentTypeRep, cancellationToken);
+    return Result.Success(_ret_dto);
   }
 }

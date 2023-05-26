@@ -2,7 +2,11 @@ namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 
 public class InstrumentResponseDto : IEquatable<InstrumentResponseDto>
 {
+  
   public InstrumentResponseDto() { }
+  
+
+
   public InstrumentResponseDto(ent.Instrument entity)
   {
     Id = entity.Id;

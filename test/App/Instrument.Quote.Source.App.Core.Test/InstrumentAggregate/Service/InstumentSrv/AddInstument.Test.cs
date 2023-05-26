@@ -79,7 +79,7 @@ public class AddInstrument_Test
     // Act
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await instrumentService.CreateInstrumentAsync(requestDto));
+    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await instrumentService.CreateInstrumentAsync(requestDto));
   }
 
 }
