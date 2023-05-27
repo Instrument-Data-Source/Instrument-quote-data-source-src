@@ -5,7 +5,6 @@ using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 

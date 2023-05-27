@@ -2,7 +2,6 @@ using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Dto;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 
