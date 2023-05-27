@@ -36,10 +36,10 @@ public class TimeFrameController : ControllerBase
   }
 
   [HttpGet("{timeframeStr}")]
-  [SwaggerOperation("Get Instrument by Code")]
-  [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(TimeFrameResponseDto))]
+  [SwaggerOperation("Get TimeFrame by Code")]
+  [SwaggerResponse(StatusCodes.Status200OK, "TimeFrame getted", typeof(TimeFrameResponseDto))]
   [SwaggerResponse(StatusCodes.Status404NotFound, "Timeframe not found")]
-  public async Task<ActionResult<TimeFrameResponseDto>> GetByCode(string timeframeStr)
+  public async Task<ActionResult<TimeFrameResponseDto>> GetByIdOrCode(string timeframeStr)
   {
     var result = await timeFrameSrv.GetByIdOrCodeAsync(timeframeStr);
     switch (result.Status)
