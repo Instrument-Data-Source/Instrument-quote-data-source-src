@@ -53,7 +53,7 @@ public static class Mapper
     return new InstrumentTypeDto()
     {
       Id = entity.Id,
-      Code = entity.Name
+      Name = entity.Name
     };
   }
 }

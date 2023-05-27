@@ -24,13 +24,20 @@ public class InstrumentTypeSrv : IInstrumentTypeSrv
     return await rep.Table.Select(e => e.ToDto()).ToArrayAsync(cancellationToken);
   }
 
-  public Task<Result<InstrumentTypeDto>> GetByAsync(int Id, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentTypeDto>> GetByAsync(int Id, CancellationToken cancellationToken = default)
   {
-    throw new NotImplementedException();
+    var result = await rep.Table.Select(e => e.ToDto()).SingleOrDefaultAsync(e => e.Id == Id, cancellationToken);
+    if (result == null)
+      return Result.NotFound();
+    return Result.Success(result);
   }
 
-  public Task<Result<InstrumentTypeDto>> GetByAsync(string Code, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentTypeDto>> GetByAsync(string Code, CancellationToken cancellationToken = default)
   {
-    throw new NotImplementedException();
+    var lower_code = Code.ToLower();
+    var result = await rep.Table.Select(e => e.ToDto()).SingleOrDefaultAsync(e => e.Name.ToLower() == lower_code, cancellationToken);
+    if (result == null)
+      return Result.NotFound();
+    return Result.Success(result);
   }
 }

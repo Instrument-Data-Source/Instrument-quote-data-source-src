@@ -27,9 +27,9 @@ public class GetAll_Test
   {
     // Array
     var expected_dto = new[] {
-      new InstrumentTypeDto(){Id=1,Code="Currency"},
-      new InstrumentTypeDto(){Id=2,Code="Stock"},
-      new InstrumentTypeDto(){Id=3,Code="CryptoCurrency"}};
+      new InstrumentTypeDto(){Id=1,Name="Currency"},
+      new InstrumentTypeDto(){Id=2,Name="Stock"},
+      new InstrumentTypeDto(){Id=3,Name="CryptoCurrency"}};
     var usingTypes = InstrumentType.ToList().Select(e => new InstrumentType(e.Id));
     typeRep.Table.Returns(usingTypes.BuildMock());
 
