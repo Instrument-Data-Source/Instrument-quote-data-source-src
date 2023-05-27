@@ -4,7 +4,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 public interface IInstrumentTypeSrv
 {
-  Task<Result<IEnumerable<InstrumentTypeDto>>> GetAllAsync(CancellationToken cancellationToken = default);
-  Task<Result<InstrumentTypeDto>> GetByAsync(int Id, CancellationToken cancellationToken = default);
-  Task<Result<InstrumentTypeDto>> GetByAsync(string Code, CancellationToken cancellationToken = default);
+  Task<Result<IEnumerable<InstrumentTypeResponseDto>>> GetAllAsync(CancellationToken cancellationToken = default);
+  Task<Result<InstrumentTypeResponseDto>> GetByAsync(int Id, CancellationToken cancellationToken = default);
+  Task<Result<InstrumentTypeResponseDto>> GetByAsync(string Name, CancellationToken cancellationToken = default);
 }

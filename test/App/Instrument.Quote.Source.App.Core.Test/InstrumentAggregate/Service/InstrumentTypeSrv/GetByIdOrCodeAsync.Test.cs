@@ -9,13 +9,13 @@ using NSubstitute;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Service.InstrumentTypeSrvTest;
 
-public class GetByAsync_Test
+public class GetByIdOrCodeAsync_Test
 {
   private readonly ITestOutputHelper output;
   private readonly IInstrumentTypeSrv instrumentTypeSrv;
   private readonly IReadRepository<InstrumentType> typeRep = Substitute.For<IReadRepository<InstrumentType>>();
   private readonly InstrumentType[] usingTypes;
-  public GetByAsync_Test(ITestOutputHelper output)
+  public GetByIdOrCodeAsync_Test(ITestOutputHelper output)
   {
     usingTypes = InstrumentType.ToList().Select(e => new InstrumentType(e.Id)).ToArray();
     typeRep.Table.Returns(usingTypes.BuildMock());
@@ -24,42 +24,12 @@ public class GetByAsync_Test
     instrumentTypeSrv = new InstrumentTypeSrv(output.BuildLoggerFor<InstrumentTypeSrv>(), typeRep);
   }
 
-  [Fact]
-  public void WHEN_request_correct_id_THEN_return_correct_data()
-  {
-    // Array
-    var expected_dto = new InstrumentTypeResponseDto()
-    {
-      Id = 2,
-      Name = "Stock"
-    };
-
-    // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync(2).Result;
-
-    // Assert
-    Assert.True(asserted_result.IsSuccess);
-    Assert.Equal(expected_dto, asserted_result.Value);
-  }
-
-  [Fact]
-  public void WHEN_request_incorrect_id_THEN_return_correct_data()
-  {
-    // Array
-
-    // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync(99).Result;
-
-    // Assert
-    Assert.False(asserted_result.IsSuccess);
-    Assert.Equal(ResultStatus.NotFound, asserted_result.Status);
-  }
-
   [Theory]
+  [InlineData("2")]
   [InlineData("Stock")]
   [InlineData("stock")]
   [InlineData("STOCK")]
-  public void WHEN_request_correct_Name_THEN_return_correct_data(string using_name)
+  public void WHEN_request_correct_TypeStr_THEN_return_correct_data(string instrumentTypeStr)
   {
     // Array
     var expected_dto = new InstrumentTypeResponseDto()
@@ -69,20 +39,22 @@ public class GetByAsync_Test
     };
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync(using_name).Result;
+    var asserted_result = instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr).Result;
 
     // Assert
     Assert.True(asserted_result.IsSuccess);
     Assert.Equal(expected_dto, asserted_result.Value);
   }
 
-  [Fact]
-  public void WHEN_request_incorrect_Name_THEN_return_correct_data()
+  [Theory]
+  [InlineData("99")]
+  [InlineData("Mock")]
+  public void WHEN_request_incorrect_TypeStr_THEN_return_correct_data(string instrumentTypeStr)
   {
     // Array
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync("mock").Result;
+    var asserted_result = instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr).Result;
 
     // Assert
     Assert.False(asserted_result.IsSuccess);

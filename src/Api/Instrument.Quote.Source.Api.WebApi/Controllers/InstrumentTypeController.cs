@@ -11,15 +11,58 @@ namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 
 [ApiController]
 [Route(Route)]
+[Produces("application/json")]
 public class InstrumentTypeController : ControllerBase
 {
-  public const string Route = "api/instrument-type";/*
-   public InstrumentController(ILogger<InstrumentController> logger,
-                              IInstrumentSrv instrumentSrv,
-                              ICandleSrv candleSrv)
+  public const string Route = "api/instrument-type";
+  private readonly ILogger<InstrumentController> logger;
+  private readonly IInstrumentTypeSrv instrumentTypeSrv;
+
+  public InstrumentTypeController(ILogger<InstrumentController> logger,
+                             IInstrumentTypeSrv instrumentTypeSrv)
   {
-    _logger = logger;
-    this.instrumentSrv = instrumentSrv;
-    this.candleSrv = candleSrv;
-  }*/
+    this.logger = logger;
+    this.instrumentTypeSrv = instrumentTypeSrv;
+  }
+  /// <summary>
+  /// Get all instrumen types
+  /// </summary>
+  /// <returns>All Instrument Type DTO</returns>
+  /// <response code="200">Instrument types getted</response>
+  [HttpGet()]
+  [ProducesResponseType(typeof(IEnumerable<InstrumentTypeResponseDto>), StatusCodes.Status200OK)]
+  public async Task<ActionResult<IEnumerable<InstrumentTypeResponseDto>>> GetAll()
+  {
+    var result = await instrumentTypeSrv.GetAllAsync();
+    switch (result.Status)
+    {
+      case ResultStatus.Ok:
+        return Ok(result.Value);
+      default:
+        throw new ApplicationException("Unexpected result status");
+    }
+  }
+  /// <summary>
+  /// Get Instrument type by Name
+  /// </summary>
+  /// <param name="instrumentTypeStr">Instrument Type Id or Name</param>
+  /// <returns>Instrument Type DTO</returns>
+  /// <response code="200">Instrument type getted</response>
+  /// <response code="404">Instrument type not found</response>
+  [HttpGet("{instrumentTypeStr}")]
+  [ProducesResponseType(typeof(InstrumentTypeResponseDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+  public async Task<ActionResult<InstrumentTypeResponseDto>> GetByIdOrName(string instrumentTypeStr)
+  {
+    var result = await instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr);
+    switch (result.Status)
+    {
+      case ResultStatus.Ok:
+        return Ok(result.Value);
+      case ResultStatus.NotFound:
+        return NotFound("Timeframe not found");
+      default:
+        throw new ApplicationException("Unexpected result status");
+    }
+  }
 }

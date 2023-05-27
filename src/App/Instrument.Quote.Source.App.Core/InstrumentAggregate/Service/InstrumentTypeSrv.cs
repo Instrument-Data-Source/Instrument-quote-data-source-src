@@ -19,12 +19,12 @@ public class InstrumentTypeSrv : IInstrumentTypeSrv
     this.rep = rep;
   }
 
-  public async Task<Result<IEnumerable<InstrumentTypeDto>>> GetAllAsync(CancellationToken cancellationToken = default)
+  public async Task<Result<IEnumerable<InstrumentTypeResponseDto>>> GetAllAsync(CancellationToken cancellationToken = default)
   {
     return await rep.Table.Select(e => e.ToDto()).ToArrayAsync(cancellationToken);
   }
 
-  public async Task<Result<InstrumentTypeDto>> GetByAsync(int Id, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentTypeResponseDto>> GetByAsync(int Id, CancellationToken cancellationToken = default)
   {
     var result = await rep.Table.Select(e => e.ToDto()).SingleOrDefaultAsync(e => e.Id == Id, cancellationToken);
     if (result == null)
@@ -32,7 +32,7 @@ public class InstrumentTypeSrv : IInstrumentTypeSrv
     return Result.Success(result);
   }
 
-  public async Task<Result<InstrumentTypeDto>> GetByAsync(string Code, CancellationToken cancellationToken = default)
+  public async Task<Result<InstrumentTypeResponseDto>> GetByAsync(string Code, CancellationToken cancellationToken = default)
   {
     var lower_code = Code.ToLower();
     var result = await rep.Table.Select(e => e.ToDto()).SingleOrDefaultAsync(e => e.Name.ToLower() == lower_code, cancellationToken);

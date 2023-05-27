@@ -48,9 +48,9 @@ public static class Mapper
     return dto;
   }
 
-  public static InstrumentTypeDto ToDto(this ent.InstrumentType entity)
+  public static InstrumentTypeResponseDto ToDto(this ent.InstrumentType entity)
   {
-    return new InstrumentTypeDto()
+    return new InstrumentTypeResponseDto()
     {
       Id = entity.Id,
       Name = entity.Name
