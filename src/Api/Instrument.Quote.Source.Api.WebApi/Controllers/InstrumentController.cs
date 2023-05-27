@@ -11,6 +11,7 @@ namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 
 [ApiController]
 [Route(Route)]
+[Produces("application/json")]
 public class InstrumentController : ControllerBase
 {
   public const string Route = "api/instrument";
@@ -27,17 +28,41 @@ public class InstrumentController : ControllerBase
     this.candleSrv = candleSrv;
   }
 
+  /// <summary>
+  /// Get All Instrument
+  /// </summary>
+  /// <returns>All Instrument DTO</returns>
+  /// <response code="200">Instrument type getted</response>
   [HttpGet()]
+  [ProducesResponseType(typeof(IEnumerable<InstrumentResponseDto>), StatusCodes.Status200OK)]
   public async Task<ActionResult<IEnumerable<InstrumentResponseDto>>> GetAll()
   {
     var result_body = await instrumentSrv.GetAllAsync();
     return Ok(result_body);
   }
 
+  /// <summary>
+  /// Create new Instrument
+  /// </summary>
+  /// <remarks>
+  /// Sample request:
+  ///
+  ///     POST /api/instrument
+  ///     {
+  ///        "Name":"EUR vs USD",
+  ///        "Code":"EURUSD",
+  ///        "TypeId":1,
+  ///        "PriceDecimalLen": 5
+  ///        "VolumeDecimalLen": 2
+  ///     }
+  ///
+  /// </remarks>
+  /// <returns>Created Instrument DTO</returns>
+  /// <response code="201">Instrument created</response>
+  /// <response code="400">Invalid request</response>
   [HttpPost()]
-  [SwaggerOperation("Create new Instrument")]
-  [SwaggerResponse(StatusCodes.Status201Created, "Instrument created", typeof(InstrumentResponseDto))]
-  [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid request", typeof(BadRequestDto))]
+  [ProducesResponseType(typeof(InstrumentResponseDto), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(BadRequestDto), StatusCodes.Status400BadRequest)]
   public async Task<ActionResult<InstrumentResponseDto>> CreateInstument([FromBody] NewInstrumentRequestDto instrumentRquest,
       CancellationToken cancellationToken = new())
   {
@@ -53,10 +78,16 @@ public class InstrumentController : ControllerBase
     }
   }
 
+  /// <summary>
+  /// Get Instrument by Id or Code
+  /// </summary>
+  /// <param name="instrumentStr">Instrument Id or Name</param>
+  /// <returns>Instrument DTO</returns>
+  /// <response code="200">Instrument getted</response>
+  /// <response code="404">Instrument not found</response>
   [HttpGet("{instrumentStr}")]
-  [SwaggerOperation("Get Instrument by Id or Code")]
-  [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(InstrumentResponseDto))]
-  [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
+  [ProducesResponseType(typeof(InstrumentResponseDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
   public async Task<ActionResult<InstrumentResponseDto?>> GetInstrumentByIdOrCode(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var result = await instrumentSrv.GetInstrumentByIdOrCodeAsync(instrumentStr, cancellationToken);
@@ -71,10 +102,16 @@ public class InstrumentController : ControllerBase
     }
   }
 
+  /// <summary>
+  /// Get all loaded periods for instrument
+  /// </summary>
+  /// <param name="instrumentStr">Instrument Id or Name</param>
+  /// <returns>Array of Instrument Loaded Period DTO</returns>
+  /// <response code="200">Instrument period getted</response>
+  /// <response code="404">Instrument not found</response>
   [HttpGet("{instrumentStr}/periods")]
-  [SwaggerOperation("Get all loaded periods for instrument")]
-  [SwaggerResponse(StatusCodes.Status200OK, "Instrument period getted", typeof(IReadOnlyDictionary<string, PeriodResponseDto>))]
-  [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
+  [ProducesResponseType(typeof(IReadOnlyDictionary<string, PeriodResponseDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
   public async Task<ActionResult<IReadOnlyDictionary<string, PeriodResponseDto>>> GetPeriods(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var instrumentResult = await instrumentSrv.GetInstrumentByIdOrCodeAsync(instrumentStr, cancellationToken);
@@ -100,10 +137,15 @@ public class InstrumentController : ControllerBase
     }
   }
 
+  /// <summary>
+  /// Delete instrument
+  /// </summary>
+  /// <param name="instrumentStr">Instrument Id or Name</param>
+  /// <response code="200">Instrument deleted</response>
+  /// <response code="404">Instrument not found</response>
   [HttpDelete("{instrumentStr}")]
-  [SwaggerOperation("Delete instrument")]
-  [SwaggerResponse(StatusCodes.Status200OK, "Instrument deleted")]
-  [SwaggerResponse(StatusCodes.Status404NotFound, "Instrument not found")]
+  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
   public async Task<ActionResult> RemoveInstrument(string instrumentStr, CancellationToken cancellationToken = default)
   {
 
