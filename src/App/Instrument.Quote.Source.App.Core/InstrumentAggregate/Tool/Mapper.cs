@@ -47,4 +47,13 @@ public static class Mapper
     dto.VolumeDecimalLen = entity.VolumeDecimalLen;
     return dto;
   }
+
+  public static InstrumentTypeResponseDto ToDto(this ent.InstrumentType entity)
+  {
+    return new InstrumentTypeResponseDto()
+    {
+      Id = entity.Id,
+      Name = entity.Name
+    };
+  }
 }

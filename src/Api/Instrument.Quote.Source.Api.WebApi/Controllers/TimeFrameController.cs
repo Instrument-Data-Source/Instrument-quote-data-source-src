@@ -8,6 +8,7 @@ namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
 public class TimeFrameController : ControllerBase
 {
 
@@ -20,9 +21,12 @@ public class TimeFrameController : ControllerBase
     this.timeFrameSrv = timeFrameSrv;
   }
 
+  /// <summary>
+  /// Get all timeframes
+  /// </summary>
+  /// <response code="200">All timeframe getted</response>
   [HttpGet()]
-  [SwaggerOperation("Get all timeframes")]
-  [SwaggerResponse(StatusCodes.Status200OK, "All timeframe getted", typeof(IEnumerable<TimeFrameResponseDto>))]
+  [ProducesResponseType(typeof(IEnumerable<TimeFrameResponseDto>), StatusCodes.Status200OK)]
   public async Task<ActionResult<IEnumerable<TimeFrameResponseDto>>> GetAll()
   {
     var result = await timeFrameSrv.GetAllAsync();
@@ -35,11 +39,17 @@ public class TimeFrameController : ControllerBase
     }
   }
 
+  /// <summary>
+  /// Get TimeFrame by Code
+  /// </summary>
+  /// <param name="instrumentStr">Instrument Id or Name</param>
+  /// <returns>Instrument DTO</returns>
+  /// <response code="200">TimeFrame getted</response>
+  /// <response code="404">Timeframe not found</response>
   [HttpGet("{timeframeStr}")]
-  [SwaggerOperation("Get Instrument by Code")]
-  [SwaggerResponse(StatusCodes.Status200OK, "Instrument getted", typeof(TimeFrameResponseDto))]
-  [SwaggerResponse(StatusCodes.Status404NotFound, "Timeframe not found")]
-  public async Task<ActionResult<TimeFrameResponseDto>> GetByCode(string timeframeStr)
+  [ProducesResponseType(typeof(TimeFrameResponseDto), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+  public async Task<ActionResult<TimeFrameResponseDto>> GetByIdOrCode(string timeframeStr)
   {
     var result = await timeFrameSrv.GetByIdOrCodeAsync(timeframeStr);
     switch (result.Status)
