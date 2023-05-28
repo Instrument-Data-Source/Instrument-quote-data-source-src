@@ -21,7 +21,8 @@
 				"esbenp.prettier-vscode",
 				"fernandoescolar.vscode-solution-explorer",
 				"ckolkman.vscode-postgres",
-				"k--kato.docomment"
+				"k--kato.docomment",
+				"mhutchie.git-graph"
 			]
 		}
 	},

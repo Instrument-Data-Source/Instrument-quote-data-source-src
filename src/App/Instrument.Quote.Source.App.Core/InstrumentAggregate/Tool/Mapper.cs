@@ -12,39 +12,48 @@ public static class Mapper
   /// Convert Dto to Entity
   /// </summary>
   /// <param name="readRepository">Entity Type Repository</param>
-  /// <exception cref="ArgumentOutOfRangeException">One of argument has wrong value</exception>
+  /// <exception cref="FluentValidation.ValidationException">One of argument has wrong value</exception>
   /// <returns></returns>
-  public static async Task<ent.Instrument> ToEntityAsync(this NewInstrumentRequestDto dto, IReadRepository<ent.InstrumentType> readRepository)
+  public static async Task<ent.Instrument> ToEntityAsync(this NewInstrumentRequestDto dto, IReadRepository<ent.InstrumentType> readRepository, CancellationToken cancellationToken = default)
   {
-    InstrumentType typeEnt = await dto.GetInstrumentType(readRepository);
+    int typeEnt = await dto.GetInstrumentTypeId(readRepository, cancellationToken);
     return new ent.Instrument(dto.Name, dto.Code, dto.PriceDecimalLen, dto.VolumeDecimalLen, typeEnt);
   }
 
-  private static async Task<InstrumentType> GetInstrumentType(this NewInstrumentRequestDto dto, IReadRepository<InstrumentType> readRepository)
+  private static async Task<int> GetInstrumentTypeId(this NewInstrumentRequestDto dto, IReadRepository<InstrumentType> readRepository, CancellationToken cancellationToken = default)
   {
     InstrumentType? typeByCode = null;
     if (dto.TypeId != 0)
-      typeByCode = await readRepository.GetByIdAsync(dto.TypeId);
+      typeByCode = await readRepository.TryGetByIdAsync(dto.TypeId, cancellationToken);
 
-    InstrumentType? typeByName = null;
-    if (!string.IsNullOrEmpty(dto.Type))
-      typeByName = await readRepository.GetByTypeAsync(dto.Type);
-
-    if (typeByCode != null && typeByName != null)
-    {
-      if (typeByCode != typeByName)
-        throw new ArgumentException("Instrument type name and id conflict to each other");
-
-      return typeByCode;
-    }
 
     if (typeByCode != null)
-      return typeByCode;
+      return typeByCode.Id;
 
-    if (typeByName != null)
-      return typeByName;
+    return -1;
 
-    throw new ArgumentException("Cann't define Instument type");
+  }
+  public static async Task<InstrumentResponseDto> ToDtoAsync(this ent.Instrument entity, IReadRepository<ent.InstrumentType> instrumentTypeRep, CancellationToken cancellationToken = default)
+  {
+    var dto = new InstrumentResponseDto();
+    dto.Id = entity.Id;
+    dto.Name = entity.Name;
+    dto.Code = entity.Code;
+    if (entity.InstrumentType == null)
+      dto.Type = await instrumentTypeRep.GetNameByIdAsync(entity.InstrumentTypeId, cancellationToken);
+    else
+      dto.Type = entity.InstrumentType.Name;
+    dto.PriceDecimalLen = entity.PriceDecimalLen;
+    dto.VolumeDecimalLen = entity.VolumeDecimalLen;
+    return dto;
+  }
 
+  public static InstrumentTypeResponseDto ToDto(this ent.InstrumentType entity)
+  {
+    return new InstrumentTypeResponseDto()
+    {
+      Id = entity.Id,
+      Name = entity.Name
+    };
   }
 }

@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
@@ -8,7 +9,6 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Service;
 
 public class CandleSrv : ICandleSrv
@@ -29,14 +29,13 @@ public class CandleSrv : ICandleSrv
     this.logger = logger ?? NullLogger<CandleSrv>.Instance;
   }
 
-  public async Task<int> AddAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<CandleDto> candles, CancellationToken cancellationToken = default)
+  public async Task<Result<int>> AddAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<CandleDto> candles, CancellationToken cancellationToken = default)
   {
     logger.LogDebug("Prepare data to adding");
     var newPeriodEnt = await LoadedPeriod.BuildNewPeriodAsync(instrumentRep, instrumentId, timeFrameId, from, untill, candles, cancellationToken);
     var loadedPerEnt = await loadedPeriodRep.TryGetForAsync(instrumentId, timeFrameId, cancellationToken);
     if (loadedPerEnt == null)
     {
-
       logger.LogInformation("Add new period");
       await loadedPeriodRep.AddAsync(newPeriodEnt, cancellationToken: cancellationToken);
     }
@@ -45,7 +44,7 @@ public class CandleSrv : ICandleSrv
       loadedPerEnt.Extend(newPeriodEnt);
       await loadedPeriodRep.SaveChangesAsync(cancellationToken);
     }
-    return candles.Count();
+    return Result.Success(candles.Count());
   }
 
   public async Task<IEnumerable<CandleDto>> GetAsync(int instrumentId, int timeFrameId, DateTime? from = null, DateTime? untill = null)
@@ -72,16 +71,46 @@ public class CandleSrv : ICandleSrv
     return arr;
   }
 
-  public async Task<PeriodResponseDto?> TryGetExistPeriodAsync(int instrumentId, int timeFrameId, CancellationToken cancellationToken = default)
+  public async Task<Result<PeriodResponseDto>> TryGetExistPeriodAsync(int instrumentId, int timeFrameId, CancellationToken cancellationToken = default)
   {
     var loadedPer = await loadedPeriodRep.TryGetForAsync(instrumentId, timeFrameId, cancellationToken);
-    return loadedPer != null ? loadedPer.ToDto() : null;
+    if (loadedPer == null)
+      return Result.NotFound();
+
+    return Result.Success(loadedPer.ToDto());
   }
 
-  public async Task<IReadOnlyDictionary<string, PeriodResponseDto>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<IReadOnlyDictionary<string, PeriodResponseDto>>> GetExistPeriodAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
-    return await loadedPeriodRep.Table
-                  .Where(e => e.InstrumentId == instrumentId)
-                  .ToDictionaryAsync(e => Enum.GetName((TimeFrame.Enum)e.TimeFrameId)!, e => e.ToDto(), cancellationToken);
+    var periods = await loadedPeriodRep.Table.Where(e => e.InstrumentId == instrumentId).ToArrayAsync(cancellationToken);
+    if (periods.Count() == 0 && !await instrumentRep.ContainIdAsync(instrumentId, cancellationToken))
+      return Result.NotFound();
+
+    IReadOnlyDictionary<string, PeriodResponseDto> _ret_dto = periods.ToDictionary(e => Enum.GetName((TimeFrame.Enum)e.TimeFrameId)!, e => e.ToDto());
+    return Result.Success(_ret_dto);
   }
+  /*
+    public async Task<Result<PeriodResponseDto>> TryGetExistPeriodAsync(string instrumentStr, string timeframeStr, CancellationToken cancellationToken = default)
+    {
+      var findedEnt = await instrumentRep.Table.Include(e => e.InstrumentType).SingleOrDefaultAsync(e => e.Code == instrumentStr, cancellationToken);
+      int instrumentId = -1;
+      if (findedEnt != null)
+        instrumentId = findedEnt.Id;
+      else if (!Int32.TryParse(instrumentStr, out instrumentId))
+        return Result.NotFound();
+
+      int timeframeId = -1;
+      if (!Int32.TryParse(timeframeStr, out timeframeId))
+      {
+        TimeFrame.Enum? timeframeParseId = Enum.GetValues<TimeFrame.Enum>().SingleOrDefault(e => e.ToString() == timeframeStr);
+        if (timeframeParseId != null)
+        {
+          timeframeId = (int)timeframeParseId;
+        }
+        else
+          return Result.NotFound();
+      }
+
+      return await TryGetExistPeriodAsync(instrumentId, timeframeId, cancellationToken);
+    }*/
 }

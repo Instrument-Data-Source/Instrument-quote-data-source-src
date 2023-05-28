@@ -30,10 +30,11 @@ public class GetInstrumentIdByCode_Test
 
     var expected_dto = new InstrumentResponseDto() { Id = 0, Name = "Inst1", Code = "I1", Type = "Currency", PriceDecimalLen = 2, VolumeDecimalLen = 3 };
     // Act
-    var asseerted_dto = instrumentService.TryGetInstrumentByCodeAsync("I1").Result;
+    var asseerted_result = instrumentService.GetByAsync("I1").Result;
 
     // Assert
-    Assert.Equal(expected_dto, asseerted_dto);
+    Assert.True(asseerted_result.IsSuccess);
+    Assert.Equal(expected_dto, asseerted_result.Value);
   }
 
   [Fact]
@@ -45,9 +46,9 @@ public class GetInstrumentIdByCode_Test
     InstrumentRep.Table.Returns(new[] { instument1, instument2 }.BuildMock());
 
     // Act
-    var asseerted_dto = instrumentService.TryGetInstrumentByCodeAsync("I3").Result;
+    var asseerted_result = instrumentService.GetByAsync("I3").Result;
 
     // Assert
-    Assert.Null(asseerted_dto);
+    Assert.False(asseerted_result.IsSuccess);
   }
 }

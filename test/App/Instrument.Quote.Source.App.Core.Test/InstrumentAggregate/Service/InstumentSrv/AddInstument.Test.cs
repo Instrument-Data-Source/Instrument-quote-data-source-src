@@ -36,7 +36,7 @@ public class AddInstrument_Test
     InstrumentTypeRep.Table.Returns(new List<ent.InstrumentType>() { new InstrumentType((InstrumentType.Enum)1) }.BuildMock());
 
     // Act
-    var asserted_dto = instrumentService.CreateInstrumentAsync(requestDto).Result;
+    var asserted_dto = instrumentService.CreateAsync(requestDto).Result;
 
     // Assert
     Assert.NotNull(asserted_dto);
@@ -56,7 +56,7 @@ public class AddInstrument_Test
     InstrumentTypeRep.Table.Returns(new List<ent.InstrumentType>() { new InstrumentType((InstrumentType.Enum)1) }.BuildMock());
 
     // Act
-    var asserted_dto = instrumentService.CreateInstrumentAsync(requestDto).Result;
+    var asserted_dto = instrumentService.CreateAsync(requestDto).Result;
 
     // Assert
     InstrumentRep.Received().AddAsync(Arg.Any<ent.Instrument>());
@@ -79,7 +79,7 @@ public class AddInstrument_Test
     // Act
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await instrumentService.CreateInstrumentAsync(requestDto));
+    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await instrumentService.CreateAsync(requestDto));
   }
 
 }
