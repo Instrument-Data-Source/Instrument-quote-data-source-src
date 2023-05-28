@@ -10,6 +10,9 @@
 - Get List of instruments
 - Remove instrument
 
+### [Instrument Type](./src/App/Instrument.Quote.Source.App.Core/InstrumentAggregate/Interface/IInstrumentTypeSrv.cs)
+- Get Instrument Types
+
 ### [TimeFrame](./src/App/Instrument.Quote.Source.App.Core/TimeFrameAggregate/Interface/ITimeFrameSrv.cs)
 - Get all Timeframes
 
