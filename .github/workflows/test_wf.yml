@@ -1,0 +1,21 @@
+name: Project Unit tests
+
+on:
+  pull_request:
+    branches: [ workflow ]
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/sdk:7.0
+    if: github.event.head_commit.modified_files =~ 'src/*'
+    steps:
+      - name: log passes
+        run: echo "testing job"
+  control_job:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/sdk:7.0
+    if: github.event.head_commit.modified_files =~ 'doc/*'
+    steps:
+      - name: log passes
+        run: echo "control_job"
