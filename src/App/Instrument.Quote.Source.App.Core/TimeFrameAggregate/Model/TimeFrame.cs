@@ -19,6 +19,7 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
     m10 = 8,
     m5 = 9,
     m1 = 10
+
   }
   /// <summary>
   /// Second in TimeFrame
@@ -78,4 +79,13 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
   public virtual IEnumerable<LoadedPeriod> LoadedPeriods => _LoadedPeriods.AsReadOnly();
   private readonly List<Candle> _candles = new();
   public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
+}
+
+public static class TimeFrameMapper
+{
+
+  public static TimeFrame ToEntity(this TimeFrame.Enum enumValue)
+  {
+    return new TimeFrame(enumValue);
+  }
 }

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Event;
+namespace Instrument.Quote.Source.App.Core.Event;
 /// <summary>
 /// 10000-10099
 /// </summary>

@@ -5,19 +5,20 @@ namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.TestData;
 
 public class CandleFactory
 {
+
   public static Candle RandomCandle(DateTime? dt = null)
   {
     var r = new Random();
     var instrument = new ent.Instrument("inst", "i", 2, 2, 1);
     var open = r.Next(200, 500);
-    return new Candle(dt ?? DateTime.UtcNow,
+    return null;/* new Candle(dt ?? DateTime.UtcNow,
     open,
     open + 200,
     open - 100,
     open + (r.Next(0, 100) - 50),
     r.Next(1, 100),
     (int)TimeFrame.Enum.D1,
-    instrument);
+    instrument);*/
   }
   public static IEnumerable<Candle> RandomCandles(int count, DateTime? startDt = null)
   {

@@ -6,6 +6,7 @@ using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Service;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
 using Instrument.Quote.Source.App.Core.Test.CandleAggregate.TestData;
+using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using MockQueryable.Moq;
 using NSubstitute;
@@ -17,9 +18,10 @@ public class GetAll_Test
   private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IRepository<LoadedPeriod> loadedPeriodRep = Substitute.For<IRepository<LoadedPeriod>>();
   private IRepository<ent.Instrument> instrumentRep = Substitute.For<IRepository<ent.Instrument>>();
+  private IRepository<TimeFrame> timeframeRep = Substitute.For<IRepository<TimeFrame>>();
   public GetAll_Test(ITestOutputHelper output)
   {
-    srv = new CandleSrv(candleRep, loadedPeriodRep, instrumentRep);
+    srv = new CandleSrv(candleRep, loadedPeriodRep, instrumentRep,timeframeRep);
   }
 
   [Fact]

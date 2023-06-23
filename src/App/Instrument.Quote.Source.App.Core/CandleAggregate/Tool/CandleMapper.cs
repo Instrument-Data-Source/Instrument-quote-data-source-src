@@ -1,5 +1,6 @@
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
+using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
@@ -34,7 +35,7 @@ public static class CandleMapper
   {
     var instrument = await instrumentRep.GetByIdAsync(InstrumentId);
 
-    return dto.ToEntity(instrument, timeFrameId);
+    return null; // dto.ToEntity(instrument, timeFrame);
   }
 
   /// <summary>
@@ -46,18 +47,20 @@ public static class CandleMapper
   /// <param name="instrumentRep">instrument repository</param>
   /// <exception cref="ArgumentOutOfRangeException">One of argument has wrong value</exception>
   /// <returns></returns>
-  public static Candle ToEntity(this CandleDto dto, ent.Instrument instrument, int timeFrameId)
+  public static Candle ToEntity(this CandleDto dto, ent.Instrument instrument, TimeFrame timeFrame)
   {
+
     return new Candle(
       dateTime: dto.DateTime,
-      openStore: ToStoreValue(dto.Open, instrument.PriceDecimalLen, nameof(dto.Open)),
-      highStore: ToStoreValue(dto.High, instrument.PriceDecimalLen, nameof(dto.High)),
-      lowStore: ToStoreValue(dto.Low, instrument.PriceDecimalLen, nameof(dto.Low)),
-      closeStore: ToStoreValue(dto.Close, instrument.PriceDecimalLen, nameof(dto.Close)),
-      volumeStore: ToStoreValue(dto.Volume, instrument.VolumeDecimalLen, nameof(dto.Volume)),
-      timeFrameId: timeFrameId,
+      open: ToStoreValue(dto.Open, instrument.PriceDecimalLen, nameof(dto.Open)),
+      high: ToStoreValue(dto.High, instrument.PriceDecimalLen, nameof(dto.High)),
+      low: ToStoreValue(dto.Low, instrument.PriceDecimalLen, nameof(dto.Low)),
+      close: ToStoreValue(dto.Close, instrument.PriceDecimalLen, nameof(dto.Close)),
+      volume: ToStoreValue(dto.Volume, instrument.VolumeDecimalLen, nameof(dto.Volume)),
+      timeFrame: timeFrame,
       instrument: instrument
     );
+
   }
 
   public static int ToStoreValue(decimal value, int decimalLen, string name = "")

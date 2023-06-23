@@ -39,4 +39,14 @@ public static class IReadRepositoryTool
   {
     return (await readRep.Table.Select(e => new { e.Id }).SingleOrDefaultAsync(e => e.Id == id, cancellationToken)) != null;
   }
+
+  /// <summary>
+  /// Contain entity with Id
+  /// </summary>
+  /// <param name="id">Id of elemtnt</param>
+  /// <returns></returns>
+  public static bool ContainId<TEntity>(this IReadRepository<TEntity> readRep, int id) where TEntity : EntityBase
+  {
+    return readRep.ContainIdAsync(id).Result;
+  }
 }

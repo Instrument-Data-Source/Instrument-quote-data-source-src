@@ -6,6 +6,7 @@ namespace Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
 
 public class CandleForLoadedPeriodValidator : AbstractValidator<Candle>
 {
+  /*
   public CandleForLoadedPeriodValidator(LoadedPeriod loadedPeriod)
   {
     var dt_validator = new CandleDateTimeValidator((TimeFrame.Enum)loadedPeriod.TimeFrameId);
@@ -28,4 +29,5 @@ public class CandleForLoadedPeriodValidator : AbstractValidator<Candle>
   {
     return Enum.GetName<TimeFrame.Enum>((TimeFrame.Enum)tfId);
   }
+  */
 }

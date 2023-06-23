@@ -47,7 +47,7 @@ public interface ICandleSrv
   /// <param name="candles">new candles</param>
   /// <exception cref="ArgumentException">One of argument has wrong value</exception>
   /// <returns></returns>
-  Task<Result<int>> AddAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<CandleDto> candles, CancellationToken cancellationToken = default);
+  Task<Result<int>> AddAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default);
 
   /// <summary>
   /// Get loaded period

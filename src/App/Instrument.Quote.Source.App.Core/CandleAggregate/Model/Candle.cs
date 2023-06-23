@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FluentValidation;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
+using Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
@@ -11,59 +11,44 @@ namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 /// Quotes of <see cref="ent.Instrument"/> 
 /// <see cref="ADR-001 Decimal in candle value">ADR-001 Decimal in candle value</see>
 /// </summary>
-public partial class Candle : EntityBase
+public partial class Candle : EntityBaseExt
 {
-  public Candle(DateTime dateTime,
-                 int openStore,
-                 int highStore,
-                 int lowStore,
-                 int closeStore,
-                 int volumeStore,
-                 int timeFrameId,
-                 int instrumentId)
-  {
-    DateTime = dateTime;
-    OpenStore = openStore;
-    HighStore = highStore;
-    LowStore = lowStore;
-    CloseStore = closeStore;
-    VolumeStore = volumeStore;
-    TimeFrameId = timeFrameId;
-    InstrumentId = instrumentId;
-    new CandleValidator((TimeFrame.Enum)timeFrameId).ValidateAndThrow(this);
-  }
 
   [Required]
+  [UTCKind]
   public DateTime DateTime { get; private set; }
 
-  public int OpenStore { get; private set; }
-  [NotMapped]
-  public decimal Open => CalcPriceDecimal(OpenStore);
-
-  public int CloseStore { get; private set; }
-  [NotMapped]
-  public decimal Close => CalcPriceDecimal(CloseStore);
-
-  public int HighStore { get; private set; }
-  [NotMapped]
-  public decimal High => CalcPriceDecimal(HighStore);
-
-  public int LowStore { get; private set; }
-  [NotMapped]
-  public decimal Low => CalcPriceDecimal(LowStore);
-
-  public int VolumeStore { get; private set; }
-  [NotMapped]
-  public decimal Volume => CalcVolumeDecimal(VolumeStore);
-
-  #region TimeFrame relation
-  /// <summary>
-  /// Id of <see cref="TimeFrame"/> realated to entity
-  /// </summary>
-  /// <value></value>
+  private int _OpenStore;
   [Required]
-  public int TimeFrameId { get; private set; }
+  [PriceGeLow]
+  [PriceLeHigh]
+  public int OpenStore { get; private set; }
 
+  [Required]
+  [PriceGeLow]
+  [PriceLeHigh]
+  public int CloseStore { get; private set; }
+
+  [Required]
+  [HighIsMax]
+  public int HighStore { get; private set; }
+  [Required]
+  [LowIsMin]
+  public int LowStore { get; private set; }
+
+  [Range(0, int.MaxValue)]
+  public int VolumeStore { get; private set; }
+
+  private int _TimeFrameId;
+  public int TimeFrameId
+  {
+    get => _TimeFrameId;
+    private set
+    {
+      _TimeFrame = null;
+      _TimeFrameId = value;
+    }
+  }
   private TimeFrame _TimeFrame;
   /// <summary>
   /// <see cref="TimeFrame"/> realated to entity
@@ -74,35 +59,46 @@ public partial class Candle : EntityBase
     get => _TimeFrame;
     private set
     {
-      TimeFrameId = value.Id;
+      _TimeFrameId = value.Id;
       _TimeFrame = value;
     }
   }
-  #endregion
 
-  #region Instrument relation
-  [Required]
-  /// <summary>
-  /// Id of <see cref="ent.Instrument"/> of <see cref="Candle"/>
-  /// </summary>
-  /// <value></value>  
-  public int InstrumentId { get; private set; }
+  private int _InstrumentId;
+  public int InstrumentId
+  {
+    get => _InstrumentId;
+    private set
+    {
+      _Instrument = null;
+      _InstrumentId = value;
+    }
+  }
 
-  private ent.Instrument _instrument;
+  private ent.Instrument _Instrument;
   /// <summary>
   /// <see cref="ent.Instrument"/> of <see cref="Candle"/>
   /// </summary>
-  /// <value></value>  
+  /// /// <value></value>  
   public virtual ent.Instrument Instrument
   {
-    get => _instrument;
-    private set
+    get => _Instrument; private set
     {
-      InstrumentId = value.Id;
-      _instrument = value;
+      _InstrumentId = value.Id;
+      _Instrument = value;
     }
   }
-  #endregion
+
+  [NotMapped]
+  public decimal Open => CalcPriceDecimal(OpenStore);
+  [NotMapped]
+  public decimal Close => CalcPriceDecimal(CloseStore);
+  [NotMapped]
+  public decimal High => CalcPriceDecimal(HighStore);
+  [NotMapped]
+  public decimal Low => CalcPriceDecimal(LowStore);
+  [NotMapped]
+  public decimal Volume => CalcVolumeDecimal(VolumeStore);
 
   private decimal CalcPriceDecimal(int value_full)
   {

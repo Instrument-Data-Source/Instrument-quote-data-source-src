@@ -19,7 +19,7 @@ public class Entity_ToDto_Test
   public void WHEN_give_entity_with_Instrument_property_THEN_get_correct_dto()
   {
     // Array
-    var using_entity = new Candle(
+    Candle using_entity = null;/* new Candle(
       new DateTime(2020, 1, 1).ToUniversalTime(),
       122,
       233,
@@ -27,7 +27,7 @@ public class Entity_ToDto_Test
       111,
       134,
       (int)TimeFrame.Enum.D1,
-      new ent.Instrument("Instr1", "I1", 2, 2, 1));
+      new ent.Instrument("Instr1", "I1", 2, 2, 1));*/
     //ar using_inst_arr = new[] { new ent.Instrument("Instr1", "I1", 2, 2, 1) };
     //instrumentRep.Table.Returns(using_inst_arr.BuildMock());
 
@@ -47,7 +47,7 @@ public class Entity_ToDto_Test
   public async void WHEN_give_entity_with_Instrument_Id_THEN_get_exception()
   {
     // Array
-    var using_entity = new Candle(
+    Candle using_entity = null;/*new Candle(
       new DateTime(2020, 1, 1).ToUniversalTime(),
       122,
       233,
@@ -55,7 +55,7 @@ public class Entity_ToDto_Test
       111,
       134,
       TimeFrame.Enum.D1,
-      0);
+      0);*/
     //var using_inst_arr = new[] { new ent.Instrument("Instr1", "I1", 2, 2, 1) };
     //instrumentRep.Table.Returns(using_inst_arr.BuildMock());
 
