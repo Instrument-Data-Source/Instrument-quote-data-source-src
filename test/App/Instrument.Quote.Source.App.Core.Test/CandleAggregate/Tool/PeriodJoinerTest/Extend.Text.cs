@@ -3,7 +3,6 @@ namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Tool.PeriodJoine
 using Xunit.Abstractions;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
-using Instrument.Quote.Source.App.Core.Test.CandleAggregate.TestData;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
 /*
 public class Extend_Test

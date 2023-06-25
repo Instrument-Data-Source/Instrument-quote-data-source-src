@@ -17,7 +17,6 @@ public static class Module
     sc.AddScoped<IReadInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<ITimeFrameSrv, TimeFrameSrv>();
     sc.AddScoped<ICandleSrv, CandleSrv>();
-    sc.RegisterValidators();
     return sc;
   }
 }

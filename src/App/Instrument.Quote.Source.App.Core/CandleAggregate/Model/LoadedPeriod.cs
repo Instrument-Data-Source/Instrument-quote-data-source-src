@@ -87,6 +87,7 @@ public partial class LoadedPeriod : EntityBaseExt
   [CandleInPeriod]
   [NotEmpty]
   [NoDuplicates]
+  [TimeFrameDateTime]
   public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
   /*
    private LoadedPeriod AddCandles(IEnumerable<Candle> candles)

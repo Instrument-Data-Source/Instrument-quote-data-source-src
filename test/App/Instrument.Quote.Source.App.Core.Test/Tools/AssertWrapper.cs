@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace Instrument.Quote.Source.App.Core.Test;
+namespace Instrument.Quote.Source.App.Core.Test.Tools;
 
 public class BaseTest<T> where T : BaseTest<T>
 {

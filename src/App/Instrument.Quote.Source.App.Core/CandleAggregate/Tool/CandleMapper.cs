@@ -31,22 +31,6 @@ public static class CandleMapper
   /// <param name="instrumentRep">instrument repository</param>
   /// <exception cref="ArgumentOutOfRangeException">One of argument has wrong value</exception>
   /// <returns></returns>
-  public static async Task<Candle> ToEntityAsync(this CandleDto dto, int InstrumentId, int timeFrameId, IReadRepository<ent.Instrument> instrumentRep)
-  {
-    var instrument = await instrumentRep.GetByIdAsync(InstrumentId);
-
-    return null; // dto.ToEntity(instrument, timeFrame);
-  }
-
-  /// <summary>
-  /// Convert Dto to Entity
-  /// </summary>
-  /// <param name="dto">Data transfer object</param>
-  /// <param name="InstrumentId">Instrument id</param>
-  /// <param name="timeFrameId">timeframe id</param>
-  /// <param name="instrumentRep">instrument repository</param>
-  /// <exception cref="ArgumentOutOfRangeException">One of argument has wrong value</exception>
-  /// <returns></returns>
   public static Candle ToEntity(this CandleDto dto, ent.Instrument instrument, TimeFrame timeFrame)
   {
 

@@ -3,6 +3,7 @@ namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Model;
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
+using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;

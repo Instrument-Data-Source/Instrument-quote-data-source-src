@@ -5,8 +5,8 @@ using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Service;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
 using Instrument.Quote.Source.App.Core.Test.CandleAggregate.Mock;
-using Instrument.Quote.Source.App.Core.Test.CandleAggregate.TestData;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
+using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -43,7 +43,7 @@ public class Add_Test : BaseTest<Add_Test>
 
     var expectedFrom = new DateTime(2020, 1, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 1, 10).ToUniversalTime();
-    var expectedCandleDtos = candleFactory.CreateRandomCandles(expectedFrom, expectedUntill).Select(e => e.ToDto());
+    var expectedCandleDtos = candleFactory.CreateCandles(expectedFrom, expectedUntill).Select(e => e.ToDto());
 
     loadedPeriodRep.Table.Returns(new List<LoadedPeriod>().BuildMock());
     var expectedDto = new AddCandlesDto()
@@ -114,7 +114,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
 
     periodFactory = new MockPeriodFactory(mockInstrument, usedTf);
 
-    mockPeriod = periodFactory.CreateRandomPeriod(new DateTime(2020, 1, 1), new DateTime(2020, 3, 1));
+    mockPeriod = periodFactory.CreatePeriod(new DateTime(2020, 1, 1), new DateTime(2020, 3, 1));
     loadedPeriodRep.Table.Returns(new[] { mockPeriod }.BuildMock());
   }
 
@@ -126,7 +126,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
     var expectedUntillDt = mockPeriod.UntillDate;
     var usingFromDt = new DateTime(2019, 11, 1).ToUniversalTime();
     var usingUntillDt = new DateTime(2020, 1, 1).ToUniversalTime();
-    var usingCandleDtos = candleFactory.CreateRandomCandles(usingFromDt, usingUntillDt).Select(e => e.ToDto());
+    var usingCandleDtos = candleFactory.CreateCandles(usingFromDt, usingUntillDt).Select(e => e.ToDto());
     var usingAddCandelDto = new AddCandlesDto()
     {
       From = usingFromDt,
@@ -163,58 +163,10 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
       Expect("Candles has joined count", () => Assert.Equal(expectedCandleCount, mockPeriod.Candles.Count()));
     });
 
+    Expect("Called method to savechanges", async () =>
+    {
+      await loadedPeriodRep.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+    });
     #endregion
   }
-
-  /*
-    [Fact]
-    public async Task WHEN_extend_existing_candle_THEN_add_only_newAsync()
-    {
-      #region Array
-      this.logger.LogDebug("Test ARRAY");
-
-      this.logger.LogDebug("Mock instrument");
-      var instument1 = new ent.Instrument("Inst1", "I1", 2, 3, new ent.InstrumentType(1));
-      instrumentRep.Table.Returns(new[] { instument1 }.BuildMock());
-
-      this.logger.LogDebug("Mock loaded period");
-      var mockPeriod = new LoadedPeriod(instument1, new TimeFrame(TimeFrame.Enum.D1), new DateTime(2020, 1, 5).ToUniversalTime(), new DateTime(2020, 1, 15).ToUniversalTime());
-      loadedPeriodRep.Table.Returns(new List<LoadedPeriod>().BuildMock());
-
-      this.logger.LogDebug("Prepare test data");
-      var usedCandleDto = CandleFactory.RandomCandles(9, new DateTime(2020, 1, 1).ToUniversalTime()).Select(e => e.ToDto());
-      var usedFrom = new DateTime(2020, 1, 1).ToUniversalTime();
-      var usedUntill = new DateTime(2020, 1, 10).ToUniversalTime();
-
-      this.logger.LogDebug("Prepare expected data");
-      var expectedFrom = new DateTime(2020, 1, 1).ToUniversalTime();
-      var expectedUntill = new DateTime(2020, 1, 5).ToUniversalTime();
-      var expectedCandleDto = usedCandleDto.Where(e => e.DateTime < mockPeriod.FromDate);
-
-      #endregion
-
-
-      #region Act
-      this.logger.LogDebug("Test ACT");
-
-      await srv.AddAsync(0, (int)TimeFrame.Enum.D1, usedFrom, usedUntill, usedCandleDto);
-
-      #endregion
-
-
-      #region Assert
-      this.logger.LogDebug("Test ASSERT");
-
-      this.logger.LogInformation("Assert: call repository add method with new period data");
-      await loadedPeriodRep.Received().AddAsync(Arg.Is<LoadedPeriod>(e =>
-          e.FromDate == expectedFrom &&
-          e.UntillDate == expectedUntill &&
-          e.InstrumentId == 0 &&
-          e.TimeFrameId == (int)TimeFrame.Enum.D1 &&
-          e.Candles.Count() == expectedCandleDto.Count()),
-      Arg.Any<IDbContextTransaction>(),
-      Arg.Any<CancellationToken>());
-
-      #endregion
-    }*/
 }

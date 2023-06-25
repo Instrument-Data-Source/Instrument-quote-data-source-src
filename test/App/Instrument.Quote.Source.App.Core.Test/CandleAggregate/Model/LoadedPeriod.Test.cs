@@ -5,6 +5,7 @@ using System.Net;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.Test.CandleAggregate.Mock;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
+using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
 
     var expected_from = new DateTime(2020, 1, 1).ToUniversalTime();
     var expected_untill = new DateTime(2020, 1, 11).ToUniversalTime();
-    var expected_candles = mockCandleFactory.CreateRandomCandles(expected_from, expected_untill);
+    var expected_candles = mockCandleFactory.CreateCandles(expected_from, expected_untill);
     #endregion
 
 
@@ -68,21 +69,23 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
     get
     {
 
-      yield return new object[] { new DateTime(2020, 1, 1), new DateTime(2020, 5, 1) };
-      yield return new object[] { new DateTime(2020, 1, 1).ToUniversalTime(), new DateTime(2020, 5, 1) };
-      yield return new object[] { new DateTime(2020, 1, 1), new DateTime(2020, 5, 1).ToUniversalTime() };
-      yield return new object[] { new DateTime(2021, 1, 1).ToUniversalTime(), new DateTime(2020, 5, 1).ToUniversalTime() };
-      yield return new object[] { new DateTime(2020, 1, 1).ToUniversalTime(), new DateTime(2020, 1, 1).ToUniversalTime() };
+      yield return new object[] { "both NOT UTC", new DateTime(2020, 1, 1), new DateTime(2020, 5, 1) };
+      yield return new object[] { "Until NOT UTC", new DateTime(2020, 1, 1).ToUniversalTime(), new DateTime(2020, 5, 1) };
+      yield return new object[] { "From NOT UTC", new DateTime(2020, 1, 1), new DateTime(2020, 5, 1).ToUniversalTime() };
+      yield return new object[] { "From > Untill", new DateTime(2021, 1, 1).ToUniversalTime(), new DateTime(2020, 5, 1).ToUniversalTime() };
+      yield return new object[] { "From = Untill", new DateTime(2020, 1, 1).ToUniversalTime(), new DateTime(2020, 1, 1).ToUniversalTime() };
     }
   }
 
   [Theory]
   [MemberData(nameof(IncorrectDates))]
-  public void WHEN_dates_incorrect_THEN_error(DateTime fromDt, DateTime untillDt)
+  public void WHEN_from_or_untill_dates_incorrect_THEN_validation_error(string Name, DateTime fromDt, DateTime untillDt)
   {
+    logger.LogInformation($"Check: {Name}");
+
     #region Array
     this.logger.LogDebug("Test ARRAY");
-    var expected_candles = mockCandleFactory.CreateRandomCandles(2, fromDt);
+    var expected_candles = mockCandleFactory.CreateCandles(2, fromDt);
 
     #endregion
 
@@ -167,7 +170,7 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
 
     var expected_from = new DateTime(2020, 3, 1).ToUniversalTime();
     var expected_untill = new DateTime(2020, 5, 1).ToUniversalTime();
-    var expected_candles = mockCandleFactory.CreateRandomCandles(fromDate, untillDate);
+    var expected_candles = mockCandleFactory.CreateCandles(fromDate, untillDate);
 
     #endregion
 
@@ -211,7 +214,7 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
 
     var expected_from = new DateTime(2020, 1, 1).ToUniversalTime();
     var expected_untill = new DateTime(2020, 1, 11).ToUniversalTime();
-    var expected_candles = mockCandleFactory.CreateRandomCandles(expected_from, expected_untill);
+    var expected_candles = mockCandleFactory.CreateCandles(expected_from, expected_untill);
     expected_candles = expected_candles.Append(expected_candles.ElementAt(1));
     #endregion  
 
@@ -247,6 +250,359 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
       Assert.Equal(nameof(LoadedPeriod.Candles), assertedMemberName));
 
     logger.LogInformation("Asserted exception message: " + assertedException.Message);
+
+    #endregion
+  }
+
+  [Fact]
+  public void WHEN_candles_datetime_doesnt_fit_to_timeframe_THEN_throw_validation_error()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var expected_from = new DateTime(2020, 1, 1).ToUniversalTime();
+    var expected_untill = new DateTime(2020, 1, 3).ToUniversalTime();
+    var expected_candles = mockCandleFactory.CreateCandles(expected_from, expected_untill, hourStep: true);
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("Constructor throw ValidationException", () =>
+      Assert.Throws<ValidationException>(() => new LoadedPeriod(expected_from, expected_untill, mockInstrument1, usedTimeframe, expected_candles)),
+      out var assertedException);
+
+    Expect("Exception has one error", () =>
+     Assert.Single((assertedException.InnerException as AggregateException).InnerExceptions),
+     out Exception assertedInnerException);
+    this.logger.LogInformation($"ValidationException: {assertedInnerException.Message}");
+
+    var assertedValidationException = (ValidationException)assertedInnerException;
+
+    Expect("Single member name", () =>
+      Assert.Single(assertedValidationException.ValidationResult.MemberNames),
+      out var assertedMemberName);
+    Expect("Member name is Candles", () =>
+      Assert.Equal(nameof(LoadedPeriod.Candles), assertedMemberName));
+
+    logger.LogInformation("Asserted exception message: " + assertedException.Message);
+    #endregion
+  }
+}
+
+
+public class LoadedPeriad_Extend_Test : BaseTest<LoadedPeriad_Extend_Test>
+{
+  ent.Instrument mockInstrument = MockInstrument.Create();
+  TimeFrame mockTimeFrame = TimeFrame.Enum.D1.ToEntity();
+
+  MockPeriodFactory periodFactory;
+
+  LoadedPeriod usedPeriod;
+
+  public LoadedPeriad_Extend_Test(ITestOutputHelper output) : base(output)
+  {
+    periodFactory = new MockPeriodFactory(mockInstrument, mockTimeFrame);
+
+    usedPeriod = periodFactory.CreatePeriod(initId: true);
+  }
+
+  [Fact]
+  public void WHEN_new_period_has_id_THEN_error()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var newPeriod = periodFactory.CreatePeriod(usedPeriod.FromDate.AddDays(-10), usedPeriod.FromDate, true);
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+    /*
+    Expect("Extend method throw Validation exception", () =>
+      Assert.Throws<FluentValidation.ValidationException>(() => usedPeriod.Extend(newPeriod)),
+      out var assertedException);
+
+    Expect("Exception has one error", () =>
+      Assert.Single(assertedException.Errors),
+      out var assertedFailure);
+    this.logger.LogInformation($"ValidationFailure: {assertedFailure.ErrorMessage}");
+
+
+    Expect("Property name is Id", () =>
+      Assert.Equal(nameof(LoadedPeriod.Id), assertedFailure.PropertyName));
+    */
+
+    Expect("Extend method throw Validation exception", () =>
+      Assert.Throws<ValidationException>(() => usedPeriod.Extend(newPeriod)),
+      out var assertedException);
+
+    Expect("Exception has one error", () =>
+      Assert.Single((assertedException.InnerException as AggregateException).InnerExceptions),
+      out Exception assertedInnerException);
+    this.logger.LogInformation($"ValidationException: {assertedInnerException.Message}");
+
+    var assertedValidationException = (ValidationException)assertedInnerException;
+
+    Expect("Single member name", () =>
+      Assert.Single(assertedValidationException.ValidationResult.MemberNames),
+      out var assertedMemberName);
+    Expect("Member name is Id", () =>
+      Assert.Equal(nameof(LoadedPeriod.Id), assertedMemberName));
+
+    #endregion
+  }
+
+  [Theory]
+  [InlineData("left")]
+  [InlineData("right")]
+  [InlineData("inside")]
+  [InlineData("same")]
+  [InlineData("over")]
+  public void WHEN_dates_are_crossing_THEN_validation_error(string crossing_type)
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+    DateTime fromDt;
+    DateTime untillDt;
+    switch (crossing_type)
+    {
+      case "left":
+        fromDt = usedPeriod.FromDate.AddDays(-10);
+        untillDt = usedPeriod.FromDate.AddDays(1);
+        break;
+      case "right":
+        fromDt = usedPeriod.UntillDate.AddDays(-1);
+        untillDt = usedPeriod.UntillDate.AddDays(10);
+        break;
+      case "inside":
+        fromDt = usedPeriod.FromDate.AddDays(1);
+        untillDt = usedPeriod.UntillDate.AddDays(-1);
+        break;
+      case "same":
+        fromDt = usedPeriod.FromDate;
+        untillDt = usedPeriod.UntillDate;
+        break;
+      case "over":
+        fromDt = usedPeriod.FromDate.AddDays(-1);
+        untillDt = usedPeriod.UntillDate.AddDays(1);
+        break;
+      default:
+        throw new NotImplementedException();
+    }
+    var newPeriod = periodFactory.CreatePeriod(fromDt, untillDt, false);
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    /*
+    Expect("Extend method throw Validation exception", () =>
+      Assert.Throws<FluentValidation.ValidationException>(() => usedPeriod.Extend(newPeriod)),
+      out var assertedException);
+    logger.LogInformation($"ValidationException message: {assertedException.Message}");
+
+    Expect("Exception has 2 errors", () =>
+      Assert.Equal(2, assertedException.Errors.Count()));
+
+    Expect($"One error is about {nameof(LoadedPeriod.FromDate)}", () =>
+      Assert.Contains(nameof(LoadedPeriod.FromDate), assertedException.Errors.Select(e => e.PropertyName)));
+    Expect($"Second error is about {nameof(LoadedPeriod.UntillDate)}", () =>
+      Assert.Contains(nameof(LoadedPeriod.UntillDate), assertedException.Errors.Select(e => e.PropertyName)));
+    */
+
+    Expect("Extend method throw Validation exception", () =>
+    Assert.Throws<ValidationException>(() => usedPeriod.Extend(newPeriod)),
+    out var assertedException);
+
+    Expect("Exception has one error", () =>
+      Assert.Single((assertedException.InnerException as AggregateException).InnerExceptions),
+      out Exception assertedInnerException);
+    this.logger.LogInformation($"ValidationException: {assertedInnerException.Message}");
+
+    var assertedValidationException = (ValidationException)assertedInnerException;
+
+    ExpectGroup("Two member name", () =>
+    {
+      Expect("From is one of member name", () =>
+        Assert.Contains(nameof(LoadedPeriod.FromDate), assertedValidationException.ValidationResult.MemberNames));
+      Expect("Untill is one of member name", () =>
+        Assert.Contains(nameof(LoadedPeriod.UntillDate), assertedValidationException.ValidationResult.MemberNames));
+    });
+
+    #endregion
+  }
+
+  [Theory]
+  [InlineData("left")]
+  [InlineData("right")]
+  public void WHEN_not_connected_THEN_validation_error(string crossing_type)
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+    DateTime fromDt;
+    DateTime untillDt;
+    switch (crossing_type)
+    {
+      case "left":
+        fromDt = usedPeriod.FromDate.AddDays(-10);
+        untillDt = usedPeriod.FromDate.AddDays(-1);
+        break;
+      case "right":
+        fromDt = usedPeriod.UntillDate.AddDays(1);
+        untillDt = usedPeriod.UntillDate.AddDays(10);
+        break;
+      default:
+        throw new NotImplementedException();
+    }
+    var newPeriod = periodFactory.CreatePeriod(fromDt, untillDt, false);
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+    /*
+    Expect("Extend method throw Validation exception", () =>
+      Assert.Throws<FluentValidation.ValidationException>(() => usedPeriod.Extend(newPeriod)),
+      out var assertedException);
+    logger.LogInformation($"ValidationException message: {assertedException.Message}");
+
+    Expect("Exception has 2 errors", () =>
+      Assert.Equal(2, assertedException.Errors.Count()));
+
+    Expect($"One error is about {nameof(LoadedPeriod.FromDate)}", () =>
+      Assert.Contains(nameof(LoadedPeriod.FromDate), assertedException.Errors.Select(e => e.PropertyName)));
+    Expect($"Second error is about {nameof(LoadedPeriod.UntillDate)}", () =>
+      Assert.Contains(nameof(LoadedPeriod.UntillDate), assertedException.Errors.Select(e => e.PropertyName)));
+    */
+
+
+    Expect("Extend method throw Validation exception", () =>
+    Assert.Throws<ValidationException>(() => usedPeriod.Extend(newPeriod)),
+    out var assertedException);
+
+    Expect("Exception has one error", () =>
+      Assert.Single((assertedException.InnerException as AggregateException).InnerExceptions),
+      out Exception assertedInnerException);
+    this.logger.LogInformation($"ValidationException: {assertedInnerException.Message}");
+
+    var assertedValidationException = (ValidationException)assertedInnerException;
+
+    ExpectGroup("Two member name", () =>
+    {
+      Expect("From is one of member name", () =>
+        Assert.Contains(nameof(LoadedPeriod.FromDate), assertedValidationException.ValidationResult.MemberNames));
+      Expect("Untill is one of member name", () =>
+        Assert.Contains(nameof(LoadedPeriod.UntillDate), assertedValidationException.ValidationResult.MemberNames));
+    });
+
+    #endregion
+  }
+
+
+  [Theory]
+  [InlineData("left")]
+  [InlineData("right")]
+  public void WHEN_period_connected_THEN_update_period(string crossing_type)
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    DateTime fromDt;
+    DateTime untillDt;
+    DateTime expectedFromDt;
+    DateTime expectedUntillDt;
+    switch (crossing_type)
+    {
+      case "left":
+        fromDt = usedPeriod.FromDate.AddDays(-10);
+        untillDt = usedPeriod.FromDate;
+        expectedFromDt = fromDt;
+        expectedUntillDt = usedPeriod.UntillDate;
+        break;
+      case "right":
+        fromDt = usedPeriod.UntillDate;
+        untillDt = usedPeriod.UntillDate.AddDays(10);
+        expectedFromDt = usedPeriod.FromDate;
+        expectedUntillDt = untillDt;
+        break;
+      default:
+        throw new NotImplementedException();
+    }
+    var newPeriod = periodFactory.CreatePeriod(fromDt, untillDt, false);
+
+
+    var expectedCandlesCount = usedPeriod.Candles.Count() + newPeriod.Candles.Count();
+    var expectedCandleDtList = new List<DateTime>();
+    expectedCandleDtList.AddRange(usedPeriod.Candles.Select(e => e.DateTime));
+    expectedCandleDtList.AddRange(newPeriod.Candles.Select(e => e.DateTime));
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var assertedPeriod = usedPeriod.Extend(newPeriod);
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("Return same instance", () => Assert.True(usedPeriod == assertedPeriod));
+
+    Expect("Same ID of returned period", () => Assert.Equal(usedPeriod.Id, assertedPeriod.Id));
+
+    ExpectGroup("New period has extended dates", () =>
+    {
+      Expect("From date is extend correctly", () => Assert.Equal(expectedFromDt, assertedPeriod.FromDate));
+      Expect("Untill date is extend correctly", () => Assert.Equal(expectedUntillDt, assertedPeriod.UntillDate));
+    });
+
+    ExpectGroup("Candles exptend correctly", () =>
+    {
+      Expect("Count is summed", () => Assert.Equal(expectedCandlesCount, assertedPeriod.Candles.Count()));
+      Expect("All Candles in returned period", () => Assert.True(assertedPeriod.Candles.All(c => expectedCandleDtList.Contains(c.DateTime))));
+    });
 
     #endregion
   }

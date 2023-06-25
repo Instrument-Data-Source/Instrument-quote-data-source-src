@@ -42,20 +42,22 @@ public class CandleSrv : ICandleSrv
     var candles = addCandlesDto.Candles.Select(e => e.ToEntity(instrument, timeFrame));
 
     logger.LogDebug("Convert create new LoadedPeriod entity");
-    var loadedPer = new LoadedPeriod(addCandlesDto.From, addCandlesDto.Untill, instrument, timeFrame, candles);
+    var newLoadedPer = new LoadedPeriod(addCandlesDto.From, addCandlesDto.Untill, instrument, timeFrame, candles);
 
     logger.LogDebug("Searching exist period");
     var existLoadedPer = await loadedPeriodRep.TryGetForAsync(instrument.Id, timeFrame.Id, cancellationToken);
     if (existLoadedPer == null)
     {
       logger.LogDebug("Add first period");
-      await loadedPeriodRep.AddAsync(loadedPer, cancellationToken: cancellationToken);
+      await loadedPeriodRep.AddAsync(newLoadedPer, cancellationToken: cancellationToken);
     }
     else
     {
-      throw new NotImplementedException();
+      existLoadedPer.Extend(newLoadedPer);
+      await loadedPeriodRep.SaveChangesAsync(cancellationToken);
     }
-    return Result.Success(loadedPer.Candles.Count());
+
+    return Result.Success(newLoadedPer.Candles.Count());
   }
   /*
    private async Task<(LoadedPeriod? existPeriod, LoadedPeriod newPeriod)> convertDtoAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default)

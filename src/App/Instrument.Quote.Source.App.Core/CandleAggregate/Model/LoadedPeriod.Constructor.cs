@@ -22,6 +22,11 @@ public partial class LoadedPeriod : EntityBaseExt
     Validate();
   }
 
+  public IQueryable<LoadedPeriod> BuildMock()
+  {
+    throw new NotImplementedException();
+  }
+
   /*
   /// <summary>
   /// Create New LoadedPeriod base on import DTO

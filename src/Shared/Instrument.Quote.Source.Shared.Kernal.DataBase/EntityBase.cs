@@ -24,13 +24,18 @@ public abstract class EntityBaseExt : EntityBase
   {
     if (!IsValid(out var validationResults))
     {
-      throw new ValidationException($"{this.GetType().Name} invalid",
+      ThrowValidationResults(validationResults, this.GetType().Name);
+    }
+  }
+
+  protected void ThrowValidationResults(ICollection<ValidationResult> validationResults, string validatedObjectName)
+  {
+    throw new ValidationException($"{validatedObjectName} invalid",
         new AggregateException(
           "Validation errors",
           validationResults.Select(v => new ValidationException(v, null, null))
         )
       );
-    }
   }
 
   protected void SetProperty<T>(T value, string propName, ref T prop)

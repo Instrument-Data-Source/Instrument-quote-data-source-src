@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
+using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;

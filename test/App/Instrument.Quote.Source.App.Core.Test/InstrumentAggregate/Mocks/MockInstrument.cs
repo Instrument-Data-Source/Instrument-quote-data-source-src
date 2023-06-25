@@ -23,6 +23,12 @@ public class MockInstrument : ent.Instrument
   }
 
   private static HashSet<int> usedId = new HashSet<int>();
+  /// <summary>
+  /// Create Instrument with ID
+  /// </summary>
+  /// <param name="pliceDecimalLen"></param>
+  /// <param name="volumeDecimalLen"></param>
+  /// <returns></returns>
   public static ent.Instrument Create(byte pliceDecimalLen = 1, byte volumeDecimalLen = 1)
   {
     var random = new Random();

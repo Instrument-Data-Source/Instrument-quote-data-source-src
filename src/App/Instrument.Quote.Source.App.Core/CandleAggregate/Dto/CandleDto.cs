@@ -27,31 +27,5 @@ public class CandleDto : IEquatable<CandleDto>
       Volume.Equals(other.Volume);
   }
 
-
-  public class Validator : AbstractValidator<CandleDto>
-  {
-    public Validator(TimeFrame.Enum timeFrame)
-    {
-      var dtValidator = new CandleDateTimeValidator(timeFrame);
-      RuleFor(e => e.DateTime)
-        .SetValidator(c => dtValidator)
-          .WithMessage("Candle in candle is invalid");
-      RuleFor(e => e.High)
-        .GreaterThanOrEqualTo(e => e.Open)
-        .WithMessage("High must be GE Open.");
-      RuleFor(e => e.High)
-        .GreaterThanOrEqualTo(e => e.Close)
-          .WithMessage("High must be GE Close.");
-      RuleFor(e => e.Low)
-        .LessThanOrEqualTo(e => e.Open)
-          .WithMessage("Low must be LE Open.");
-      RuleFor(e => e.Low)
-        .LessThanOrEqualTo(e => e.Close)
-          .WithMessage("Low must be LE Close.");
-      RuleFor(e => e.Volume)
-        .GreaterThanOrEqualTo(0)
-          .WithMessage("Volume must be GE 0.");
-    }
-  }
 }
 
