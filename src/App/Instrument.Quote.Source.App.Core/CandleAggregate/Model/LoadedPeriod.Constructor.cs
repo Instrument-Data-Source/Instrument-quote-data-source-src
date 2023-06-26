@@ -8,14 +8,24 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 public partial class LoadedPeriod : EntityBaseExt
 {
+
+  protected LoadedPeriod(DateTime fromDate,
+                        DateTime untillDate,
+                        int instrumentId,
+                        int timeFrameId)
+  {
+    FromDate = fromDate;
+    UntillDate = untillDate;
+    InstrumentId = instrumentId;
+    TimeFrameId = timeFrameId;
+  }
+
   public LoadedPeriod(DateTime from,
                       DateTime untill,
                       ent.Instrument instrument,
                       TimeFrame timeFrame,
-                      IEnumerable<Candle> candles)
+                      IEnumerable<Candle> candles) : this(from, untill, instrument.Id, timeFrame.Id)
   {
-    FromDate = from;
-    UntillDate = untill;
     Instrument = instrument;
     TimeFrame = timeFrame;
     _candles = candles.ToList();

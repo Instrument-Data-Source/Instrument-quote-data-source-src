@@ -12,6 +12,26 @@ namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 /// </summary>
 public partial class Candle
 {
+  protected Candle(DateTime dateTime,
+              int openStore,
+              int highStore,
+              int lowStore,
+              int closeStore,
+              int volumeStore,
+              int instrumentId,
+              int timeFrameId)
+  {
+
+    DateTime = dateTime;
+    OpenStore = openStore;
+    HighStore = highStore;
+    LowStore = lowStore;
+    CloseStore = closeStore;
+    VolumeStore = volumeStore;
+    InstrumentId = instrumentId;
+    TimeFrameId = timeFrameId;
+  }
+
   public Candle(DateTime dateTime,
                 int open,
                 int high,
@@ -19,17 +39,8 @@ public partial class Candle
                 int close,
                 int volume,
                 [NotNull] ent.Instrument instrument,
-                [NotNull] TimeFrame timeFrame)
+                [NotNull] TimeFrame timeFrame) : this(dateTime, open, high, low, close, volume, instrument.Id, timeFrame.Id)
   {
-    Guard.Against.Null(instrument);
-    Guard.Against.Null(timeFrame);
-
-    DateTime = dateTime;
-    OpenStore = open;
-    HighStore = high;
-    LowStore = low;
-    CloseStore = close;
-    VolumeStore = volume;
     Instrument = instrument;
     TimeFrame = timeFrame;
     Validate();

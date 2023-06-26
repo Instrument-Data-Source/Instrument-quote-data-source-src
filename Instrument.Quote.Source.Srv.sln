@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instrument.Quote.Source.Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instrument.Quote.Source.Shared.FluentValidation.Extension.Test", "test\Shared\Instrument.Quote.Source.Shared.FluentValidation.Extension.Test\Instrument.Quote.Source.Shared.FluentValidation.Extension.Test.csproj", "{9480AA06-2D93-4834-9919-60F3CE65D07C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instrument.Quote.Source.App.Test", "test\App\Instrument.Quote.Source.App.Test\Instrument.Quote.Source.App.Test.csproj", "{7067398A-609E-4FE3-8513-AE4214A24625}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +98,10 @@ Global
 		{9480AA06-2D93-4834-9919-60F3CE65D07C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9480AA06-2D93-4834-9919-60F3CE65D07C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9480AA06-2D93-4834-9919-60F3CE65D07C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7067398A-609E-4FE3-8513-AE4214A24625}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7067398A-609E-4FE3-8513-AE4214A24625}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7067398A-609E-4FE3-8513-AE4214A24625}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7067398A-609E-4FE3-8513-AE4214A24625}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{61F4CEA1-34A3-497C-8275-DADE889A7597} = {02D4A369-060B-4C61-89E9-5CCFB2C4E978}
@@ -116,5 +122,6 @@ Global
 		{2F9103D6-C487-4A67-B622-0F38C6B75FF8} = {76E3ABCD-BFBD-4A40-9A63-E05D931093DD}
 		{256A54C5-885F-4C82-A63D-F3343DEA65C1} = {D395DC78-4021-47DF-8F9B-0AECDC1F12B6}
 		{9480AA06-2D93-4834-9919-60F3CE65D07C} = {61F4CEA1-34A3-497C-8275-DADE889A7597}
+		{7067398A-609E-4FE3-8513-AE4214A24625} = {0EAABB71-63E4-465E-88F1-BFEF4A9918BE}
 	EndGlobalSection
 EndGlobal

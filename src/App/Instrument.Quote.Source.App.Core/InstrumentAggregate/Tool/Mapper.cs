@@ -33,19 +33,9 @@ public static class Mapper
     return -1;
 
   }
-  public static async Task<InstrumentResponseDto> ToDtoAsync(this ent.Instrument entity, IReadRepository<ent.InstrumentType> instrumentTypeRep, CancellationToken cancellationToken = default)
+  public static InstrumentResponseDto ToDto(this ent.Instrument entity)
   {
-    var dto = new InstrumentResponseDto();
-    dto.Id = entity.Id;
-    dto.Name = entity.Name;
-    dto.Code = entity.Code;
-    if (entity.InstrumentType == null)
-      dto.Type = await instrumentTypeRep.GetNameByIdAsync(entity.InstrumentTypeId, cancellationToken);
-    else
-      dto.Type = entity.InstrumentType.Name;
-    dto.PriceDecimalLen = entity.PriceDecimalLen;
-    dto.VolumeDecimalLen = entity.VolumeDecimalLen;
-    return dto;
+    return new InstrumentResponseDto(entity);
   }
 
   public static InstrumentTypeResponseDto ToDto(this ent.InstrumentType entity)
