@@ -169,4 +169,107 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
     });
     #endregion
   }
+
+  [Fact]
+  public void WHEN_add_cross_period_THEN_add_only_new_data()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    this.logger.LogDebug("Test ARRAY");
+    var expectedUntillDt = mockPeriod.UntillDate;
+    var usingFromDt = new DateTime(2019, 11, 1).ToUniversalTime();
+    var usingUntillDt = new DateTime(2020, 1, 10).ToUniversalTime();
+    var usingNewCandleDtos = candleFactory.CreateCandles(usingFromDt, mockPeriod.FromDate).Select(e => e.ToDto());
+
+    var usingCandlesDto = new List<CandleDto>();
+    usingCandlesDto.AddRange(usingNewCandleDtos);
+    usingCandlesDto.AddRange(mockPeriod.Candles.Where(c => c.DateTime < usingUntillDt).Select(c => c.ToDto()));
+
+    var usingAddCandelDto = new AddCandlesDto()
+    {
+      From = usingFromDt,
+      Untill = usingUntillDt,
+      instrumentId = mockInstrument.Id,
+      timeFrameId = usedTf.Id,
+      Candles = usingCandlesDto
+    };
+
+    var expectedCandleCount = mockPeriod.Candles.Count() + usingNewCandleDtos.Count();
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var assertedResult = srv.AddAsync(usingAddCandelDto).Result;
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("Result is Success", () => Assert.True(assertedResult.IsSuccess));
+
+    Expect("Result is correct", () => Assert.Equal(usingNewCandleDtos.Count(), assertedResult.Value));
+
+    ExpectGroup("Exist pretiod changed", () =>
+    {
+      Expect("From datetime changed", () => Assert.Equal(usingFromDt, mockPeriod.FromDate));
+      Expect("Until datetime does not changed", () => Assert.Equal(expectedUntillDt, mockPeriod.UntillDate));
+      Expect("Candles has joined count", () => Assert.Equal(expectedCandleCount, mockPeriod.Candles.Count()));
+    });
+
+    Expect("Called method to savechanges", async () =>
+    {
+      await loadedPeriodRep.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+    });
+
+    #endregion
+  }
+
+  [Fact]
+  public void WHEN_add_cross_period_with_different_candles_THEN_return_validation_errors()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    this.logger.LogDebug("Test ARRAY");
+    var usingFromDt = new DateTime(2019, 11, 1).ToUniversalTime();
+    var usingUntillDt = new DateTime(2020, 1, 10).ToUniversalTime();
+    var usingNewCandleDtos = candleFactory.CreateCandles(usingFromDt, usingUntillDt).Select(e => e.ToDto());
+
+    var usingAddCandelDto = new AddCandlesDto()
+    {
+      From = usingFromDt,
+      Untill = usingUntillDt,
+      instrumentId = mockInstrument.Id,
+      timeFrameId = usedTf.Id,
+      Candles = usingNewCandleDtos
+    };
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var assertedResult = srv.AddAsync(usingAddCandelDto).Result;
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("Result is not Success", () => Assert.False(assertedResult.IsSuccess));
+
+    Expect("Result status is Invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
+
+    Expect("Result contain validations errors", () => Assert.NotEmpty(assertedResult.ValidationErrors));
+
+    #endregion
+  }
 }

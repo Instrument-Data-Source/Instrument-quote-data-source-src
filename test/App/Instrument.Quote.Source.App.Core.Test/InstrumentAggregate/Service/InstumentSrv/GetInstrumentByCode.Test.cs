@@ -28,7 +28,7 @@ public class GetInstrumentIdByCode_Test
     var instument2 = new ent.Instrument("Inst2", "I2", 1, 2, new ent.InstrumentType(2));
     InstrumentRep.Table.Returns(new[] { instument1, instument2 }.BuildMock());
 
-    var expected_dto = new InstrumentResponseDto() { Id = 0, Name = "Inst1", Code = "I1", Type = "Currency", PriceDecimalLen = 2, VolumeDecimalLen = 3 };
+    var expected_dto = new InstrumentResponseDto() { Id = 0, Name = "Inst1", Code = "I1", TypeId = 1, PriceDecimalLen = 2, VolumeDecimalLen = 3 };
     // Act
     var asseerted_result = instrumentService.GetByAsync("I1").Result;
 
