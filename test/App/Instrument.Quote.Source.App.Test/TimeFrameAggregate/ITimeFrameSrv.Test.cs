@@ -107,8 +107,8 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 
     #endregion
   }
-  /*
-    [Fact]
+
+  [Fact]
     public void WHEN_request_incorrect_id_THEN_return_not_found_result()
     {
       #region Array
@@ -141,7 +141,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 
       #endregion
     }
-    */
+
 }
 /*
 
