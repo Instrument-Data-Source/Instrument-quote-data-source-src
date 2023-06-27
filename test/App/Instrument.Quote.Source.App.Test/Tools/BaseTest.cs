@@ -118,7 +118,9 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
   {
     using var scope = global_sp.CreateScope();
     var _sp = scope.ServiceProvider;
+#if DEBUG
     _sp.DeleteDb();
+#endif
   }
 
 }

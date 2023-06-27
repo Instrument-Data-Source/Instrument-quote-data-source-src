@@ -187,7 +187,7 @@ public class Candle_Construct_Test : BaseTest<Candle_Construct_Test>
     this.logger.LogDebug("Test ASSERT");
 
     Expect("Raise expection", () =>
-      Assert.Throws<ArgumentNullException>(() =>
+      Assert.Throws<NullReferenceException>(() =>
          new Candle(expected_dt,
                     expected_open,
                     expected_high,
@@ -232,7 +232,7 @@ public class Candle_Construct_Test : BaseTest<Candle_Construct_Test>
     this.logger.LogDebug("Test ASSERT");
 
     Expect("Raise expection", () =>
-      Assert.Throws<ArgumentNullException>(() =>
+      Assert.Throws<NullReferenceException>(() =>
          new Candle(expected_dt,
                     expected_open,
                     expected_high,
