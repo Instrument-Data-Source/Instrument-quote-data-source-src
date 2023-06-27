@@ -10,7 +10,7 @@ jobs:
     container: mcr.microsoft.com/dotnet/sdk:7.0
 
     services:
-      db:
+      postgres:
         image: postgres:14.3
 
         env:
@@ -35,4 +35,4 @@ jobs:
       - name: Run tests
         run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Debug --verbosity m --no-restore
         env: 
-          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+          ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=postgres"
