@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Test.TimeFrameAggregate;
-/*
+
 public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
 {
 
@@ -223,4 +223,3 @@ public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_T
     #endregion
   }
 }
-*/
