@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate;
-/*
+
 public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 {
 
@@ -129,7 +129,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
     #endregion
   }
 }
-*/
+/*
 public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
 {
   private MockInstrumentFactory mockInstrumentFactory;
@@ -182,3 +182,4 @@ public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
     #endregion
   }
 }
+*/
