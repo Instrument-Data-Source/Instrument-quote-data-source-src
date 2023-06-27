@@ -105,17 +105,8 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
     App.Application.InitApp(sc);
     global_sp = sc.BuildServiceProvider();
 
-    InitDb();
   }
 
-  private void InitDb()
-  {
-    using var scope = global_sp.CreateScope();
-    var _sp = scope.ServiceProvider;
-    var connectionString = _sp.GetService<IConfiguration>().GetConnectionString("DefaultConnection");
-    _sp.GetService<ILogger>().LogInformation($"Connection string: {connectionString}");
-    _sp.InitDb();
-  }
 
   public virtual void Dispose()
   {
