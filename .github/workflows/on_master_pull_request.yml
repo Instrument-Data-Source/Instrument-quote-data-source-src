@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration Debug --no-restore
+        run: dotnet build --configuration Release --no-restore
       - name: Run tests
-        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Debug --verbosity m --no-restore
+        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity m --no-restore
         env: 
           ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=postgres"

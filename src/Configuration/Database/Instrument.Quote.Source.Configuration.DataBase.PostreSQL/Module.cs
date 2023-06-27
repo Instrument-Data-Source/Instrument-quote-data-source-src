@@ -38,6 +38,7 @@ public static class Module
       });
 
     Console.WriteLine("Migration - begin");
+    sc.BuildServiceProvider().GetService<SrvDbContext>().Database.EnsureCreated();
     sc.BuildServiceProvider().GetService<SrvDbContext>().Database.Migrate();
     Console.WriteLine("Migration - done");
 
@@ -46,10 +47,9 @@ public static class Module
     return sc;
   }
 
-
-#if DEBUG
   public static void DeleteDb(this IServiceProvider sp)
   {
+    Console.WriteLine("Clearup DB");
     var environment = sp.GetService<IHostEnvironment>();
     if (environment == null)
       sp.GetRequiredService<ILogger>().LogWarning("Host environment is not defined, if it is prod FIX THIS");
@@ -57,6 +57,6 @@ public static class Module
       throw new ApplicationException("Delete Db is not allowed to use in production environment");
     using var dbContext = sp.GetRequiredService<SrvDbContext>();
     dbContext.Database.EnsureDeleted();
+    Console.WriteLine("DB clearuped");
   }
-#endif
 }
