@@ -86,100 +86,99 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
     });
     #endregion
   }
-  /*
-    [Fact]
-    public void WHEN_give_wrong_record_THEN_get_result_with_invalid_status()
+
+  [Fact]
+  public void WHEN_give_wrong_record_THEN_get_result_with_invalid_status()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var usingNewInstrumentRequestDto = new NewInstrumentRequestDto()
     {
-      #region Array
-      this.logger.LogDebug("Test ARRAY");
+      Name = "Test instrument 1",
+      Code = "TI13.opuo.euoeuoeuoe",
+      TypeId = 1,
+      PriceDecimalLen = 2,
+      VolumeDecimalLen = 3
+    };
 
-      var usingNewInstrumentRequestDto = new NewInstrumentRequestDto()
-      {
-        Name = "Test instrument 1",
-        Code = "TI13.opuo.euoeuoeuoe",
-        TypeId = 1,
-        PriceDecimalLen = 2,
-        VolumeDecimalLen = 3
-      };
-
-      #endregion
+    #endregion
 
 
-      #region Act
-      this.logger.LogDebug("Test ACT");
+    #region Act
+    this.logger.LogDebug("Test ACT");
 
-      Result<InstrumentResponseDto> assertedResult;
-      using (var act_scope = this.global_sp.CreateScope())
-      {
-        var sp = act_scope.ServiceProvider;
-        var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-        assertedResult = usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
-      }
-
-      #endregion
-
-
-      #region Assert
-      this.logger.LogDebug("Test ASSERT");
-
-      Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
-      Expect("Status is Invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
-      Expect("Result contain validation errors", () => Assert.NotEmpty(assertedResult.ValidationErrors));
-
-      #endregion
+    Result<InstrumentResponseDto> assertedResult;
+    using (var act_scope = this.global_sp.CreateScope())
+    {
+      var sp = act_scope.ServiceProvider;
+      var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
+      assertedResult = usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
     }
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Status is Invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
+    Expect("Result contain validation errors", () => Assert.NotEmpty(assertedResult.ValidationErrors));
+
+    #endregion
+  }
+}
+
+public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
+{
+  private MockInstrumentFactory mockInstrumentFactory;
+  public IInstrumentSrv_Remove_Test(ITestOutputHelper output) : base(output)
+  {
+    mockInstrumentFactory = new MockInstrumentFactory(global_sp);
+    mockInstrumentFactory.Init();
   }
 
-  public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
+  [Fact]
+  public void WHEN_request_remove_THEN_instrument_removed()
   {
-    private MockInstrumentFactory mockInstrumentFactory;
-    public IInstrumentSrv_Remove_Test(ITestOutputHelper output) : base(output)
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var usingId = mockInstrumentFactory.mockInstrument1.Id;
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    Result assertedResult;
+    using (var act_scope = this.global_sp.CreateScope())
     {
-      mockInstrumentFactory = new MockInstrumentFactory(global_sp);
-      mockInstrumentFactory.Init();
+      var sp = act_scope.ServiceProvider;
+      var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
+      assertedResult = usedTimeFrameSrv.RemoveAsync(usingId).Result;
     }
 
-    [Fact]
-    public void WHEN_request_remove_THEN_instrument_removed()
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
+    ExpectGroup("Instrument does'n exist in repository", () =>
     {
-      #region Array
-      this.logger.LogDebug("Test ARRAY");
-
-      var usingId = mockInstrumentFactory.mockInstrument1.Id;
-
-      #endregion
-
-
-      #region Act
-      this.logger.LogDebug("Test ACT");
-
-      Result assertedResult;
-      using (var act_scope = this.global_sp.CreateScope())
+      using (var assert_scope = this.global_sp.CreateScope())
       {
-        var sp = act_scope.ServiceProvider;
-        var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-        assertedResult = usedTimeFrameSrv.RemoveAsync(usingId).Result;
+        var sp = assert_scope.ServiceProvider;
+        var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();
+        var assertedEnt = instrumentRep.TryGetByIdAsync(usingId).Result;
+        Expect("Entity doesn't exist", () => Assert.Null(assertedEnt));
       }
+    });
 
-      #endregion
-
-
-      #region Assert
-      this.logger.LogDebug("Test ASSERT");
-
-      Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
-      ExpectGroup("Instrument does'n exist in repository", () =>
-      {
-        using (var assert_scope = this.global_sp.CreateScope())
-        {
-          var sp = assert_scope.ServiceProvider;
-          var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();
-          var assertedEnt = instrumentRep.TryGetByIdAsync(usingId).Result;
-          Expect("Entity doesn't exist", () => Assert.Null(assertedEnt));
-        }
-      });
-
-      #endregion
-    }
-    */
+    #endregion
+  }
 }
