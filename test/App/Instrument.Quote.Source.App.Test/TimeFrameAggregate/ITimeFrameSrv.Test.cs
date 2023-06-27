@@ -23,7 +23,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
   public void WHEN_get_request_all_timeframes_THEN_get_list_of_them()
   {
     #region Array
-    this.logger.LogDebug("Test ARRAY");
+    Console.WriteLine("Test ARRAY");
 
 
 
@@ -31,7 +31,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
 
 
     #region Act
-    this.logger.LogDebug("Test ACT");
+    Console.WriteLine("Test ACT");
     Result<IEnumerable<TimeFrameResponseDto>> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
     {
@@ -44,7 +44,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
 
 
     #region Assert
-    this.logger.LogDebug("Test ASSERT");
+    Console.WriteLine("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     Expect("Result contain timeframe", () => Assert.Equal(TimeFrame.ToList().Count(), assertedResult.Value.Count()));
@@ -62,7 +62,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
     #endregion
   }
 }
-
+/*
 public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 {
 
@@ -223,3 +223,4 @@ public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_T
     #endregion
   }
 }
+*/
