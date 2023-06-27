@@ -88,6 +88,7 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
           {"ConnectionStrings:DbSuffix", dbSuffix}
       };
     _configurationBuilder.AddInMemoryCollection(dict);
+    Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
     return _configurationBuilder.Build();
   }
 
