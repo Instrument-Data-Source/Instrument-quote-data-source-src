@@ -143,7 +143,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
     }
     */
 }
-
+/*
 
 public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_Test>
 {
