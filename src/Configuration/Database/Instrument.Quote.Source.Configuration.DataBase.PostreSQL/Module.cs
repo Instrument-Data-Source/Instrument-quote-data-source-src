@@ -28,6 +28,7 @@ public static class Module
         if (dbSuffix != null)
           _connectionStringBuilder["Database"] += $"_{dbSuffix}";
 
+        Console.WriteLine("PG db - " + _connectionStringBuilder["Database"]);
         builder.UseNpgsql(_connectionStringBuilder.ConnectionString);
 
         //if (environment.IsDevelopment())

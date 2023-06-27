@@ -13,10 +13,12 @@ public static class Module
 {
   public static IServiceCollection Register(this IServiceCollection sc)
   {
+    Console.WriteLine("Instrument.Quote.Source.App.Core.Module - Registering");
     sc.AddScoped<IInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<IReadInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<ITimeFrameSrv, TimeFrameSrv>();
     sc.AddScoped<ICandleSrv, CandleSrv>();
+    Console.WriteLine("Instrument.Quote.Source.App.Core.Module - Registered");
     return sc;
   }
 }
