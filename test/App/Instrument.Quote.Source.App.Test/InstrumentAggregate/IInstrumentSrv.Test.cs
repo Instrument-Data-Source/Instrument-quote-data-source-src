@@ -60,7 +60,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
     {
       Expect("Name is correct", () => Assert.Equal(usingNewInstrumentRequestDto.Name, assertedResult.Value.Name));
       Expect("Code is correct", () => Assert.Equal(usingNewInstrumentRequestDto.Code, assertedResult.Value.Code));
-      Expect("PriceDecLen is correct", () => Assert.Equal(usingNewInstrumentRequestDto.PriceDecimalLen, assertedResult.Value.PriceDecimalLen));
+      Expect("PriceDecimalLen is correct", () => Assert.Equal(usingNewInstrumentRequestDto.PriceDecimalLen, assertedResult.Value.PriceDecimalLen));
       Expect("VolumeDecLen is correct", () => Assert.Equal(usingNewInstrumentRequestDto.VolumeDecimalLen, assertedResult.Value.VolumeDecimalLen));
       Expect("TypeId is correct", () => Assert.Equal(usingNewInstrumentRequestDto.TypeId, assertedResult.Value.TypeId));
       Expect("ID > 0", () => Assert.True(assertedResult.Value.Id > 0));
