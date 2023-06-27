@@ -24,7 +24,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
   public void WHEN_request_create_new_instrument_THEN_instrument_created()
   {
     #region Array
-    this.logger.LogDebug("Test ARRAY");
+    Console.WriteLine("Test ARRAY");
 
     var usingNewInstrumentRequestDto = new NewInstrumentRequestDto()
     {
@@ -39,7 +39,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 
 
     #region Act
-    this.logger.LogDebug("Test ACT");
+    Console.WriteLine("Test ACT");
 
     Result<InstrumentResponseDto> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
@@ -53,7 +53,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 
 
     #region Assert
-    this.logger.LogDebug("Test ASSERT");
+    Console.WriteLine("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     ExpectGroup("Return correct dto", () =>
