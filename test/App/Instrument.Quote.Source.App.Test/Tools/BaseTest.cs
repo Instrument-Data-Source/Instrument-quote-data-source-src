@@ -112,6 +112,8 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
   {
     using var scope = global_sp.CreateScope();
     var _sp = scope.ServiceProvider;
+    var connectionString = _sp.GetService<IConfiguration>().GetConnectionString("DefaultConnection");
+    _sp.GetService<ILogger>().LogInformation($"Connection string: {connectionString}");
     _sp.InitDb();
   }
 
