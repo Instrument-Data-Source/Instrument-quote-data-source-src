@@ -75,14 +75,14 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
   public void WHEN_request_by_exist_id_THEN_get_timeframe()
   {
     #region Array
-    this.logger.LogDebug("Test ARRAY");
+    Console.WriteLine("Test ARRAY");
     var expectedData = TimeFrame.Enum.D1.ToEntity();
 
     #endregion
 
 
     #region Act
-    this.logger.LogDebug("Test ACT");
+    Console.WriteLine("Test ACT");
     Result<TimeFrameResponseDto> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
     {
@@ -95,7 +95,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 
 
     #region Assert
-    this.logger.LogDebug("Test ASSERT");
+    Console.WriteLine("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     ExpectGroup("Return correct DTO", () =>
