@@ -62,7 +62,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
     #endregion
   }
 }
-/*
+
 public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 {
 
@@ -107,40 +107,41 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 
     #endregion
   }
-
-  [Fact]
-  public void WHEN_request_incorrect_id_THEN_return_not_found_result()
-  {
-    #region Array
-    this.logger.LogDebug("Test ARRAY");
-
-
-
-    #endregion
-
-
-    #region Act
-    this.logger.LogDebug("Test ACT");
-
-    Result<TimeFrameResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+  /*
+    [Fact]
+    public void WHEN_request_incorrect_id_THEN_return_not_found_result()
     {
-      var sp = act_scope.ServiceProvider;
-      var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
-      assertedResult = usedTimeFrameSrv.GetByIdAsync(9989898).Result;
+      #region Array
+      this.logger.LogDebug("Test ARRAY");
+
+
+
+      #endregion
+
+
+      #region Act
+      this.logger.LogDebug("Test ACT");
+
+      Result<TimeFrameResponseDto> assertedResult;
+      using (var act_scope = this.global_sp.CreateScope())
+      {
+        var sp = act_scope.ServiceProvider;
+        var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
+        assertedResult = usedTimeFrameSrv.GetByIdAsync(9989898).Result;
+      }
+
+      #endregion
+
+
+      #region Assert
+      this.logger.LogDebug("Test ASSERT");
+
+      Expect("Result is not Success", () => Assert.False(assertedResult.IsSuccess));
+      Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+
+      #endregion
     }
-
-    #endregion
-
-
-    #region Assert
-    this.logger.LogDebug("Test ASSERT");
-
-    Expect("Result is not Success", () => Assert.False(assertedResult.IsSuccess));
-    Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
-
-    #endregion
-  }
+    */
 }
 
 
