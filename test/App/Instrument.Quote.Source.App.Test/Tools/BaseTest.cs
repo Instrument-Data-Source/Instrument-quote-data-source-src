@@ -85,7 +85,7 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
     _configurationBuilder.AddEnvironmentVariables();
     var dict = new Dictionary<string, string>
       {
-          {"ConnectionStrings:DbSuffix", dbSuffix+DateTime.UtcNow.ToString()}
+          {"ConnectionStrings:DbSuffix", dbSuffix}
       };
     _configurationBuilder.AddInMemoryCollection(dict);
     Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
