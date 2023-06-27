@@ -82,6 +82,7 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
   {
     var _configurationBuilder = new ConfigurationBuilder();
     _configurationBuilder.AddJsonFile("./appsettings.test.json");
+    _configurationBuilder.AddEnvironmentVariables();
     var dict = new Dictionary<string, string>
       {
           {"ConnectionStrings:DbSuffix", dbSuffix}
