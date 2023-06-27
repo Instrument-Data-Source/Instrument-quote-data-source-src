@@ -33,21 +33,18 @@ public static class Module
         //if (environment.IsDevelopment())
         //  builder.EnableSensitiveDataLogging();
 
-        builder.EnableDetailedErrors();
+        //builder.EnableDetailedErrors();
       });
 
+    Console.WriteLine("Migration - begin");
     sc.BuildServiceProvider().GetService<SrvDbContext>().Database.Migrate();
+    Console.WriteLine("Migration - done");
 
     sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
     sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
     return sc;
   }
 
-  public static void InitDb(this IServiceProvider sp)
-  {
-    using var dbContext = sp.GetRequiredService<SrvDbContext>();
-    dbContext.Database.Migrate();
-  }
 
 #if DEBUG
   public static void DeleteDb(this IServiceProvider sp)
