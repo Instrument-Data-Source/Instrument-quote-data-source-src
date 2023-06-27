@@ -38,7 +38,6 @@ public static class Module
       });
 
     Console.WriteLine("Migration - begin");
-    sc.BuildServiceProvider().GetService<SrvDbContext>().Database.EnsureCreated();
     sc.BuildServiceProvider().GetService<SrvDbContext>().Database.Migrate();
     Console.WriteLine("Migration - done");
 

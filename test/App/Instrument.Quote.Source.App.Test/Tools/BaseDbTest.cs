@@ -44,9 +44,13 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
 
   public virtual void Dispose()
   {
+    DeleteDb();
+  }
+
+  private void DeleteDb()
+  {
     using var scope = global_sp.CreateScope();
     var _sp = scope.ServiceProvider;
     _sp.DeleteDb();
   }
-
 }
