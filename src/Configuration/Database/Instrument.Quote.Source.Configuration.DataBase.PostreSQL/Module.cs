@@ -55,7 +55,7 @@ public static class Module
     else if (environment.IsProduction())
       throw new ApplicationException("Delete Db is not allowed to use in production environment");
     using var dbContext = sp.GetRequiredService<SrvDbContext>();
-    dbContext.Database.EnsureDeleted();
-    Console.WriteLine("DB clearuped");
+    var result = dbContext.Database.EnsureDeleted();
+    Console.WriteLine("DB clearuped. Result: " + result);
   }
 }
