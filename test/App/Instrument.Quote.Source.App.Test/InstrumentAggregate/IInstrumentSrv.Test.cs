@@ -45,8 +45,8 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-      assertedResult = usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
+      var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();
+      assertedResult = usedInstrumentSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
     }
 
     #endregion

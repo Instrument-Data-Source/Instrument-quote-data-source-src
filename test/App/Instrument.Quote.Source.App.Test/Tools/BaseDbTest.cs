@@ -6,19 +6,30 @@ using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace Instrument.Quote.Source.App.Test.Tools;
+public static class Counter
+{
+  private static int value = 0;
 
+  public static int Value => value;
+
+  public static int Next()
+  {
+    return Interlocked.Increment(ref value);
+  }
+}
 public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTest<T>
 {
   protected ServiceProvider global_sp;
-
+  private int number = 1;
   private static IConfiguration GetConfig(string dbSuffix)
   {
     var _configurationBuilder = new ConfigurationBuilder();
     _configurationBuilder.AddJsonFile("./appsettings.test.json");
     _configurationBuilder.AddEnvironmentVariables();
+    var cur_numb = Counter.Next();
     var dict = new Dictionary<string, string>
       {
-          {"ConnectionStrings:DbSuffix", dbSuffix}
+          {"ConnectionStrings:DbSuffix", dbSuffix+cur_numb}
       };
     _configurationBuilder.AddInMemoryCollection(dict);
     Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
