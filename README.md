@@ -21,3 +21,5 @@
 - Upload new candles
 - Get all loaded periods
 
+## Validation events
+- [List of events](./src/App/Instrument.Quote.Source.App.Core/Event/ValidationEvents.cs)

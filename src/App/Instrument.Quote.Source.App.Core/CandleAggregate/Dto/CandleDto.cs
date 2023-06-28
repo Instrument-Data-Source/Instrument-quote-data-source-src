@@ -1,4 +1,8 @@
+using FluentValidation;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
+using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
+using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 public class CandleDto : IEquatable<CandleDto>
@@ -22,4 +26,6 @@ public class CandleDto : IEquatable<CandleDto>
       Close.Equals(other.Close) &&
       Volume.Equals(other.Volume);
   }
+
 }
+

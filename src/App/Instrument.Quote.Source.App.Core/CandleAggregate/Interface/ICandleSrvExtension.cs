@@ -14,7 +14,30 @@ public static class CandleSrvExtension
   /// <returns></returns>
   public static async Task<Result<int>> AddAsync(this ICandleSrv candleSrv, int instrumentId, int timeFrameId, NewCandlesDto newCandlesDto, CancellationToken cancellationToken = default)
   {
-    return await candleSrv.AddAsync(instrumentId, timeFrameId, newCandlesDto.From, newCandlesDto.Untill, newCandlesDto.Candles, cancellationToken);
+    AddCandlesDto addCandlesDto = new AddCandlesDto()
+    {
+      instrumentId = instrumentId,
+      timeFrameId = timeFrameId,
+      From = newCandlesDto.From,
+      Untill = newCandlesDto.Untill,
+      Candles = newCandlesDto.Candles
+    };
+    return await candleSrv.AddAsync(addCandlesDto, cancellationToken);
+
+  }
+
+  public static async Task<Result<int>> AddAsync(this ICandleSrv candleSrv, int instrumentId, int timeFrameId, DateTime From, DateTime Untill,
+IEnumerable<CandleDto> Candles, CancellationToken cancellationToken = default)
+  {
+    AddCandlesDto addCandlesDto = new AddCandlesDto()
+    {
+      instrumentId = instrumentId,
+      timeFrameId = timeFrameId,
+      From = From,
+      Untill = Untill,
+      Candles = Candles
+    };
+    return await candleSrv.AddAsync(addCandlesDto, cancellationToken);
 
   }
   /*

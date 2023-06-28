@@ -29,7 +29,7 @@ public class GetByIdOrCodeAsync_Test
   [InlineData("Stock")]
   [InlineData("stock")]
   [InlineData("STOCK")]
-  public void WHEN_request_correct_TypeStr_THEN_return_correct_data(string instrumentTypeStr)
+  public async void WHEN_request_correct_TypeStr_THEN_return_correct_data(string instrumentTypeStr)
   {
     // Array
     var expected_dto = new InstrumentTypeResponseDto()
@@ -39,7 +39,7 @@ public class GetByIdOrCodeAsync_Test
     };
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr).Result;
+    var asserted_result = await instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr);
 
     // Assert
     Assert.True(asserted_result.IsSuccess);
@@ -49,12 +49,12 @@ public class GetByIdOrCodeAsync_Test
   [Theory]
   [InlineData("99")]
   [InlineData("Mock")]
-  public void WHEN_request_incorrect_TypeStr_THEN_return_correct_data(string instrumentTypeStr)
+  public async void WHEN_request_incorrect_TypeStr_THEN_return_correct_data(string instrumentTypeStr)
   {
     // Array
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr).Result;
+    var asserted_result = await instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr);
 
     // Assert
     Assert.False(asserted_result.IsSuccess);

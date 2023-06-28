@@ -1,12 +1,16 @@
+using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
+using Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
+using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Validator;
 
-public class CandleDateTimeValidator_Test
+public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribute_Test>
 {
 
-  public CandleDateTimeValidator_Test(ITestOutputHelper output)
+  public TimeFrameDateTimeAttribute_Test(ITestOutputHelper output) : base(output)
   {
 
   }
@@ -161,24 +165,32 @@ public class CandleDateTimeValidator_Test
     }
   }
 
+
   [Theory]
   [MemberData(nameof(Correct_case))]
   public void WHEN_correct_dt_for_timeframe_THEN_success(IEnumerable<DateTime> dts, TimeFrame.Enum tfEnum)
   {
-    // Array
-    var validator = new CandleDateTimeValidator(tfEnum);
-    foreach (var dt in dts)
-    {
-      // Act
-      var asserted_result = validator.Validate(dt.ToUniversalTime());
-      // Assert
-      //if (!asserted_result.IsValid)
-      //{
-      //  //break point
-      //  var i = 0;
-      //}
-      Assert.True(asserted_result.IsValid, $"{dt} invalid for {tfEnum}");
-    }
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var validationAttribute = new TimeFrameDateTimeAttribute();
+
+    #endregion
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var asserted_result = validationAttribute.IsValid(dts, tfEnum, out string assertedMessage);
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("DTs is valid", () => Assert.True(asserted_result));
+    logger.LogInformation($"Validation message: {assertedMessage}");
+    #endregion
   }
 
 
@@ -399,20 +411,63 @@ public class CandleDateTimeValidator_Test
   [MemberData(nameof(InCorrect_case))]
   public void WHEN_incorrect_dt_for_timeframe_THEN_invalid(IEnumerable<DateTime> dts, TimeFrame.Enum tfEnum)
   {
-    // Array
-    var validator = new CandleDateTimeValidator(tfEnum);
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var validationAttribute = new TimeFrameDateTimeAttribute();
+
+    #endregion
+
     foreach (var dt in dts)
     {
-      // Act
-      var asserted_result = validator.Validate(dt);
-      // Assert
-      //if (asserted_result.IsValid)
-      //{
-      //  //break point
-      //  var i = 0;
-      //  validator.Validate(dt);
-      //}
-      Assert.False(asserted_result.IsValid, $"{dt} valid for {tfEnum}");
+      #region Act
+      this.logger.LogDebug("Test ACT");
+      logger.LogInformation($"Test DateTime: {dt} for {tfEnum}");
+
+      var asserted_result = validationAttribute.IsValid(new DateTime[] { dt.ToUniversalTime() }, tfEnum, out string assertedMessage);
+
+      #endregion
+
+
+      #region Assert
+      this.logger.LogDebug("Test ASSERT");
+
+      Expect("DT is invalid", () => Assert.False(asserted_result));
+      logger.LogInformation($"Validation message: {assertedMessage}");
+      #endregion
     }
+  }
+
+  [Fact]
+  public void WHEN_one_of_dt_invalid_THEN_return_false_to_all_list()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+
+    var validationAttribute = new TimeFrameDateTimeAttribute();
+    var usedTf = TimeFrame.Enum.D1;
+    var usedDts = new[]{
+        new DateTime(2020,1,1),
+        new DateTime(2020,1,2),
+        new DateTime(2020,1,3,4,4,3),
+        new DateTime(2020,1,4),
+    };
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var asserted_result = validationAttribute.IsValid(usedDts, usedTf, out string assertedMessage);
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+
+    Expect("DTs is invalid", () => Assert.False(asserted_result));
+    logger.LogInformation($"Validation message: {assertedMessage}");
+    #endregion
   }
 }

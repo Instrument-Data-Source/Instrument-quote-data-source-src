@@ -19,17 +19,15 @@ public class Entity_ToDto_Test
   public void WHEN_give_entity_with_Instrument_property_THEN_get_correct_dto()
   {
     // Array
-    var using_entity = new Candle(
+    Candle using_entity = new Candle(
       new DateTime(2020, 1, 1).ToUniversalTime(),
       122,
       233,
       1,
       111,
       134,
-      (int)TimeFrame.Enum.D1,
-      new ent.Instrument("Instr1", "I1", 2, 2, 1));
-    //ar using_inst_arr = new[] { new ent.Instrument("Instr1", "I1", 2, 2, 1) };
-    //instrumentRep.Table.Returns(using_inst_arr.BuildMock());
+      new ent.Instrument("Instr1", "I1", 2, 2, 1),
+      TimeFrame.Enum.D1.ToEntity());
 
     // Act
     var asserted_dto = using_entity.ToDto();
@@ -41,27 +39,5 @@ public class Entity_ToDto_Test
     Assert.Equal((decimal)0.01, asserted_dto.Low);
     Assert.Equal((decimal)1.11, asserted_dto.Close);
     Assert.Equal((decimal)1.34, asserted_dto.Volume);
-  }
-
-  [Fact]
-  public async void WHEN_give_entity_with_Instrument_Id_THEN_get_exception()
-  {
-    // Array
-    var using_entity = new Candle(
-      new DateTime(2020, 1, 1).ToUniversalTime(),
-      122,
-      233,
-      010,
-      111,
-      134,
-      TimeFrame.Enum.D1,
-      0);
-    //var using_inst_arr = new[] { new ent.Instrument("Instr1", "I1", 2, 2, 1) };
-    //instrumentRep.Table.Returns(using_inst_arr.BuildMock());
-
-    // Act
-
-    // Assert
-    Assert.Throws<ArgumentException>(() => using_entity.ToDto());
   }
 }

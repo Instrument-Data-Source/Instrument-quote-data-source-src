@@ -23,7 +23,7 @@ public class GetAll_Test
   }
 
   [Fact]
-  public void WHEN_request_THEN_get_all()
+  public async void WHEN_request_THEN_get_all()
   {
     // Array
     var expected_dto = new[] {
@@ -34,7 +34,7 @@ public class GetAll_Test
     typeRep.Table.Returns(usingTypes.BuildMock());
 
     // Act
-    var asseerted_result = instrumentTypeSrv.GetAllAsync().Result;
+    var asseerted_result = await instrumentTypeSrv.GetAllAsync();
 
     // Assert
     Assert.True(asseerted_result.IsSuccess);

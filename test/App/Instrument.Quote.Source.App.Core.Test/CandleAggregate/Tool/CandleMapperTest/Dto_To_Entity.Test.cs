@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
+using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ public class Dto_ToEntity_Test
   }
 
   [Fact]
-  public async Task WHEN_give_dto_THEN_get_correct_entityAsync()
+  public void WHEN_give_dto_THEN_get_correct_entity()
   {
     // Array
     var using_dto = new CandleDto()
@@ -32,11 +33,11 @@ public class Dto_ToEntity_Test
       Close = (decimal)2.345,
       Volume = (decimal)9.2
     };
-    var using_inst_arr = new[] { new ent.Instrument("Instr1", "I1", 3, 2, 1) };
-    instrumentRep.Table.Returns(using_inst_arr.BuildMock());
+    var usedIstrument = new MockInstrument("Instr1", "I1", 3, 2, 1).InitId(1);
+
 
     // Act
-    var asserted_entity = await using_dto.ToEntityAsync(0, (int)TimeFrame.Enum.M, instrumentRep);
+    var asserted_entity = using_dto.ToEntity(usedIstrument, TimeFrame.Enum.M.ToEntity());
 
     // Assert
     Assert.Equal(using_dto.DateTime, asserted_entity.DateTime);
@@ -56,7 +57,7 @@ public class Dto_ToEntity_Test
   [InlineData(1.3452, 1.22)]
   [InlineData(1.345, 1.233)]
   [InlineData(1.3452, 1.233)]
-  public async Task WHEN_decimal_part_longer_than_allowed_THEN_exceptionAsync(decimal close, decimal volume)
+  public void WHEN_decimal_part_longer_than_allowed_THEN_exception(decimal close, decimal volume)
   {
     // Array
     var using_dto = new CandleDto()
@@ -68,12 +69,12 @@ public class Dto_ToEntity_Test
       Close = close,
       Volume = volume
     };
-    var using_inst_arr = new[] { new ent.Instrument("Instr1", "I1", 3, 2, 1) };
-    instrumentRep.Table.Returns(using_inst_arr.BuildMock());
+    var usedIstrument = new MockInstrument("Instr1", "I1", 3, 2, 1).InitId(1);
 
     // Act
 
     // Assert
-    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await using_dto.ToEntityAsync(0, 1, instrumentRep));
+    Assert.Throws<ArgumentOutOfRangeException>(() =>
+      using_dto.ToEntity(usedIstrument, TimeFrame.Enum.M.ToEntity()));
   }
 }

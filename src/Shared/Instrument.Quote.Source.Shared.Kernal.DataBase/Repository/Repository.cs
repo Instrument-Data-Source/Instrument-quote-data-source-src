@@ -83,5 +83,5 @@ public class Repository<TEntity, TDbContext> : IRepository<TEntity> where TEntit
     await SaveChangesAsync(cancellationToken);
   }
 
-  public IQueryable<TEntity> Table => dbContext.Set<TEntity>();
+  public IQueryable<TEntity> Table => dbContext.Set<TEntity>().AsQueryable();
 }

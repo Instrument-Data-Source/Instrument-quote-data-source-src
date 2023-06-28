@@ -21,18 +21,4 @@ public static class LoadedPeriodRepository
     return await loadedPeriodRep.Table.SingleOrDefaultAsync(e => e.TimeFrameId == timeFrameId && e.InstrumentId == instrumentId, cancellationToken);
 
   }
-
-  public static async Task<LoadedPeriod> LoadCandles(IRepository<LoadedPeriod> loadedPeriodRep, IRepository<Candle> candleRep,
-                                  int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<Candle> candles)
-  {
-    var loadedPer = await loadedPeriodRep.TryGetForAsync(instrumentId, timeFrameId);
-    if (loadedPer == null)
-    {
-      //logger.LogInformation("Add new period");
-      var newPeriodEnt = new LoadedPeriod(instrumentId, timeFrameId, from, untill);
-      await loadedPeriodRep.AddAsync(newPeriodEnt);
-      await candleRep.AddRangeAsync(candles);
-    }
-    throw new NotImplementedException();
-  }
 }

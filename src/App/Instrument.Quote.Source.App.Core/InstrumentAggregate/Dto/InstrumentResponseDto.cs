@@ -12,7 +12,7 @@ public class InstrumentResponseDto : IEquatable<InstrumentResponseDto>
     Id = entity.Id;
     Name = entity.Name;
     Code = entity.Code;
-    Type = entity.InstrumentType.Name;
+    TypeId = entity.InstrumentTypeId;
     PriceDecimalLen = entity.PriceDecimalLen;
     VolumeDecimalLen = entity.VolumeDecimalLen;
   }
@@ -20,7 +20,7 @@ public class InstrumentResponseDto : IEquatable<InstrumentResponseDto>
   public int Id { get; set; }
   public string Name { get; set; }
   public string Code { get; set; }
-  public string Type { get; set; }
+  public int TypeId { get; set; }
   public byte PriceDecimalLen { get; set; }
   public byte VolumeDecimalLen { get; set; }
 
@@ -31,7 +31,7 @@ public class InstrumentResponseDto : IEquatable<InstrumentResponseDto>
     return Id == other.Id &&
            Name == other.Name &&
            Code == other.Code &&
-           Type == other.Type &&
+           TypeId == other.TypeId &&
            PriceDecimalLen == other.PriceDecimalLen &&
            VolumeDecimalLen == other.VolumeDecimalLen;
   }

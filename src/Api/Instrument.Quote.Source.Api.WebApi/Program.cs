@@ -39,6 +39,15 @@ builder.Services.AddSwaggerGen(options =>
   var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
   options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+builder.Services.AddCors(options =>
+    {
+      options.AddDefaultPolicy(builder =>
+      {
+        builder.AllowAnyOrigin()
+                 .AllowAnyMethod()
+                 .AllowAnyHeader();
+      });
+    });
 
 var app = builder.Build();
 
@@ -52,7 +61,7 @@ app.UseSwaggerUI(options =>
   options.RoutePrefix = string.Empty;
 });
 //}
-
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

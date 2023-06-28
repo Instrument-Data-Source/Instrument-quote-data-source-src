@@ -21,16 +21,16 @@ public class GetInstrumentIdByCode_Test
   }
 
   [Fact]
-  public void WHEN_request_correct_code_THEN_get_dto()
+  public async void WHEN_request_correct_code_THEN_get_dto()
   {
     // Array
     var instument1 = new ent.Instrument("Inst1", "I1", 2, 3, new ent.InstrumentType(1));
     var instument2 = new ent.Instrument("Inst2", "I2", 1, 2, new ent.InstrumentType(2));
     InstrumentRep.Table.Returns(new[] { instument1, instument2 }.BuildMock());
 
-    var expected_dto = new InstrumentResponseDto() { Id = 0, Name = "Inst1", Code = "I1", Type = "Currency", PriceDecimalLen = 2, VolumeDecimalLen = 3 };
+    var expected_dto = new InstrumentResponseDto() { Id = 0, Name = "Inst1", Code = "I1", TypeId = 1, PriceDecimalLen = 2, VolumeDecimalLen = 3 };
     // Act
-    var asseerted_result = instrumentService.GetByAsync("I1").Result;
+    var asseerted_result = await instrumentService.GetByAsync("I1");
 
     // Assert
     Assert.True(asseerted_result.IsSuccess);
@@ -38,7 +38,7 @@ public class GetInstrumentIdByCode_Test
   }
 
   [Fact]
-  public void WHEN_request_incorrect_code_THEN_get_null()
+  public async void WHEN_request_incorrect_code_THEN_get_null()
   {
     // Array
     var instument1 = new ent.Instrument("Inst1", "I1", 2, 3, 1);
@@ -46,7 +46,7 @@ public class GetInstrumentIdByCode_Test
     InstrumentRep.Table.Returns(new[] { instument1, instument2 }.BuildMock());
 
     // Act
-    var asseerted_result = instrumentService.GetByAsync("I3").Result;
+    var asseerted_result = await instrumentService.GetByAsync("I3");
 
     // Assert
     Assert.False(asseerted_result.IsSuccess);

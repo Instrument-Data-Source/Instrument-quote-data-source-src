@@ -16,37 +16,65 @@ public class CandleSrv : ICandleSrv
   private readonly IRepository<Candle> candleRep;
   private readonly IRepository<LoadedPeriod> loadedPeriodRep;
   private readonly IReadRepository<ent.Instrument> instrumentRep;
+  private readonly IReadRepository<TimeFrame> timeframeRep;
   private readonly ILogger<CandleSrv> logger;
 
   public CandleSrv(IRepository<Candle> repository,
                     IRepository<LoadedPeriod> loadedPeriodRep,
                     IReadRepository<ent.Instrument> instrumentRep,
+                    IReadRepository<TimeFrame> timeframeRep,
                     ILogger<CandleSrv>? logger = null)
   {
     this.candleRep = repository;
     this.loadedPeriodRep = loadedPeriodRep;
     this.instrumentRep = instrumentRep;
+    this.timeframeRep = timeframeRep;
     this.logger = logger ?? NullLogger<CandleSrv>.Instance;
   }
 
-  public async Task<Result<int>> AddAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, IEnumerable<CandleDto> candles, CancellationToken cancellationToken = default)
+  public async Task<Result<int>> AddAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default)
   {
-    logger.LogDebug("Prepare data to adding");
-    var newPeriodEnt = await LoadedPeriod.BuildNewPeriodAsync(instrumentRep, instrumentId, timeFrameId, from, untill, candles, cancellationToken);
-    var loadedPerEnt = await loadedPeriodRep.TryGetForAsync(instrumentId, timeFrameId, cancellationToken);
-    if (loadedPerEnt == null)
+    logger.LogDebug("Get using entity from DB by ID");
+    var instrument = await instrumentRep.GetByIdAsync(addCandlesDto.instrumentId, cancellationToken);
+    var timeFrame = await timeframeRep.GetByIdAsync(addCandlesDto.timeFrameId, cancellationToken);
+
+    logger.LogDebug("Convert candles from DTO to new Candle Entity");
+    var candles = addCandlesDto.Candles.Select(e => e.ToEntity(instrument, timeFrame));
+
+    logger.LogDebug("Convert create new LoadedPeriod entity");
+    var newLoadedPer = new LoadedPeriod(addCandlesDto.From, addCandlesDto.Untill, instrument, timeFrame, candles);
+
+    logger.LogDebug("Searching exist period");
+    var existLoadedPer = await loadedPeriodRep.TryGetForAsync(instrument.Id, timeFrame.Id, cancellationToken);
+    if (existLoadedPer == null)
     {
-      logger.LogInformation("Add new period");
-      await loadedPeriodRep.AddAsync(newPeriodEnt, cancellationToken: cancellationToken);
+      logger.LogDebug("Add first period");
+      await loadedPeriodRep.AddAsync(newLoadedPer, cancellationToken: cancellationToken);
     }
     else
     {
-      loadedPerEnt.Extend(newPeriodEnt);
+      existLoadedPer.Extend(newLoadedPer);
       await loadedPeriodRep.SaveChangesAsync(cancellationToken);
     }
-    return Result.Success(candles.Count());
-  }
 
+    return Result.Success(newLoadedPer.Candles.Count());
+  }
+  /*
+   private async Task<(LoadedPeriod? existPeriod, LoadedPeriod newPeriod)> convertDtoAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default)
+   {
+
+     logger.LogInformation("Searching entities by Id");
+     var instrument = await instrumentRep.TryGetByIdAsync(addCandlesDto.instrumentId, cancellationToken);
+     var timeFrame = await timeframeRep.TryGetByIdAsync(addCandlesDto.timeFrameId, cancellationToken);
+
+     var newPeriodEnt = LoadedPeriod.BuildNewPeriod(instrument, timeFrame, addCandlesDto.From, addCandlesDto.Untill, addCandlesDto.Candles);
+
+     var loadedPerEnt = await loadedPeriodRep.TryGetForAsync(addCandlesDto.instrumentId, addCandlesDto.timeFrameId, cancellationToken);
+     return (loadedPerEnt, newPeriodEnt);
+
+
+   }
+ */
   public async Task<IEnumerable<CandleDto>> GetAsync(int instrumentId, int timeFrameId, DateTime? from = null, DateTime? untill = null)
   {
     var loadedPer = await loadedPeriodRep.GetForAsync(instrumentId, timeFrameId);
