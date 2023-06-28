@@ -6,10 +6,17 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Config;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Config;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ent = Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
 namespace Instrument.Quote.Source.Configuration.DataBase;
 public class SrvDbContext : DbContext
 {
+  private readonly ILogger<SrvDbContext>? logger = null;
+
+  public SrvDbContext(DbContextOptions options, ILogger<SrvDbContext> logger) : this(options)
+  {
+    this.logger = logger;
+  }
   public SrvDbContext(DbContextOptions options) : base(options)
   {
 
@@ -26,41 +33,42 @@ public class SrvDbContext : DbContext
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
-    ManualyUseConfig(modelBuilder);
+    AutoUseConfig(modelBuilder);
+    //ManualyUseConfig(modelBuilder);
   }
 
   private void AutoUseConfig(ModelBuilder modelBuilder)
   {
-    Console.WriteLine("Auto Config entity");
+    logger?.LogInformation("Auto Config entity");
     IEnumerable<Assembly> usingAssemble = getUsingAssemblyList();
 
     ApplyConfigFromAssemlies(modelBuilder, usingAssemble);
-    Console.WriteLine("Auto Config entity - done");
+    logger?.LogInformation("Auto Config entity - done");
   }
 
-  private static void ApplyConfigFromAssemlies(ModelBuilder modelBuilder, IEnumerable<Assembly> usingAssemble)
+  private void ApplyConfigFromAssemlies(ModelBuilder modelBuilder, IEnumerable<Assembly> usingAssemble)
   {
-    Console.WriteLine("Apply config in assembly");
+    logger?.LogInformation("Apply config in assembly");
     foreach (var assembly in usingAssemble)
     {
       modelBuilder.ApplyConfigurationsFromAssembly(assembly);
     }
-    Console.WriteLine("Apply config in assembly - done");
+    logger?.LogInformation("Apply config in assembly - done");
   }
 
   private void ManualyUseConfig(ModelBuilder modelBuilder)
   {
-    Console.WriteLine("Manualy config entity");
+    logger?.LogInformation("Manualy config entity");
     new InstrumentConfig().Configure(modelBuilder.Entity<ent.Instrument>());
     new InstrumentTypeConfig().Configure(modelBuilder.Entity<ent.InstrumentType>());
     new TimeFrameConfig().Configure(modelBuilder.Entity<TimeFrame>());
     new CandleConfig().Configure(modelBuilder.Entity<Candle>());
     new LoadedPeriodConfig().Configure(modelBuilder.Entity<LoadedPeriod>());
-    Console.WriteLine("Manualy config entity - done");
+    logger?.LogInformation("Manualy config entity - done");
   }
   private IEnumerable<Assembly> getUsingAssemblyList()
   {
-    Console.WriteLine("Search assamblies");
+    logger?.LogInformation("Search assamblies");
     HashSet<Assembly> usingAssemble = new HashSet<Assembly>();
     foreach (var propInfo in this.GetType().GetProperties())
     {
@@ -75,7 +83,7 @@ public class SrvDbContext : DbContext
         }
       }
     }
-    Console.WriteLine("Search assamblies - done");
+    logger?.LogInformation("Search assamblies - done");
     return usingAssemble;
   }
 }

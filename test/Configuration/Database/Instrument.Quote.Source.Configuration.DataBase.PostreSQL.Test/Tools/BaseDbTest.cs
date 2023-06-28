@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit.Abstractions;
 
-namespace Instrument.Quote.Source.App.Test.Tools;
+namespace Instrument.Quote.Source.Configuration.DataBase.PostreSQL.Test.Tools;
 
 public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTest<T>
 {

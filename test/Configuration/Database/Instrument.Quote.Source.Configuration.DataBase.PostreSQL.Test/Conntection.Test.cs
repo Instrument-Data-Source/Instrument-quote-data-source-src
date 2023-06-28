@@ -1,8 +1,7 @@
 namespace Instrument.Quote.Source.Configuration.DataBase.PostreSQL.Test;
 
-using System.Net;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
-using Instrument.Quote.Source.App.Test.Tools;
+using Instrument.Quote.Source.Configuration.DataBase.PostreSQL.Test.Tools;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

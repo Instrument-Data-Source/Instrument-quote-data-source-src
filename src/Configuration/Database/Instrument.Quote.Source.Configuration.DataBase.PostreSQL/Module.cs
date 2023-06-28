@@ -13,6 +13,8 @@ public static class Module
 {
   public static IServiceCollection Register(this IServiceCollection sc)
   {
+    using var sp = sc.BuildServiceProvider();
+    var logger = sp.GetService<ILogger>();
     sc.AddDbContext<SrvDbContext>((provider, builder) =>
       {
         var config = provider.GetService<IConfiguration>();
@@ -34,13 +36,13 @@ public static class Module
         if (dbSuffix != null)
           _connectionStringBuilder["Database"] += $"_{dbSuffix}";
 
-        Console.WriteLine("PG db - " + _connectionStringBuilder["Database"]);
+        logger?.LogInformation("PG db - " + _connectionStringBuilder["Database"]);
         builder.UseNpgsql(_connectionStringBuilder.ConnectionString);
       });
 
-    Console.WriteLine("Migration - begin");
+    logger?.LogInformation("Migration - begin");
     sc.BuildServiceProvider().GetService<SrvDbContext>()!.Database.Migrate();
-    Console.WriteLine("Migration - done");
+    logger?.LogInformation("Migration - done");
 
     sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
     sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
@@ -49,7 +51,8 @@ public static class Module
 
   public static void DeleteDb(this IServiceProvider sp)
   {
-    Console.WriteLine("Clearup DB");
+    var logger = sp.GetService<ILogger>();
+    logger?.LogWarning("Clearup DB");
     var environment = sp.GetService<IHostEnvironment>();
     if (environment == null)
       sp.GetRequiredService<ILogger>().LogWarning("Host environment is not defined, if it is prod FIX THIS");
@@ -57,6 +60,6 @@ public static class Module
       throw new ApplicationException("Delete Db is not allowed to use in production environment");
     using var dbContext = sp.GetRequiredService<SrvDbContext>();
     var result = dbContext.Database.EnsureDeleted();
-    Console.WriteLine("DB clearuped. Result: " + result);
+    logger?.LogWarning("DB clearuped. Result: " + result);
   }
 }

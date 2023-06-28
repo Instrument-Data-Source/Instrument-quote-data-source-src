@@ -23,7 +23,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
   public async Task WHEN_get_request_all_timeframes_THEN_get_list_of_them()
   {
     #region Array
-    Console.WriteLine("Test ARRAY");
+    logger.LogInformation("Test ARRAY");
 
 
 
@@ -31,7 +31,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
 
 
     #region Act
-    Console.WriteLine("Test ACT");
+    logger.LogInformation("Test ACT");
     Result<IEnumerable<TimeFrameResponseDto>> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
     {
@@ -44,7 +44,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
 
 
     #region Assert
-    Console.WriteLine("Test ASSERT");
+    logger.LogInformation("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     Expect("Result contain timeframe", () => Assert.Equal(TimeFrame.ToList().Count(), assertedResult.Value.Count()));
@@ -75,14 +75,14 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
   public async void WHEN_request_by_exist_id_THEN_get_timeframe()
   {
     #region Array
-    Console.WriteLine("Test ARRAY");
+    logger.LogInformation("Test ARRAY");
     var expectedData = TimeFrame.Enum.D1.ToEntity();
 
     #endregion
 
 
     #region Act
-    Console.WriteLine("Test ACT");
+    logger.LogInformation("Test ACT");
     Result<TimeFrameResponseDto> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
     {
@@ -95,7 +95,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
 
 
     #region Assert
-    Console.WriteLine("Test ASSERT");
+    logger.LogInformation("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     ExpectGroup("Return correct DTO", () =>
