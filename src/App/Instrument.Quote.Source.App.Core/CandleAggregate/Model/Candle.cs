@@ -104,7 +104,7 @@ public partial class Candle : EntityBaseExt
   {
     if (Instrument == null)
     {
-      throw new ArgumentException("To get price, you must load Instrument navigation property", nameof(Instrument));
+      throw new ApplicationException($"To get price, you must load {nameof(Instrument)} navigation property");
     }
     return CalcDecimal(value_full, Instrument.PriceDecimalLen);
   }
@@ -113,7 +113,7 @@ public partial class Candle : EntityBaseExt
   {
     if (Instrument == null)
     {
-      throw new ArgumentException("To get price, you must load Instrument navigation property", nameof(Instrument));
+      throw new ApplicationException($"To get price, you must load {nameof(Instrument)} navigation property");
     }
     return CalcDecimal(value_full, Instrument.VolumeDecimalLen);
   }
