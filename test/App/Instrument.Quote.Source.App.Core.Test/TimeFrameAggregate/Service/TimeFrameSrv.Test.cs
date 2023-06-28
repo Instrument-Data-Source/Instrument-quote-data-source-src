@@ -24,14 +24,14 @@ public class TimeFrameSrv_Test
 
 
   [Fact]
-  public void WHEN_request_all_THEN_get_all_from_repository()
+  public async void WHEN_request_all_THEN_get_all_from_repository()
   {
     // Array
     var expected_arr = new[] { new TimeFrame(TimeFrame.Enum.M), new TimeFrame(TimeFrame.Enum.W1) };
     tfRep.Table.Returns(expected_arr.BuildMock());
 
     // Act
-    var asserted_res = timeFrameSrv.GetAllAsync().Result;
+    var asserted_res = await timeFrameSrv.GetAllAsync();
 
     // Assert
     Assert.True(asserted_res.IsSuccess);

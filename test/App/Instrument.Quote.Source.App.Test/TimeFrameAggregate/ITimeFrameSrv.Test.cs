@@ -20,7 +20,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
   }
 
   [Fact]
-  public void WHEN_get_request_all_timeframes_THEN_get_list_of_them()
+  public async Task WHEN_get_request_all_timeframes_THEN_get_list_of_them()
   {
     #region Array
     Console.WriteLine("Test ARRAY");
@@ -37,7 +37,7 @@ public class ITimeFrameSrv_GetAll_Test : BaseDbTest<ITimeFrameSrv_GetAll_Test>
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
-      assertedResult = usedTimeFrameSrv.GetAllAsync().Result;
+      assertedResult = await usedTimeFrameSrv.GetAllAsync();
     }
 
     #endregion
@@ -72,7 +72,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
   }
 
   [Fact]
-  public void WHEN_request_by_exist_id_THEN_get_timeframe()
+  public async void WHEN_request_by_exist_id_THEN_get_timeframe()
   {
     #region Array
     Console.WriteLine("Test ARRAY");
@@ -88,7 +88,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
-      assertedResult = usedTimeFrameSrv.GetByIdAsync(expectedData.Id).Result;
+      assertedResult = await usedTimeFrameSrv.GetByIdAsync(expectedData.Id);
     }
 
     #endregion
@@ -109,25 +109,25 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest<ITimeFrameSrv_GetById_Test>
   }
 
   [Fact]
-    public void WHEN_request_incorrect_id_THEN_return_not_found_result()
+    public async void WHEN_request_incorrect_id_THEN_return_not_found_result()
     {
       #region Array
       this.logger.LogDebug("Test ARRAY");
 
 
 
-      #endregion
+    #endregion
 
 
-      #region Act
-      this.logger.LogDebug("Test ACT");
+    #region Act
+    this.logger.LogDebug("Test ACT");
 
-      Result<TimeFrameResponseDto> assertedResult;
+    Result<TimeFrameResponseDto> assertedResult;
       using (var act_scope = this.global_sp.CreateScope())
       {
         var sp = act_scope.ServiceProvider;
         var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
-        assertedResult = usedTimeFrameSrv.GetByIdAsync(9989898).Result;
+      assertedResult = await usedTimeFrameSrv.GetByIdAsync(9989898);
       }
 
       #endregion
@@ -153,7 +153,7 @@ public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_T
   }
 
   [Fact]
-  public void WHEN_request_by_exist_Code_THEN_get_timeframe()
+  public async void WHEN_request_by_exist_Code_THEN_get_timeframe()
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -169,7 +169,7 @@ public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_T
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
-      assertedResult = usedTimeFrameSrv.GetByCodeAsync(expectedData.Name).Result;
+      assertedResult = await usedTimeFrameSrv.GetByCodeAsync(expectedData.Name);
     }
 
     #endregion
@@ -190,7 +190,7 @@ public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_T
   }
 
   [Fact]
-  public void WHEN_request_incorrect_code_THEN_return_not_found_result()
+  public async void WHEN_request_incorrect_code_THEN_return_not_found_result()
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -208,7 +208,7 @@ public class ITimeFrameSrv_GetByCode_Test : BaseDbTest<ITimeFrameSrv_GetByCode_T
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
-      assertedResult = usedTimeFrameSrv.GetByCodeAsync("9989898").Result;
+      assertedResult = await usedTimeFrameSrv.GetByCodeAsync("9989898");
     }
 
     #endregion

@@ -119,7 +119,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
   }
 
   [Fact]
-  public void WHEN_add_addition_period_THEN_preriod_joined()
+  public async void WHEN_add_addition_period_THEN_preriod_joined()
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -144,7 +144,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = srv.AddAsync(usingAddCandelDto).Result;
+    var assertedResult = await srv.AddAsync(usingAddCandelDto);
 
     #endregion
 
@@ -203,7 +203,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
       #region Act
       this.logger.LogDebug("Test ACT");
 
-      var assertedResult = srv.AddAsync(usingAddCandelDto).Result;
+      var assertedResult = await srv.AddAsync(usingAddCandelDto);
 
       #endregion
 
@@ -256,7 +256,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
       #region Act
       this.logger.LogDebug("Test ACT");
 
-      var assertedResult = srv.AddAsync(usingAddCandelDto).Result;
+      var assertedResult = await srv.AddAsync(usingAddCandelDto);
 
       #endregion
 

@@ -22,23 +22,24 @@ public static class Module
         var dbSuffix = config["ConnectionStrings:DbSuffix"];
         DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
 
-        if (environment != null && !environment.IsProduction())
-          _connectionStringBuilder["Database"] += $"_{environment.EnvironmentName}";
+        if (environment != null)
+        {
+          if (environment.IsDevelopment() || environment.IsEnvironment("Test"))
+          {
+            builder.EnableSensitiveDataLogging();
+            builder.EnableDetailedErrors();
+          }
+        }
 
         if (dbSuffix != null)
           _connectionStringBuilder["Database"] += $"_{dbSuffix}";
 
         Console.WriteLine("PG db - " + _connectionStringBuilder["Database"]);
         builder.UseNpgsql(_connectionStringBuilder.ConnectionString);
-
-        //if (environment.IsDevelopment())
-        //  builder.EnableSensitiveDataLogging();
-
-        //builder.EnableDetailedErrors();
       });
 
     Console.WriteLine("Migration - begin");
-    sc.BuildServiceProvider().GetService<SrvDbContext>().Database.Migrate();
+    sc.BuildServiceProvider().GetService<SrvDbContext>()!.Database.Migrate();
     Console.WriteLine("Migration - done");
 
     sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));

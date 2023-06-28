@@ -1,4 +1,5 @@
 using Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
+using Instrument.Quote.Source.Shared.Test.BaseClass;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ using NSubstitute;
 using Xunit.Abstractions;
 
 namespace Instrument.Quote.Source.App.Test.Tools;
+
 public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTest<T>
 {
   protected IServiceProvider global_sp;
@@ -33,8 +35,12 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
     Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
     Console.WriteLine("Db Suffix: " + dbSuffix);
   }
+  public BaseDbTest(ITestOutputHelper output, Func<IServiceCollection, IServiceCollection> serviceRegistration) :
+    this(output, (sc) => { serviceRegistration(sc);})
+  {
 
-  public BaseDbTest(ITestOutputHelper output) : base(output)
+  }
+  public BaseDbTest(ITestOutputHelper output, Action<IServiceCollection> serviceRegistration) : base(output)
   {
     var host = new HostBuilder()
           .ConfigureHostConfiguration(config => setupConfigBuider(typeof(T).Name, config))
@@ -51,7 +57,7 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
                     builder.AddXunit(output); // Add the xUnit logger
                   });
             services.AddSingleton<ILogger>(sp => output.BuildLogger());
-            App.Application.InitApp(services);
+            serviceRegistration(services);
           })
           .Build();
 

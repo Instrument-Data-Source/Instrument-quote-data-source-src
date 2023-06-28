@@ -21,7 +21,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
   }
 
   [Fact]
-  public void WHEN_request_create_new_instrument_THEN_instrument_created()
+  public async void WHEN_request_create_new_instrument_THEN_instrument_created()
   {
     #region Array
     Console.WriteLine("Test ARRAY");
@@ -46,7 +46,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
     {
       var sp = act_scope.ServiceProvider;
       var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();
-      assertedResult = usedInstrumentSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
+      assertedResult = await usedInstrumentSrv.CreateAsync(usingNewInstrumentRequestDto);
     }
 
     #endregion
@@ -66,13 +66,13 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
       Expect("ID > 0", () => Assert.True(assertedResult.Value.Id > 0));
     });
 
-    ExpectGroup("Instrument exist in repository", () =>
+    ExpectGroup("Instrument exist in repository", async () =>
     {
       using (var assert_scope = this.global_sp.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();
-        var assertedEnt = instrumentRep.GetByIdAsync(assertedResult.Value.Id).Result;
+        var assertedEnt = await instrumentRep.GetByIdAsync(assertedResult.Value.Id);
         Expect("Entity exist", () => Assert.NotNull(assertedEnt));
         ExpectGroup("Entity has correct values", () =>
         {
@@ -88,7 +88,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
   }
 
   [Fact]
-  public void WHEN_give_wrong_record_THEN_get_result_with_invalid_status()
+  public async void WHEN_give_wrong_record_THEN_get_result_with_invalid_status()
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -113,7 +113,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-      assertedResult = usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
+      assertedResult = await usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto);
     }
 
     #endregion
@@ -140,7 +140,7 @@ public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
   }
 
   [Fact]
-  public void WHEN_request_remove_THEN_instrument_removed()
+  public async void WHEN_request_remove_THEN_instrument_removed()
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -158,7 +158,7 @@ public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-      assertedResult = usedTimeFrameSrv.RemoveAsync(usingId).Result;
+      assertedResult = await usedTimeFrameSrv.RemoveAsync(usingId);
     }
 
     #endregion
@@ -168,13 +168,13 @@ public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
     this.logger.LogDebug("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
-    ExpectGroup("Instrument does'n exist in repository", () =>
+    ExpectGroup("Instrument does'n exist in repository", async () =>
     {
       using (var assert_scope = this.global_sp.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();
-        var assertedEnt = instrumentRep.TryGetByIdAsync(usingId).Result;
+        var assertedEnt = await instrumentRep.TryGetByIdAsync(usingId);
         Expect("Entity doesn't exist", () => Assert.Null(assertedEnt));
       }
     });

@@ -47,6 +47,6 @@ public static class IReadRepositoryTool
   /// <returns></returns>
   public static bool ContainId<TEntity>(this IReadRepository<TEntity> readRep, int id) where TEntity : EntityBase
   {
-    return readRep.ContainIdAsync(id).Result;
+    return Task.Run(() => readRep.ContainIdAsync(id)).GetAwaiter().GetResult();
   }
 }

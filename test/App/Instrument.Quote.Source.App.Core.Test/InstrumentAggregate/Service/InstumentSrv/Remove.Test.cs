@@ -21,7 +21,7 @@ public class Remove_Test
   }
 
   [Fact]
-  public void WHEN_remove_exist_instrument_THEN_success_result()
+  public async void WHEN_remove_exist_instrument_THEN_success_result()
   {
     // Array
     var instument1 = new ent.Instrument("Inst1", "I1", 2, 3, new ent.InstrumentType(1));
@@ -30,14 +30,14 @@ public class Remove_Test
         .Returns(Task.FromResult(true));
 
     // Act
-    var asserted_result = instrumentService.RemoveAsync(0).Result;
+    var asserted_result = await instrumentService.RemoveAsync(0);
 
     // Assert
     Assert.True(asserted_result.IsSuccess);
   }
 
   [Fact]
-  public void WHEN_remove_notexist_instrument_THEN_success_result()
+  public async void WHEN_remove_notexist_instrument_THEN_success_result()
   {
     // Array
     var instument1 = new ent.Instrument("Inst1", "I1", 2, 3, new ent.InstrumentType(1));
@@ -46,7 +46,7 @@ public class Remove_Test
         .Returns(Task.FromResult(true));
 
     // Act
-    var asserted_result = instrumentService.RemoveAsync(1).Result;
+    var asserted_result = await instrumentService.RemoveAsync(1);
 
     // Assert
     Assert.False(asserted_result.IsSuccess);

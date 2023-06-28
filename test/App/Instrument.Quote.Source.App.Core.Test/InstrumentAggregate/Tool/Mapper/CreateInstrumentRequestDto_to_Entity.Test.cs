@@ -33,7 +33,7 @@ public class ToEntity_Test
       instrumentTypeRep.Table.Returns(using_IntstrumentTypes.BuildMock());
 
       // Act
-      var asserted_ent = using_Dto.ToEntityAsync(instrumentTypeRep).Result;
+      var asserted_ent = await using_Dto.ToEntityAsync(instrumentTypeRep);
 
       // Assert
       Assert.Equal(using_Dto.Name, asserted_ent.Name);
@@ -44,7 +44,7 @@ public class ToEntity_Test
     }*/
 
   [Fact]
-  public void WHEN_give_entity_with_Type_Id_THEN_convert_equal_entity()
+  public async void WHEN_give_entity_with_Type_Id_THEN_convert_equal_entity()
   {
     // Array
     var using_Dto = new NewInstrumentRequestDto()
@@ -59,7 +59,7 @@ public class ToEntity_Test
     instrumentTypeRep.Table.Returns(using_IntstrumentTypes.BuildMock());
 
     // Act
-    var asserted_ent = using_Dto.ToEntityAsync(instrumentTypeRep).Result;
+    var asserted_ent = await using_Dto.ToEntityAsync(instrumentTypeRep);
 
     // Assert
     Assert.Equal(using_Dto.Name, asserted_ent.Name);
@@ -86,7 +86,7 @@ public class ToEntity_Test
     instrumentTypeRep.Table.Returns(using_IntstrumentTypes.BuildMock());
 
     // Act
-    var asserted_ent = using_Dto.ToEntityAsync(instrumentTypeRep).Result;
+    var asserted_ent = await using_Dto.ToEntityAsync(instrumentTypeRep);
 
     // Assert
     Assert.Equal(using_Dto.Name, asserted_ent.Name);

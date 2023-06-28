@@ -29,7 +29,7 @@ public class MockInstrumentFactory
       VolumeDecimalLen = 3
     };
     var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-    var result = usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto).Result;
+    var result = Task.Run(() => usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto)).GetAwaiter().GetResult();
 
     if (!result.IsSuccess)
       throw new ApplicationException("Unexpected fail on init data");

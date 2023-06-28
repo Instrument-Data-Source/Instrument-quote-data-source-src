@@ -25,7 +25,7 @@ public class GetByAsync_Test
   }
 
   [Fact]
-  public void WHEN_request_correct_id_THEN_return_correct_data()
+  public async void WHEN_request_correct_id_THEN_return_correct_data()
   {
     // Array
     var expected_dto = new InstrumentTypeResponseDto()
@@ -35,7 +35,7 @@ public class GetByAsync_Test
     };
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync(2).Result;
+    var asserted_result = await instrumentTypeSrv.GetByAsync(2);
 
     // Assert
     Assert.True(asserted_result.IsSuccess);
@@ -43,12 +43,12 @@ public class GetByAsync_Test
   }
 
   [Fact]
-  public void WHEN_request_incorrect_id_THEN_return_correct_data()
+  public async void WHEN_request_incorrect_id_THEN_return_correct_data()
   {
     // Array
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync(99).Result;
+    var asserted_result = await instrumentTypeSrv.GetByAsync(99);
 
     // Assert
     Assert.False(asserted_result.IsSuccess);
@@ -59,7 +59,7 @@ public class GetByAsync_Test
   [InlineData("Stock")]
   [InlineData("stock")]
   [InlineData("STOCK")]
-  public void WHEN_request_correct_Name_THEN_return_correct_data(string using_name)
+  public async void WHEN_request_correct_Name_THEN_return_correct_data(string using_name)
   {
     // Array
     var expected_dto = new InstrumentTypeResponseDto()
@@ -69,7 +69,7 @@ public class GetByAsync_Test
     };
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync(using_name).Result;
+    var asserted_result = await instrumentTypeSrv.GetByAsync(using_name);
 
     // Assert
     Assert.True(asserted_result.IsSuccess);
@@ -77,12 +77,12 @@ public class GetByAsync_Test
   }
 
   [Fact]
-  public void WHEN_request_incorrect_Name_THEN_return_correct_data()
+  public async void WHEN_request_incorrect_Name_THEN_return_correct_data()
   {
     // Array
 
     // Act
-    var asserted_result = instrumentTypeSrv.GetByAsync("mock").Result;
+    var asserted_result = await instrumentTypeSrv.GetByAsync("mock");
 
     // Assert
     Assert.False(asserted_result.IsSuccess);

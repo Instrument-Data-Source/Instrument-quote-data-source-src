@@ -23,7 +23,7 @@ public class AddInstrument_Test
   }
 
   [Fact]
-  public void WHEN_give_valid_type_THEN_get_success_value()
+  public async void WHEN_give_valid_type_THEN_get_success_value()
   {
     // Array
     NewInstrumentRequestDto requestDto = new NewInstrumentRequestDto()
@@ -36,14 +36,14 @@ public class AddInstrument_Test
     InstrumentTypeRep.Table.Returns(new List<ent.InstrumentType>() { new InstrumentType((InstrumentType.Enum)1) }.BuildMock());
 
     // Act
-    var asserted_dto = instrumentService.CreateAsync(requestDto).Result;
+    var asserted_dto = await instrumentService.CreateAsync(requestDto);
 
     // Assert
     Assert.NotNull(asserted_dto);
   }
 
   [Fact]
-  public void WHEN_give_valid_data_THEN_add_to_repository_method_will_be_called()
+  public async void WHEN_give_valid_data_THEN_add_to_repository_method_will_be_called()
   {
     // Array
     NewInstrumentRequestDto requestDto = new NewInstrumentRequestDto()
@@ -56,7 +56,7 @@ public class AddInstrument_Test
     InstrumentTypeRep.Table.Returns(new List<ent.InstrumentType>() { new InstrumentType((InstrumentType.Enum)1) }.BuildMock());
 
     // Act
-    var asserted_dto = instrumentService.CreateAsync(requestDto).Result;
+    var asserted_dto = await instrumentService.CreateAsync(requestDto);
 
     // Assert
     InstrumentRep.Received().AddAsync(Arg.Any<ent.Instrument>());

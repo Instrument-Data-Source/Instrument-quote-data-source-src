@@ -30,13 +30,13 @@ public class GetAll_Test
   }
 
   [Fact]
-  public void WHEN_call_THEN_get_data_from_repository()
+  public async void WHEN_call_THEN_get_data_from_repository()
   {
     // Array
     var expected_arr = mockCandleFactory.CreateCandles(5, initId: true);
     candleRep.Table.Returns(expected_arr.BuildMock());
     // Act
-    var asserted_res = srv.GetAllAsync().Result;
+    var asserted_res = await srv.GetAllAsync();
 
     // Assert
     Assert.Equal(expected_arr.Count(), asserted_res.Count());

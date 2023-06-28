@@ -30,7 +30,7 @@ public class Get_Test
   }
 
   [Fact]
-  public void WHEN_request_existed_data_THEN_get_correct_data()
+  public async void WHEN_request_existed_data_THEN_get_correct_data()
   {
     // Array
     var usedPeriod = mockPeriodFactory.CreatePeriod(new DateTime(2000, 1, 1), new DateTime(2000, 1, 15), initId: true);
@@ -42,7 +42,7 @@ public class Get_Test
     var till_dt = new DateTime(2000, 1, 8).ToUniversalTime();
 
     // Act
-    var asserted_res = srv.GetAsync(mockInstrument.Id, mockTimeFrame.Id, from_dt, till_dt).Result;
+    var asserted_res = await srv.GetAsync(mockInstrument.Id, mockTimeFrame.Id, from_dt, till_dt);
 
     // Assert
     Assert.Equal(5, asserted_res.Count());

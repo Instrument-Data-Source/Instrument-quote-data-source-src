@@ -19,9 +19,9 @@ public class SrvDbContext : DbContext
   public DbSet<TimeFrame> TimeFrames { get; set; }
   public DbSet<Candle> Candles { get; set; }
   public DbSet<LoadedPeriod> LoadedPeriods { get; set; }
-  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    => optionsBuilder
-        .UseLazyLoadingProxies();
+  //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  //  => optionsBuilder
+  //      .UseLazyLoadingProxies();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -34,11 +34,11 @@ public class SrvDbContext : DbContext
     Console.WriteLine("Auto Config entity");
     IEnumerable<Assembly> usingAssemble = getUsingAssemblyList();
 
-    NewMethod(modelBuilder, usingAssemble);
+    ApplyConfigFromAssemlies(modelBuilder, usingAssemble);
     Console.WriteLine("Auto Config entity - done");
   }
 
-  private static void NewMethod(ModelBuilder modelBuilder, IEnumerable<Assembly> usingAssemble)
+  private static void ApplyConfigFromAssemlies(ModelBuilder modelBuilder, IEnumerable<Assembly> usingAssemble)
   {
     Console.WriteLine("Apply config in assembly");
     foreach (var assembly in usingAssemble)

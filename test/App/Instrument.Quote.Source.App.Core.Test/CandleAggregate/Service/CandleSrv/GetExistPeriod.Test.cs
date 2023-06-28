@@ -30,7 +30,7 @@ public class GetExistPeriod_Test : BaseTest<GetExistPeriod_Test>
   }
 
   [Fact]
-  public void WHEN_period_exist_THEN_get_all_correct_periods()
+  public async void WHEN_period_exist_THEN_get_all_correct_periods()
   {
     // Array
     var d1_from = new DateTime(2000, 1, 1).ToUniversalTime();
@@ -46,7 +46,7 @@ public class GetExistPeriod_Test : BaseTest<GetExistPeriod_Test>
     loadedPeriodRep.Table.Returns(period_arr.BuildMock());
 
     // Act
-    var asserted_result = srv.GetExistPeriodAsync(mockInstrument.Id).Result;
+    var asserted_result = await srv.GetExistPeriodAsync(mockInstrument.Id);
 
     // Assert
     Expect("Result is success", () =>
@@ -74,7 +74,7 @@ public class GetExistPeriod_Test : BaseTest<GetExistPeriod_Test>
   }
 
   [Fact]
-  public void WHEN_periods_not_exist_but_insturment_existTHEN_return_empty()
+  public async void WHEN_periods_not_exist_but_insturment_existTHEN_return_empty()
   {
     // Array
     var period_arr = new[] {
@@ -86,7 +86,7 @@ public class GetExistPeriod_Test : BaseTest<GetExistPeriod_Test>
 
     instrumentRep.Table.Returns(new[] { mockInstrument, usedInstrument }.BuildMock());
     // Act
-    var asserted_periods = srv.GetExistPeriodAsync(usedInstrument.Id).Result;
+    var asserted_periods = await srv.GetExistPeriodAsync(usedInstrument.Id);
 
     // Assert
     Expect("Result is Success", () => Assert.True(asserted_periods.IsSuccess));
@@ -94,7 +94,7 @@ public class GetExistPeriod_Test : BaseTest<GetExistPeriod_Test>
   }
 
   [Fact]
-  public void WHEN_periods_not_exist_and_insturment_notexistTHEN_return_empty()
+  public async void WHEN_periods_not_exist_and_insturment_notexistTHEN_return_empty()
   {
     // Array
     var period_arr = new[] {
@@ -106,7 +106,7 @@ public class GetExistPeriod_Test : BaseTest<GetExistPeriod_Test>
     var usedId = MockInstrument.Create().Id;
 
     // Act
-    var asserted_periods = srv.GetExistPeriodAsync(usedId).Result;
+    var asserted_periods = await srv.GetExistPeriodAsync(usedId);
 
     // Assert
     Expect("Result is not Succcess", () => Assert.False(asserted_periods.IsSuccess));
