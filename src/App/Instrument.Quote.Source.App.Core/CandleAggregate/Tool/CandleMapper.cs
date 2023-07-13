@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.Results;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
@@ -45,6 +47,38 @@ public static class CandleMapper
       instrument: instrument
     );
 
+  }
+
+  public static bool TryConvertToEntity(this IEnumerable<CandleDto> candleDtos, ent.Instrument instrument, TimeFrame timeFrame,
+                                        out IEnumerable<Candle> candles, out ValidationResult validationResult)
+  {
+    var isValid = true;
+    List<ValidationFailure> _validationFailures = new List<ValidationFailure>();
+    var _ret_candles = new List<Candle>();
+    foreach (var candleDto in candleDtos)
+    {
+      Candle? entity = null;
+      try
+      {
+        var newCandle = new Candle(dateTime: candleDto.DateTime,
+                                             open: ToStoreValue(candleDto.Open, instrument.PriceDecimalLen, nameof(candleDto.Open)),
+                                             high: ToStoreValue(candleDto.High, instrument.PriceDecimalLen, nameof(candleDto.High)),
+                                             low: ToStoreValue(candleDto.Low, instrument.PriceDecimalLen, nameof(candleDto.Low)),
+                                             close: ToStoreValue(candleDto.Close, instrument.PriceDecimalLen, nameof(candleDto.Close)),
+                                             volume: ToStoreValue(candleDto.Volume, instrument.VolumeDecimalLen, nameof(candleDto.Volume)),
+                                             instrument: instrument,
+                                             timeFrame: timeFrame);
+        _ret_candles.Add(newCandle);
+      }
+      catch (ValidationException ex)
+      {
+        _validationFailures.AddRange(ex.Errors);
+        throw;
+      }
+    }
+    candles = _ret_candles;
+    validationResult = new ValidationResult(_validationFailures);
+    return isValid;
   }
 
   public static int ToStoreValue(decimal value, int decimalLen, string name = "")

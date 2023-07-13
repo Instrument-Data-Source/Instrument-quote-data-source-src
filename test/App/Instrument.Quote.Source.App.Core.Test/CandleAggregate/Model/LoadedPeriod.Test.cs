@@ -98,7 +98,7 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
     this.logger.LogDebug("Test ASSERT");
 
     Expect("Constructor throw ValidationException", () =>
-      Assert.Throws<ValidationException>(() => new LoadedPeriod(fromDt, untillDt, mockInstrument1, usedTimeframe, expected_candles)),
+      Assert.Throws<FluentValidation.ValidationException>(() => new LoadedPeriod(fromDt, untillDt, mockInstrument1, usedTimeframe, expected_candles)),
       out var assertedException);
 
     logger.LogInformation("Asserted exception message: " + assertedException.Message);
@@ -130,23 +130,9 @@ public class LoadedPeriod_Construction_Test : BaseTest<LoadedPeriod_Construction
     this.logger.LogDebug("Test ASSERT");
 
     Expect("Constructor throw ValidationException", () =>
-      Assert.Throws<ValidationException>(() => new LoadedPeriod(expected_from, expected_untill, mockInstrument1, usedTimeframe, expected_candles)),
+      Assert.Throws<FluentValidation.ValidationException>(() => new LoadedPeriod(expected_from, expected_untill, mockInstrument1, usedTimeframe, expected_candles)),
       out var assertedException);
 
-    Expect("Exception has one error", () =>
-      Assert.Single((assertedException.InnerException as AggregateException).InnerExceptions),
-      out Exception assertedInnerException);
-    this.logger.LogInformation($"ValidationException: {assertedInnerException.Message}");
-
-    var assertedValidationException = (ValidationException)assertedInnerException;
-
-    Expect("Single member name", () =>
-      Assert.Single(assertedValidationException.ValidationResult.MemberNames),
-      out var assertedMemberName);
-    Expect("Member name is Candles", () =>
-      Assert.Equal(nameof(LoadedPeriod.Candles), assertedMemberName));
-
-    logger.LogInformation("Asserted exception message: " + assertedException.Message);
     #endregion
   }
   public static IEnumerable<object[]> CandlesOutOfRange

@@ -7,7 +7,7 @@ using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
-public partial class LoadedPeriod : EntityBaseExt
+public partial class LoadedPeriod : EntityBaseExt<LoadedPeriod>, LoadedPeriod.IPayload
 {
   [Required]
   [UTCKind]

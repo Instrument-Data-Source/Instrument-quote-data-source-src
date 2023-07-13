@@ -1,3 +1,4 @@
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
@@ -15,7 +16,7 @@ public static class IReadRepositoryTool
     var ret = await readRep.TryGetByIdAsync(id, cancellationToken);
     if (ret == null)
     {
-      throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown ID");
+      throw IdNotFoundException.Build(readRep, id);
     }
     return ret;
   }

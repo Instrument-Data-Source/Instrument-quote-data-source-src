@@ -1,9 +1,13 @@
 using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
-using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 
+
+/// <summary>
+/// Candle service
+/// </summary>
 public interface ICandleSrv
 {
   /// <summary>
@@ -45,9 +49,9 @@ public interface ICandleSrv
   /// <param name="from">from date</param>
   /// <param name="untill">untill date</param>
   /// <param name="candles">new candles</param>
-  /// <exception cref="ArgumentException">One of argument has wrong value</exception>
+  /// <exception cref="ValidationException">One of argument has wrong value</exception>
   /// <returns></returns>
-  Task<Result<int>> AddAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default);
+  Task<Result<int>> AddAsync(NewPeriodDto addCandlesDto, CancellationToken cancellationToken = default);
 
   /// <summary>
   /// Get loaded period

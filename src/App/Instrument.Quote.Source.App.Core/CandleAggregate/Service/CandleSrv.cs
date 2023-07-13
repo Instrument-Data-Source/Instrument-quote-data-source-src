@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
@@ -5,6 +6,7 @@ using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,18 +33,54 @@ public class CandleSrv : ICandleSrv
     this.timeframeRep = timeframeRep;
     this.logger = logger ?? NullLogger<CandleSrv>.Instance;
   }
-
-  public async Task<Result<int>> AddAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default)
+  private async Task<Result<(ent.Instrument, TimeFrame)>> LoadRelatietEntity(int instrumentId, int timeFrameId, CancellationToken cancellationToken = default)
   {
-    logger.LogDebug("Get using entity from DB by ID");
-    var instrument = await instrumentRep.GetByIdAsync(addCandlesDto.instrumentId, cancellationToken);
-    var timeFrame = await timeframeRep.GetByIdAsync(addCandlesDto.timeFrameId, cancellationToken);
+    List<ValidationResult> validationResults = new List<ValidationResult>();
+    logger.LogDebug("Load related entities from DB");
+    var instrument = await instrumentRep.TryGetByIdAsync(instrumentId, cancellationToken);
+    var timeFrame = await timeframeRep.TryGetByIdAsync(timeFrameId, cancellationToken);
 
+    if (instrument == null)
+    {
+      validationResults.Add(new ValidationResult("Instrument by ID not found", new[] { nameof(instrumentId) }));
+    }
+    if (timeFrame == null)
+    {
+      validationResults.Add(new ValidationResult("TimeFrame by ID not found", new[] { nameof(timeFrameId) }));
+    }
+
+    if (instrument == null || timeFrame == null)
+      return Result.NotFound(validationResults.Select(v => v.ErrorMessage).ToArray());
+
+    return Result.Success((instrument, timeFrame));
+  }
+
+  private Result<LoadedPeriod> TryConvert(NewPeriodDto addCandlesDto, ent.Instrument instrument, TimeFrame timeFrame)
+  {
     logger.LogDebug("Convert candles from DTO to new Candle Entity");
-    var candles = addCandlesDto.Candles.Select(e => e.ToEntity(instrument, timeFrame));
+    if (!addCandlesDto.Candles.TryConvertToEntity(instrument, timeFrame, out var candles, out var validationResult))
+    {
+      return Result.Invalid(validationResult.Errors.ToResultErrorList());
+    }
 
-    logger.LogDebug("Convert create new LoadedPeriod entity");
-    var newLoadedPer = new LoadedPeriod(addCandlesDto.From, addCandlesDto.Untill, instrument, timeFrame, candles);
+    logger.LogDebug("Convert dto into new LoadedPeriod entity");
+    var result = LoadedPeriod.TryBuild(addCandlesDto.FromDate, addCandlesDto.UntillDate, instrument, timeFrame, candles);
+    return result;
+  }
+  public async Task<Result<int>> AddAsync(NewPeriodDto addCandlesDto, CancellationToken cancellationToken = default)
+  {
+
+    var loadingResult = await LoadRelatietEntity(addCandlesDto.InstrumentId, addCandlesDto.TimeFrameId, cancellationToken);
+    if (!loadingResult.IsSuccess)
+      return loadingResult.Repack<(ent.Instrument, TimeFrame), int>();
+
+    (var instrument, var timeFrame) = loadingResult.Value;
+
+    var convertResult = TryConvert(addCandlesDto, instrument, timeFrame);
+    if (!convertResult.IsSuccess)
+      return convertResult.Repack<LoadedPeriod, int>();
+
+    var newLoadedPer = convertResult.Value;
 
     logger.LogDebug("Searching exist period");
     var existLoadedPer = await loadedPeriodRep.TryGetForAsync(instrument.Id, timeFrame.Id, cancellationToken);
@@ -59,6 +97,8 @@ public class CandleSrv : ICandleSrv
 
     return Result.Success(newLoadedPer.Candles.Count());
   }
+
+
   /*
    private async Task<(LoadedPeriod? existPeriod, LoadedPeriod newPeriod)> convertDtoAsync(AddCandlesDto addCandlesDto, CancellationToken cancellationToken = default)
    {
@@ -74,7 +114,7 @@ public class CandleSrv : ICandleSrv
 
 
    }
- */
+  */
   public async Task<IEnumerable<CandleDto>> GetAsync(int instrumentId, int timeFrameId, DateTime? from = null, DateTime? untill = null)
   {
     var loadedPer = await loadedPeriodRep.GetForAsync(instrumentId, timeFrameId);

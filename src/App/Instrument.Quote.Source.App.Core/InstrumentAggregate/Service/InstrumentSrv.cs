@@ -7,6 +7,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
 using Ardalis.Result;
 using Instrument.Quote.Source.Shared.FluentValidation.Extension;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 
@@ -26,7 +27,7 @@ public class InstrumentSrv : IInstrumentSrv
   {
     if (!instrumentRequest.IsValid(out var validationResult))
     {
-      return Result.Invalid(validationResult.Errors.ToErrorList());
+      return Result.Invalid(validationResult.Errors.ToResultErrorList());
     }
     ent.Instrument newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
 

@@ -1,12 +1,11 @@
+using Ardalis.Result;
+using FluentValidation;
 using FluentValidation.Results;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Tool;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
-using Instrument.Quote.Source.Shared.Kernal.DataBase;
-using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
+using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
-public partial class LoadedPeriod : EntityBaseExt
+public partial class LoadedPeriod
 {
 
   protected LoadedPeriod(DateTime fromDate,
@@ -19,24 +18,39 @@ public partial class LoadedPeriod : EntityBaseExt
     InstrumentId = instrumentId;
     TimeFrameId = timeFrameId;
   }
-
+  private LoadedPeriod(DateTime from,
+                      DateTime untill,
+                      ent.Instrument instrument,
+                      TimeFrame timeFrame,
+                      bool validate) : this(from, untill, instrument.Id, timeFrame.Id)
+  {
+    Instrument = instrument;
+    TimeFrame = timeFrame;
+    if (validate)
+      Validate();
+  }
   public LoadedPeriod(DateTime from,
                       DateTime untill,
                       ent.Instrument instrument,
                       TimeFrame timeFrame,
-                      IEnumerable<Candle> candles) : this(from, untill, instrument.Id, timeFrame.Id)
+                      IEnumerable<Candle> candles) : this(from, untill, instrument, timeFrame, true)
   {
-    Instrument = instrument;
-    TimeFrame = timeFrame;
-    _candles = candles.ToList();
-    Validate();
+    AddCandles(candles);
   }
 
-  public IQueryable<LoadedPeriod> BuildMock()
+  public static Result<LoadedPeriod> TryBuild(DateTime from,
+                                              DateTime untill,
+                                              ent.Instrument instrument,
+                                              TimeFrame timeFrame
+                                              )
   {
-    throw new NotImplementedException();
+    var period = new LoadedPeriod(from, untill, instrument, timeFrame, false);
+    if (!period.IsValid(out var result))
+    {
+      return result.ToResult();
+    }
+    return Result.Success(period);
   }
-
   /*
   /// <summary>
   /// Create New LoadedPeriod base on import DTO

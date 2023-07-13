@@ -75,6 +75,10 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
         throw new ArgumentOutOfRangeException(nameof(enumId), enumId, "Unexpected type of TimeFrame");
     }
   }
+  public static TimeFrame.Enum GetEnumFrom(int id)
+  {
+    return (TimeFrame.Enum)Enum.ToObject(typeof(TimeFrame.Enum), id);
+  }
   private readonly List<LoadedPeriod> _LoadedPeriods = new();
   public virtual IEnumerable<LoadedPeriod> LoadedPeriods => _LoadedPeriods.AsReadOnly();
   private readonly List<Candle> _candles = new();

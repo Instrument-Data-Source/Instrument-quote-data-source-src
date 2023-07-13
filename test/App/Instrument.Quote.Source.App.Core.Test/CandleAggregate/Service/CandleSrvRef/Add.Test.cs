@@ -1,4 +1,5 @@
 using Ardalis.Result;
+using FluentValidation;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
@@ -8,6 +9,7 @@ using Instrument.Quote.Source.App.Core.Test.CandleAggregate.Mock;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -15,10 +17,10 @@ using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
 
-namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Service.CandleSrvTest;
+namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Service.CandleSrvRefTest;
 public class Add_Test : BaseTest<Add_Test>
 {
-  ICandleSrv srv;
+  CandleSrvRef srv;
   private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IRepository<LoadedPeriod> loadedPeriodRep = Substitute.For<IRepository<LoadedPeriod>>();
   private IRepository<ent.Instrument> instrumentRep = Substitute.For<IRepository<ent.Instrument>>();
@@ -28,7 +30,7 @@ public class Add_Test : BaseTest<Add_Test>
   private MockCandleFactory candleFactory;
   public Add_Test(ITestOutputHelper output) : base(output)
   {
-    srv = new CandleSrv(candleRep, loadedPeriodRep, instrumentRep, timeframeRep);
+    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep, candleRep);
 
     candleFactory = new MockCandleFactory(mockInstrument, usedTf);
     instrumentRep.Table.Returns(new[] { mockInstrument }.BuildMock());
@@ -69,9 +71,9 @@ public class Add_Test : BaseTest<Add_Test>
     #region Assert
     this.logger.LogDebug("Test ASSERT");
 
-    Expect("Result is Success", () => Assert.True(assertedResult.IsSuccess));
+    Expect("Success result", () => Assert.True(assertedResult.IsSuccess));
 
-    Expect("Result is correct", () => Assert.Equal(expectedCandleDtos.Count(), assertedResult.Value));
+    Expect("Result is contain count of added candles", () => Assert.Equal(expectedCandleDtos.Count(), assertedResult.Value));
 
     Expect("LoadedPeriod Repository was called to save new period", () =>
       loadedPeriodRep.Received().AddAsync(
@@ -93,7 +95,7 @@ public class Add_Test : BaseTest<Add_Test>
 
 public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
 {
-  ICandleSrv srv;
+  CandleSrvRef srv;
   private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IRepository<LoadedPeriod> loadedPeriodRep = Substitute.For<IRepository<LoadedPeriod>>();
   private IRepository<ent.Instrument> instrumentRep = Substitute.For<IRepository<ent.Instrument>>();
@@ -103,7 +105,7 @@ public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
   private MockCandleFactory candleFactory;
   public Add_invalid_dto_Test(ITestOutputHelper output) : base(output)
   {
-    srv = new CandleSrv(candleRep, loadedPeriodRep, instrumentRep, timeframeRep);
+    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep, candleRe);
 
     candleFactory = new MockCandleFactory(mockInstrument, usedTf);
     instrumentRep.Table.Returns(new[] { mockInstrument }.BuildMock());
@@ -135,16 +137,13 @@ public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await srv.AddAsync(expectedDto);
-
     #endregion
 
 
     #region Assert
     this.logger.LogDebug("Test ASSERT");
-
-    Expect("Result is invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
-
+    Expect("Get validation Exception", () => Assert.ThrowsAsync<ValidationException>(async () => await srv.AddAsync(expectedDto)).Result, out var assertedExpection);
+    this.logger.LogInformation("Get exception:\n" + assertedExpection.ToString());
     #endregion
   }
 
@@ -161,7 +160,7 @@ public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
 
   [Theory]
   [MemberData(nameof(IncorrectId))]
-  public async Task WHEN_incorect_relatet_entity_id_not_found_THEN_return_notfound_resultAsync(int? instrumentId, int? timeframeId)
+  public async Task WHEN_incorect_related_entity_id_not_found_THEN_return_notfound_resultAsync(int? instrumentId, int? timeframeId)
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -185,15 +184,15 @@ public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await srv.AddAsync(expectedDto);
-
     #endregion
 
 
     #region Assert
     this.logger.LogDebug("Test ASSERT");
-
-    Expect("Result is invalid", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+    Expect("Get IdNotFoundException",
+      () => Assert.ThrowsAsync<IdNotFoundException>(async () => await srv.AddAsync(expectedDto)).Result,
+      out var assertedException);
+    this.logger.LogInformation("Get exception:\n" + assertedException.ToString());
 
     #endregion
   }
@@ -201,7 +200,7 @@ public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
 
 public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
 {
-  ICandleSrv srv;
+  CandleSrvRef srv;
   private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IRepository<LoadedPeriod> loadedPeriodRep = Substitute.For<IRepository<LoadedPeriod>>();
   private IRepository<ent.Instrument> instrumentRep = Substitute.For<IRepository<ent.Instrument>>();
@@ -213,7 +212,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
   private MockPeriodFactory periodFactory;
   public Add_with_exist_period_Test(ITestOutputHelper output) : base(output)
   {
-    srv = new CandleSrv(candleRep, loadedPeriodRep, instrumentRep, timeframeRep);
+    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep, candleRep);
 
     candleFactory = new MockCandleFactory(mockInstrument, usedTf);
     instrumentRep.Table.Returns(new[] { mockInstrument }.BuildMock());
@@ -226,7 +225,7 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
   }
 
   [Fact]
-  public async void WHEN_add_addition_period_THEN_preriod_joined()
+  public async void WHEN_add_joined_period_THEN_period_added()
   {
     #region Array
     this.logger.LogDebug("Test ARRAY");
@@ -258,10 +257,8 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
 
     #region Assert
     this.logger.LogDebug("Test ASSERT");
-
-    Expect("Result is Success", () => Assert.True(assertedResult.IsSuccess));
-
-    Expect("Result is correct", () => Assert.Equal(usingCandleDtos.Count(), assertedResult.Value));
+    Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
+    Expect("Method return count of new candles", () => Assert.Equal(usingCandleDtos.Count(), assertedResult.Value));
 
     ExpectGroup("Exist pretiod changed", () =>
     {
@@ -274,6 +271,86 @@ public class Add_with_exist_period_Test : BaseTest<Add_with_exist_period_Test>
     {
       await loadedPeriodRep.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     });
+    #endregion
+  }
+
+  [Fact]
+  public async Task WHEN_add_not_joined_period_THEN_errorAsync()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+    var expectedUntillDt = mockPeriod.UntillDate;
+    var usingFromDt = new DateTime(2019, 11, 1).ToUniversalTime();
+    var usingUntillDt = new DateTime(2019, 11, 20).ToUniversalTime();
+    var usingCandleDtos = candleFactory.CreateCandles(usingFromDt, usingUntillDt).Select(e => e.ToDto());
+    var usingAddCandelDto = new NewPeriodDto()
+    {
+      FromDate = usingFromDt,
+      UntillDate = usingUntillDt,
+      InstrumentId = mockInstrument.Id,
+      TimeFrameId = usedTf.Id,
+      Candles = usingCandleDtos
+    };
+
+    var expectedCandleCount = mockPeriod.Candles.Count() + usingCandleDtos.Count();
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var assertedResult = await srv.AddAsync(usingAddCandelDto);
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status is Error", () => Assert.Equal(ResultStatus.Error, assertedResult.Status));
+    Expect("Result contain one error", () => Assert.Single(assertedResult.Errors), out var assertedError);
+    Expect("Result error text", () => Assert.Equal("Period not joined", assertedError));
+    #endregion
+  }
+
+  [Fact]
+  public async Task WHEN_add_crossed_period_THEN_errorAsync()
+  {
+    #region Array
+    this.logger.LogDebug("Test ARRAY");
+    var expectedUntillDt = mockPeriod.UntillDate;
+    var usingFromDt = new DateTime(2019, 11, 1).ToUniversalTime();
+    var usingUntillDt = new DateTime(2020, 1, 20).ToUniversalTime();
+    var usingCandleDtos = candleFactory.CreateCandles(usingFromDt, usingUntillDt).Select(e => e.ToDto());
+    var usingAddCandelDto = new NewPeriodDto()
+    {
+      FromDate = usingFromDt,
+      UntillDate = usingUntillDt,
+      InstrumentId = mockInstrument.Id,
+      TimeFrameId = usedTf.Id,
+      Candles = usingCandleDtos
+    };
+
+    var expectedCandleCount = mockPeriod.Candles.Count() + usingCandleDtos.Count();
+
+    #endregion
+
+
+    #region Act
+    this.logger.LogDebug("Test ACT");
+
+    var assertedResult = await srv.AddAsync(usingAddCandelDto);
+
+    #endregion
+
+
+    #region Assert
+    this.logger.LogDebug("Test ASSERT");
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status is Error", () => Assert.Equal(ResultStatus.Error, assertedResult.Status));
+    Expect("Result contain one error", () => Assert.Single(assertedResult.Errors), out var assertedError);
+    Expect("Result error text", () => Assert.Equal("Period not joined", assertedError));
     #endregion
   }
   /*

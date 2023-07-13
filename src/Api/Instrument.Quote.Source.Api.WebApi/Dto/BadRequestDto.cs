@@ -1,6 +1,14 @@
+using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 
 namespace Instrument.Quote.Source.Api.WebApi.Dto;
+
+public interface IErrorDto
+{
+  public string ErrorMessage { get; set; }
+  public string ErrorCode { get; set; }
+  public string Field { get; set; }
+}
 
 public class ErrorDto
 {
@@ -9,8 +17,19 @@ public class ErrorDto
   public string Severity { get; set; }
 }
 
-public class BadRequestDto
+public class BadRequestDto //: IErrorDto
 {
+  /*
+  public BadRequestDto(ValidationException validationException)
+  {
+    ErrorMessage = validationException.Message;
+    if (validationException.ValidationResult != null)
+    {
+      ErrorMessage = validationException.ValidationResult.ErrorMessage!;
+    }
+    if (validationException != null)
+      if (validationException.)
+  }*/
   public BadRequestDto(List<ValidationError> validationErrors)
   {
     foreach (var error in validationErrors)
@@ -26,4 +45,6 @@ public class BadRequestDto
     }
   }
   public Dictionary<string, List<ErrorDto>> errors { get; set; } = new Dictionary<string, List<ErrorDto>>();
+  public string ErrorMessage { get; set; }
+  public string ErrorCode { get; set; }
 }

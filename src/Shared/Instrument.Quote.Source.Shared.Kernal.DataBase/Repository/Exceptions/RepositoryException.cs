@@ -1,5 +1,5 @@
 using System.Runtime.Serialization;
-
+namespace Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 public class RepositoryException : Exception
 {
   public RepositoryException()

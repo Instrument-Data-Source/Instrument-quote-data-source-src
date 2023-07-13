@@ -36,10 +36,10 @@ public class AddCandlesDto_Test : BaseTest<AddCandlesDto_Test>
     #region Array
     this.logger.LogDebug("Test ARRAY");
 
-    var assertedDto = new AddCandlesDto()
+    var assertedDto = new NewPeriodDto()
     {
-      instrumentId = mockInstrument.Id,
-      timeFrameId = usedTf.Id
+      InstrumentId = mockInstrument.Id,
+      TimeFrameId = usedTf.Id
     };
 
     #endregion
@@ -71,10 +71,10 @@ public class AddCandlesDto_Test : BaseTest<AddCandlesDto_Test>
     #region Array
     this.logger.LogDebug("Test ARRAY");
 
-    var assertedDto = new AddCandlesDto()
+    var assertedDto = new NewPeriodDto()
     {
-      instrumentId = instrumenId ?? mockInstrument.Id,
-      timeFrameId = timeframeId ?? usedTf.Id
+      InstrumentId = instrumenId ?? mockInstrument.Id,
+      TimeFrameId = timeframeId ?? usedTf.Id
     };
 
     #endregion

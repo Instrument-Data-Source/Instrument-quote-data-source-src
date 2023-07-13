@@ -5,7 +5,7 @@ using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
-public class CandleDto : IEquatable<CandleDto>
+public class CandleDto : IEquatable<CandleDto>, Candle.IPayload
 {
   public DateTime DateTime { get; set; }
   public decimal Open { get; set; }

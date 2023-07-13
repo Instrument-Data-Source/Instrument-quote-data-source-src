@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
@@ -21,4 +22,5 @@ public static class LoadedPeriodRepository
     return await loadedPeriodRep.Table.SingleOrDefaultAsync(e => e.TimeFrameId == timeFrameId && e.InstrumentId == instrumentId, cancellationToken);
 
   }
+
 }

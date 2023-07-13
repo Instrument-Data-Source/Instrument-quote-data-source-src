@@ -1,6 +1,9 @@
 //using FluentValidation;
 
 using System.ComponentModel.DataAnnotations;
+using Ardalis.Result;
+using FluentValidation;
+using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 public partial class LoadedPeriod
@@ -9,12 +12,31 @@ public partial class LoadedPeriod
   /// Extend period by new period
   /// </summary>
   /// <param name="newPeriod"></param>
-  /// <returns>Self instance</returns>
+  /// <returns>Added period</returns>
   public LoadedPeriod Extend(LoadedPeriod newPeriod)
   {
-    //new ExtendValidator(this).ValidateAndThrow(newPeriod);
-    if (!ValidateExtedPeriod(newPeriod, out var validationResults))
-      ThrowValidationResults(validationResults, $"New {nameof(LoadedPeriod)}");
+    return _Extend(newPeriod, true).Value;
+  }
+
+  /// <summary>
+  /// Extend period by new period
+  /// </summary>
+  /// <param name="newPeriod"></param>
+  /// <returns>Added period</returns>
+  public Result<LoadedPeriod> TryExtend(LoadedPeriod newPeriod)
+  {
+    return _Extend(newPeriod, false);
+  }
+  public Result<LoadedPeriod> _Extend(LoadedPeriod newPeriod, bool throwError)
+  {
+    var validationRes = new ExtensionPeriodLoadedPeriodValidator(this).Validate(newPeriod, op =>
+    {
+      if (throwError)
+        op.ThrowOnFailures();
+    });
+
+    if (!validationRes.IsValid)
+      return validationRes!.ToResult();
 
     if (newPeriod.FromDate < FromDate)
       FromDate = newPeriod.FromDate;
@@ -22,20 +44,33 @@ public partial class LoadedPeriod
       UntillDate = newPeriod.UntillDate;
 
     _candles.AddRange(newPeriod.Candles);
-    Validate();
-    return this;
+    return newPeriod;
+  }
+  
+  public LoadedPeriod AddCandles(IEnumerable<Candle> candles)
+  {
+    return _AddCandles(candles, true).Value;
   }
 
-  private bool ValidateExtedPeriod(LoadedPeriod newPeriod, out ICollection<ValidationResult> validationResults)
+  public Result<LoadedPeriod> TryAddCandles(IEnumerable<Candle> candles)
   {
-    validationResults = new List<ValidationResult>();
+    return _AddCandles(candles, false);
+  }
 
-    if (newPeriod.FromDate != this.UntillDate && newPeriod.UntillDate != this.FromDate)
-      validationResults.Add(new ValidationResult("New period is not connected", new[] { nameof(this.FromDate), nameof(this.UntillDate) }));
-    if (newPeriod.Id > 0)
-      validationResults.Add(new ValidationResult("New period has Id", new[] { nameof(Id) }));
+  private Result<LoadedPeriod> _AddCandles(IEnumerable<Candle> candles, bool throwValidate)
+  {
+    var validResult = new CandleArrForPeriodValidator(this).Validate(candles, opt =>
+    {
+      if (throwValidate)
+        opt.ThrowOnFailures();
+    });
 
-    return validationResults.Count == 0;
+    if (!validResult.IsValid)
+      return validResult!.ToResult();
+
+    this._candles.AddRange(candles);
+
+    return Result.Success(this);
   }
 }
 /*

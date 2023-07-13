@@ -11,7 +11,7 @@ namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 /// Quotes of <see cref="ent.Instrument"/> 
 /// <see cref="ADR-001 Decimal in candle value">ADR-001 Decimal in candle value</see>
 /// </summary>
-public partial class Candle : EntityBaseExt
+public partial class Candle : EntityBaseExt<Candle>, Candle.IPayload
 {
 
   [Required]

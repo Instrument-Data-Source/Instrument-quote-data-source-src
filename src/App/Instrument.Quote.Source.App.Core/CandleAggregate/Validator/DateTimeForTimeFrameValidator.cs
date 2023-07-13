@@ -1,79 +1,47 @@
-using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
+using FluentValidation;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 
-namespace Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
-
-/// <summary>
-/// Validator to check if DateTime valid to TimeFrame
-/// </summary>
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-public class TimeFrameDateTimeAttribute : ValidationAttribute
+namespace Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
+public class DateTimeForTimeFrameValidator : AbstractValidator<DateTime>
 {
-  public override bool RequiresValidationContext => true;
-  protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-  {
-    var loadedPeriod = (LoadedPeriod)validationContext.ObjectInstance;
-    var timeFrameEnum = (TimeFrame.Enum)Enum.ToObject(typeof(TimeFrame.Enum), loadedPeriod.TimeFrameId);
-    var candles = (IEnumerable<Candle>)value!;
-
-    if (!IsValid(candles.Select(c => c.DateTime), timeFrameEnum, out var validationMessage))
-      return new ValidationResult(validationMessage, new string[] { validationContext.MemberName! });
-
-    return ValidationResult.Success;
-  }
-
-  public bool IsValid(IEnumerable<DateTime> dateTimes, TimeFrame.Enum timeFrameEnum, out string validationMessage)
+  public DateTimeForTimeFrameValidator(TimeFrame.Enum timeFrameEnum)
   {
     var returnMsg = "";
-    var isValid = true;
     switch (timeFrameEnum)
     {
       case TimeFrame.Enum.m1:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateMinuteTf(dt, 1, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateMinuteTf(dt, 1, out var returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.m5:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateMinuteTf(dt, 5, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateMinuteTf(dt, 5, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.m10:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateMinuteTf(dt, 10, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateMinuteTf(dt, 10, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.m15:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateMinuteTf(dt, 15, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateMinuteTf(dt, 15, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.m30:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateMinuteTf(dt, 30, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateMinuteTf(dt, 30, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.H1:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateHourTf(dt, 1, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateHourTf(dt, 1, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.H4:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateHourTf(dt, 4, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateHourTf(dt, 4, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.D1:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateDayTf(dt, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateDayTf(dt, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.W1:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateWeekTf(dt, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateWeekTf(dt, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       case TimeFrame.Enum.M:
-        isValid = ValidateCandles(dateTimes, (dt) => isValidateMonthTf(dt, out returnMsg));
+        RuleFor(e => e).Must(dt => isValidateMonthTf(dt, out returnMsg)).WithMessage((dt) => returnMsg);
         break;
       default:
         throw new NotImplementedException("Unexpected TimeFrame Time");
     }
-    validationMessage = returnMsg;
-    return isValid;
-  }
-
-  public static bool ValidateCandles(IEnumerable<DateTime> dateTimes, Func<DateTime, bool> validateFunc)
-  {
-    foreach (var dt in dateTimes)
-    {
-      if (!validateFunc(dt))
-        return false;
-    }
-    return true;
   }
 
   public static bool isValidateMinuteTf(DateTime dt, int interval, out string validationMessage)

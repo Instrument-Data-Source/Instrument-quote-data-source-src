@@ -11,4 +11,5 @@ public static class LoadedPeriodMapper
       UntillDate = loadedPeriod.UntillDate
     };
   }
+
 }
