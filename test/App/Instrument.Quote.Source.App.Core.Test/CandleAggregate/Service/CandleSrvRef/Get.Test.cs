@@ -25,7 +25,7 @@ public class Get_Test
   private MockPeriodFactory mockPeriodFactory;
   public Get_Test(ITestOutputHelper output)
   {
-    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep);
+    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep, candleRep);
     mockPeriodFactory = new MockPeriodFactory(mockInstrument, mockTimeFrame);
   }
 
@@ -45,12 +45,12 @@ public class Get_Test
     var asserted_res = await srv.GetAsync(mockInstrument.Id, mockTimeFrame.Id, from_dt, till_dt);
 
     // Assert
-    Assert.Equal(5, asserted_res.Count());
-    Assert.NotNull(asserted_res.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 3).ToUniversalTime()));
-    Assert.NotNull(asserted_res.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 4).ToUniversalTime()));
-    Assert.NotNull(asserted_res.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 5).ToUniversalTime()));
-    Assert.NotNull(asserted_res.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 6).ToUniversalTime()));
-    Assert.NotNull(asserted_res.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 7).ToUniversalTime()));
+    Assert.Equal(5, asserted_res.Value.Count());
+    Assert.NotNull(asserted_res.Value.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 3).ToUniversalTime()));
+    Assert.NotNull(asserted_res.Value.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 4).ToUniversalTime()));
+    Assert.NotNull(asserted_res.Value.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 5).ToUniversalTime()));
+    Assert.NotNull(asserted_res.Value.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 6).ToUniversalTime()));
+    Assert.NotNull(asserted_res.Value.SingleOrDefault(e => e.DateTime == new DateTime(2000, 1, 7).ToUniversalTime()));
   }
 
   [Fact]

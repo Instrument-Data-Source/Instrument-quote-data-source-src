@@ -3,11 +3,12 @@ using Ardalis.GuardClauses;
 using FluentValidation;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
 namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
-public partial class LoadedPeriod : EntityBaseExt<LoadedPeriod>, LoadedPeriod.IPayload
+public partial class LoadedPeriod : EntityBaseFluentValidation<LoadedPeriod>, LoadedPeriod.IPayload
 {
   [Required]
   [UTCKind]
@@ -87,7 +88,6 @@ public partial class LoadedPeriod : EntityBaseExt<LoadedPeriod>, LoadedPeriod.IP
   [CandleInPeriod]
   [NotEmpty]
   [NoDuplicates]
-  [TimeFrameDateTime]
   public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
   /*
    private LoadedPeriod AddCandles(IEnumerable<Candle> candles)

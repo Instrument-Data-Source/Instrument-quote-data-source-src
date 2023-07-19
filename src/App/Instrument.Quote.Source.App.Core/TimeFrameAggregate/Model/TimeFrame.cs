@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
 namespace Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
@@ -79,10 +80,12 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
   {
     return (TimeFrame.Enum)Enum.ToObject(typeof(TimeFrame.Enum), id);
   }
+  private readonly List<Chart> _charts = new();
+  public virtual IEnumerable<Chart> Charts => _charts.AsReadOnly();
   private readonly List<LoadedPeriod> _LoadedPeriods = new();
   public virtual IEnumerable<LoadedPeriod> LoadedPeriods => _LoadedPeriods.AsReadOnly();
-  private readonly List<Candle> _candles = new();
-  public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
+  private readonly List<CandleAggregate.Model.Candle> _candles = new();
+  public virtual IEnumerable<CandleAggregate.Model.Candle> Candles => _candles.AsReadOnly();
 }
 
 public static class TimeFrameMapper

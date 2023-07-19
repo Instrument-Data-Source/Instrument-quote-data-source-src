@@ -105,7 +105,7 @@ public class Add_invalid_dto_Test : BaseTest<Add_invalid_dto_Test>
   private MockCandleFactory candleFactory;
   public Add_invalid_dto_Test(ITestOutputHelper output) : base(output)
   {
-    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep, candleRe);
+    srv = new CandleSrvRef(instrumentRep, timeframeRep, loadedPeriodRep, candleRep);
 
     candleFactory = new MockCandleFactory(mockInstrument, usedTf);
     instrumentRep.Table.Returns(new[] { mockInstrument }.BuildMock());

@@ -25,6 +25,19 @@ public static class IReadRepositoryTool
   /// Get element by Id
   /// </summary>
   /// <param name="id">Id of elemtnt</param>
+  /// <exception cref="ArgumentOutOfRangeException">Id is unknown</exception>
+  /// <returns></returns>
+  public static async Task AssertIdExistAsync<TEntity>(this IReadRepository<TEntity> readRep, int id, CancellationToken cancellationToken = default) where TEntity : EntityBase
+  {
+    var ret = await readRep.Table.AnyAsync(x => x.Id == id, cancellationToken);
+    if (!ret)
+      throw IdNotFoundException.Build(readRep, id);
+  }
+
+  /// <summary>
+  /// Get element by Id
+  /// </summary>
+  /// <param name="id">Id of elemtnt</param>
   /// <returns></returns>
   public static async Task<TEntity?> TryGetByIdAsync<TEntity>(this IReadRepository<TEntity> readRep, int id, CancellationToken cancellationToken = default) where TEntity : EntityBase
   {

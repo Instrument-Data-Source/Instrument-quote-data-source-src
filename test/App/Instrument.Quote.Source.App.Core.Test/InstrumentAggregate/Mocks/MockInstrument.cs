@@ -29,7 +29,7 @@ public class MockInstrument : ent.Instrument
   /// <param name="pliceDecimalLen"></param>
   /// <param name="volumeDecimalLen"></param>
   /// <returns></returns>
-  public static ent.Instrument Create(byte pliceDecimalLen = 1, byte volumeDecimalLen = 1)
+  public static ent.Instrument Create(byte pliceDecimalLen = 1, byte volumeDecimalLen = 1, bool InitId = true)
   {
     var random = new Random();
     var id = random.Next(1, 1000);
@@ -38,6 +38,9 @@ public class MockInstrument : ent.Instrument
       id = random.Next(1, 1000);
     }
     usedId.Add(id);
-    return new MockInstrument($"Mock {id}", $"M{id}", pliceDecimalLen, volumeDecimalLen, 1).InitId(id);
+    var ret = new MockInstrument($"Mock {id}", $"M{id}", pliceDecimalLen, volumeDecimalLen, 1);
+    if (InitId)
+      ret.InitId(id);
+    return ret;
   }
 }

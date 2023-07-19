@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
 using Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
@@ -11,7 +12,7 @@ namespace Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 /// Quotes of <see cref="ent.Instrument"/> 
 /// <see cref="ADR-001 Decimal in candle value">ADR-001 Decimal in candle value</see>
 /// </summary>
-public partial class Candle : EntityBaseExt<Candle>, Candle.IPayload
+public partial class Candle : EntityBaseFluentValidation<Candle>, Candle.IPayload
 {
 
   [Required]

@@ -64,7 +64,8 @@ public class CandleSrv : ICandleSrv
     }
 
     logger.LogDebug("Convert dto into new LoadedPeriod entity");
-    var result = LoadedPeriod.TryBuild(addCandlesDto.FromDate, addCandlesDto.UntillDate, instrument, timeFrame, candles);
+    var result = LoadedPeriod.TryBuild(addCandlesDto.FromDate, addCandlesDto.UntillDate, instrument, timeFrame);
+    result.Value.AddCandles(candles);
     return result;
   }
   public async Task<Result<int>> AddAsync(NewPeriodDto addCandlesDto, CancellationToken cancellationToken = default)

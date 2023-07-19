@@ -40,12 +40,12 @@ public class CandleSrvRef
     var timeFrameEnt = await timeframeRep.GetByIdAsync(addCandlesDto.TimeFrameId, cancellationToken);
 
     logger.LogDebug("Convert DTO into new Entity");
+
+    var candles = addCandlesDto.Candles.Select(c => new Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume, instrumentEnt, timeFrameEnt));
     var newLoadedPer = new LoadedPeriod(addCandlesDto.FromDate,
                                         addCandlesDto.UntillDate,
                                         instrumentEnt,
-                                        timeFrameEnt);
-    var candles = addCandlesDto.Candles.Select(c => new Candle(c.DateTime, c.Open, c.High, c.Low, c.Close, c.Volume, instrumentEnt, timeFrameEnt));
-    newLoadedPer.AddCandles(candles);
+                                        timeFrameEnt, candles);
 
     logger.LogDebug("Searching exist period");
     var existLoadedPer = await loadedPeriodRep.TryGetForAsync(instrumentEnt.Id, timeFrameEnt.Id, cancellationToken);

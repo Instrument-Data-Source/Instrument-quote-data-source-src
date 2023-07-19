@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;

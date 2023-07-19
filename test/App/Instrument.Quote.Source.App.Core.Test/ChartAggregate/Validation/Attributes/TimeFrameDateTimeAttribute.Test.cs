@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Validator;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 using Instrument.Quote.Source.App.Core.Test.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
-namespace Instrument.Quote.Source.App.Core.Test.CandleAggregate.Validator;
+namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Validation.Attributes;
 
 public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribute_Test>
 {
@@ -173,24 +172,32 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
     #region Array
     this.logger.LogDebug("Test ARRAY");
 
-    var validationAttribute = new TimeFrameDateTimeAttribute();
+    var validationAttribute = new FitTimeFrameAttribute("TfId", true);
+
+    IDictionary<object, object?>? items = new Dictionary<object, object?>();
+    items.Add("TfId", (int)tfEnum);
 
     #endregion
 
-    #region Act
-    this.logger.LogDebug("Test ACT");
+    foreach (var dt in dts)
+    {
+      #region Act
+      this.logger.LogDebug("Test ACT");
 
-    var asserted_result = validationAttribute.IsValid(dts, tfEnum, out string assertedMessage);
+      var usedContex = new ValidationContext(dt, items);
+      var results = new List<ValidationResult>();
+      var asserted_result = Validator.TryValidateObject(dt, usedContex, results);
 
-    #endregion
+      #endregion
 
 
-    #region Assert
-    this.logger.LogDebug("Test ASSERT");
+      #region Assert
+      this.logger.LogDebug("Test ASSERT");
 
-    Expect("DTs is valid", () => Assert.True(asserted_result));
-    logger.LogInformation($"Validation message: {assertedMessage}");
-    #endregion
+      Expect("DTs is valid", () => Assert.True(asserted_result));
+      #endregion
+    }
+
   }
 
 
@@ -414,7 +421,10 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
     #region Array
     this.logger.LogDebug("Test ARRAY");
 
-    var validationAttribute = new TimeFrameDateTimeAttribute();
+    var validationAttribute = new FitTimeFrameAttribute("TfId", true);
+
+    IDictionary<object, object?>? items = new Dictionary<object, object?>();
+    items.Add("TfId", (int)tfEnum);
 
     #endregion
 
@@ -422,9 +432,10 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
     {
       #region Act
       this.logger.LogDebug("Test ACT");
-      logger.LogInformation($"Test DateTime: {dt} for {tfEnum}");
 
-      var asserted_result = validationAttribute.IsValid(new DateTime[] { dt.ToUniversalTime() }, tfEnum, out string assertedMessage);
+      var usedContex = new ValidationContext(dt, items);
+      var results = new List<ValidationResult>();
+      var asserted_result = Validator.TryValidateObject(dt, usedContex, results);
 
       #endregion
 
@@ -433,41 +444,8 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
       this.logger.LogDebug("Test ASSERT");
 
       Expect("DT is invalid", () => Assert.False(asserted_result));
-      logger.LogInformation($"Validation message: {assertedMessage}");
+      logger.LogInformation($"Validation message: {results[0]}");
       #endregion
     }
-  }
-
-  [Fact]
-  public void WHEN_one_of_dt_invalid_THEN_return_false_to_all_list()
-  {
-    #region Array
-    this.logger.LogDebug("Test ARRAY");
-
-    var validationAttribute = new TimeFrameDateTimeAttribute();
-    var usedTf = TimeFrame.Enum.D1;
-    var usedDts = new[]{
-        new DateTime(2020,1,1),
-        new DateTime(2020,1,2),
-        new DateTime(2020,1,3,4,4,3),
-        new DateTime(2020,1,4),
-    };
-    #endregion
-
-
-    #region Act
-    this.logger.LogDebug("Test ACT");
-
-    var asserted_result = validationAttribute.IsValid(usedDts, usedTf, out string assertedMessage);
-
-    #endregion
-
-
-    #region Assert
-    this.logger.LogDebug("Test ASSERT");
-
-    Expect("DTs is invalid", () => Assert.False(asserted_result));
-    logger.LogInformation($"Validation message: {assertedMessage}");
-    #endregion
   }
 }

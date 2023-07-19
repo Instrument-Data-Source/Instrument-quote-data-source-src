@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Results;
@@ -11,7 +12,66 @@ public abstract class EntityBase
   public int Id { get; protected set; }
 }
 
-public abstract class EntityBaseExt<TEntity> : EntityBase
+public abstract class EntityBaseValidation : EntityBase
+{
+  private IServiceProvider? _sp;
+  public void SetServiceProvider(IServiceProvider sp)
+  {
+    this._sp = sp;
+  }
+  private ValidationContext CreateValidationContext()
+  {
+    return new ValidationContext(this, _sp, new Dictionary<object, object?>());
+  }
+  public bool IsValid(out ICollection<System.ComponentModel.DataAnnotations.ValidationResult>? validationResults)
+  {
+    var context = CreateValidationContext();
+    validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+    return Validator.TryValidateObject(this, context, validationResults);
+  }
+
+  public void Validate()
+  {
+    var context = CreateValidationContext();
+    Validator.ValidateObject(this, context, true);
+  }
+  /*
+   public void ValidateProps(Expression<Func<object>> validatedProps)
+   {
+     var context = new ValidationContext(this);
+     var names = GetNames(validatedProps);
+     //foreach (var propObj in validatedProps.Distinct())
+     //{
+     //  context.MemberName = 
+     //  Validator.ValidateProperty(propObj, context);
+     //}
+   }
+
+   private string GetName<T>(Expression<Func<T>> propertyExpression)
+   {
+     var memberExpression = (MemberExpression)propertyExpression.Body;
+     var propertyName = memberExpression.Member.Name;
+
+     return propertyName;
+   }
+
+   private IEnumerable<string> GetNames(Expression<Func<object>> propertyExpression)
+   {
+     if (propertyExpression.Body is NewExpression newExpression)
+     {
+       return newExpression.Members.Select(member => member.Name);
+     }
+     else if (propertyExpression.Body is MemberExpression memberExpression)
+     {
+       return new[] { memberExpression.Member.Name };
+     }
+
+     throw new ArgumentException("Invalid property expression");
+   }
+   */
+}
+
+public abstract class EntityBaseFluentValidation<TEntity> : EntityBase
 {
 
   public bool IsValid(out FluentValidation.Results.ValidationResult result)
