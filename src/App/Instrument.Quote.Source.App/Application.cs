@@ -1,10 +1,4 @@
-﻿using Instrument.Quote.Source.App.Core.CandleAggregate.Service;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
-using Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
-using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository;
-using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Instrument.Quote.Source.App;
 

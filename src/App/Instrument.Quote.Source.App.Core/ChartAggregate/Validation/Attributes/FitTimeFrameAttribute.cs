@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
-using Instrument.Quote.Source.App.Shared.Validation;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 

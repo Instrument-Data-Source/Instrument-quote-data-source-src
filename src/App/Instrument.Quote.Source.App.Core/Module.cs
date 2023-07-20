@@ -1,12 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Service;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Service;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
-using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 using Microsoft.Extensions.Logging;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Service;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
 
 namespace Instrument.Quote.Source.App.Core;
 
@@ -20,7 +19,8 @@ public static class Module
     sc.AddScoped<IInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<IReadInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<ITimeFrameSrv, TimeFrameSrv>();
-    sc.AddScoped<ICandleSrv, CandleSrv>();
+    sc.AddScoped<IChartSrv, ChartSrv>();
+    sc.AddScoped<ICandlesSrv, CandlesSrv>();
     logger?.LogInformation("Instrument.Quote.Source.App.Core.Module - Registered");
     return sc;
   }

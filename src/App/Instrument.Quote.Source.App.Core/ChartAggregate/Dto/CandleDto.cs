@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Validator.Attribute;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Dto;
