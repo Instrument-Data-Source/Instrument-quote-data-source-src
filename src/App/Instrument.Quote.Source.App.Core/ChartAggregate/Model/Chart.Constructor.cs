@@ -24,23 +24,5 @@ public partial class Chart
     Validate();
   }
 
-  public class Factory
-  {
-    private readonly IServiceProvider sp;
 
-    public Factory(IServiceProvider sp)
-    {
-      this.sp = sp;
-    }
-
-    public Chart Build(DateTime from,
-                      DateTime untill,
-                      ent.Instrument instrument,
-                      TimeFrame timeFrame)
-    {
-      var entity = new Chart(from, untill, instrument, timeFrame);
-      entity.SetServiceProvider(sp);
-      return entity;
-    }
-  }
 }

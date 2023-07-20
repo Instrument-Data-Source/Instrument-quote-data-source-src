@@ -83,15 +83,6 @@ public partial class Chart : EntityBaseValidation
   #region Candles relation
   private readonly List<Candle> _candles = new();
 
-
-  [Each<Apply<BetweenAttribute>>(nameof(Candle.DateTime), new object[] { CompType.GE, nameof(Chart.FromDate), CompType.LT, nameof(Chart.UntillDate) })]
-  [Map<NoDuplicatesAttribute>(nameof(Candle.DateTime))]
-  [Each<Apply<FitTimeFrameAttribute>>(nameof(Candle.DateTime), new object[] { "TimeFrameId", false })]
-  [Each<Apply<PriceFitDecimalLenAttribute>>(nameof(Candle.Open), new object[] { "InstrumentId", false })]
-  [Each<Apply<PriceFitDecimalLenAttribute>>(nameof(Candle.Close), new object[] { "InstrumentId", false })]
-  [Each<Apply<PriceFitDecimalLenAttribute>>(nameof(Candle.High), new object[] { "InstrumentId", false })]
-  [Each<Apply<PriceFitDecimalLenAttribute>>(nameof(Candle.Low), new object[] { "InstrumentId", false })]
-  [Each<Apply<VolumeFitDecimalLenAttribute>>(nameof(Candle.Volume), new object[] { "InstrumentId", false })]
   public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
   #endregion
 }

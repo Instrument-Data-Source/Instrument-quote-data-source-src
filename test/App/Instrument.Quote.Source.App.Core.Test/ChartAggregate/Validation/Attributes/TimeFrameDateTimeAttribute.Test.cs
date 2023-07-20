@@ -184,9 +184,7 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
       #region Act
       this.logger.LogDebug("Test ACT");
 
-      var usedContex = new ValidationContext(dt, items);
-      var results = new List<ValidationResult>();
-      var asserted_result = Validator.TryValidateObject(dt, usedContex, results);
+      var asserted_result = FitTimeFrameAttribute.IsValid(dt, tfEnum, out var assertedMessage);
 
       #endregion
 
@@ -433,9 +431,7 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
       #region Act
       this.logger.LogDebug("Test ACT");
 
-      var usedContex = new ValidationContext(dt, items);
-      var results = new List<ValidationResult>();
-      var asserted_result = Validator.TryValidateObject(dt, usedContex, results);
+      var asserted_result = FitTimeFrameAttribute.IsValid(dt, tfEnum, out var assertedMessage);
 
       #endregion
 
@@ -444,7 +440,7 @@ public class TimeFrameDateTimeAttribute_Test : BaseTest<TimeFrameDateTimeAttribu
       this.logger.LogDebug("Test ASSERT");
 
       Expect("DT is invalid", () => Assert.False(asserted_result));
-      logger.LogInformation($"Validation message: {results[0]}");
+      logger.LogInformation($"Validation message: {assertedMessage}");
       #endregion
     }
   }

@@ -33,6 +33,10 @@ public class ChartSrv : IChartSrv
   public async Task<Result<IEnumerable<ChartDto>>> GetLoadedPeriodsAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     IEnumerable<ChartDto> _ret = await chartRep.Table.Where(c => c.InstrumentId == instrumentId).Select(e => e.ToDto()).ToArrayAsync(cancellationToken);
+
+    if (_ret.Count() == 0 && !await instrumentRep.ContainIdAsync(instrumentId, cancellationToken))
+      return Result.NotFound(nameof(ent.Instrument));
+
     return Result.Success(_ret);
   }
 }

@@ -46,6 +46,7 @@ public class MockChartFactory : absMockFactory
     var expectedUntill = (untillDt ?? new DateTime(2020, 1, 20)).ToUniversalTime();
 
     var _ret = new MockChart(expectedFrom, expectedUntill, instrument, timeFrame);
+    
     if (initId)
       _ret.InitId(GetNextId());
 

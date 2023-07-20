@@ -73,13 +73,13 @@ public class CandleSrv : ICandleSrv
 
     var loadingResult = await LoadRelatietEntity(addCandlesDto.InstrumentId, addCandlesDto.TimeFrameId, cancellationToken);
     if (!loadingResult.IsSuccess)
-      return loadingResult.Repack<(ent.Instrument, TimeFrame), int>();
+      return loadingResult.Repack<int>();
 
     (var instrument, var timeFrame) = loadingResult.Value;
 
     var convertResult = TryConvert(addCandlesDto, instrument, timeFrame);
     if (!convertResult.IsSuccess)
-      return convertResult.Repack<LoadedPeriod, int>();
+      return convertResult.Repack<int>();
 
     var newLoadedPer = convertResult.Value;
 

@@ -110,16 +110,19 @@ public class CandleSrv_AddCandles_Test : BaseTest<CandleSrv_AddCandles_Test>
 
     #region Act
     this.logger.LogDebug("Test ACT");
-
+    var assertedResult = await assertedSrv.AddCandlesAsync(usedInstrumentId, usedTf.Id, usedUploadDto);
     #endregion
 
 
     #region Assert
     this.logger.LogDebug("Test ASSERT");
-
-    Expect("Throw exception", () => Assert.ThrowsAsync<IdNotFoundException>(async () => await assertedSrv.AddCandlesAsync(usedInstrumentId, usedTf.Id, usedUploadDto)).GetAwaiter().GetResult(), out var assertedException);
-    Expect("Entity is Instrument", () => Assert.Equal(nameof(ent.Instrument), assertedException.Entity));
-    Expect("Id is Instrument id", () => Assert.Equal(usedInstrumentId.ToString(), assertedException.Id));
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Error count is 1", () => Assert.Equal(1, assertedResult.Errors.Count()));
+      Expect("Error is Instrument", () => Assert.True(assertedResult.Errors.Contains(nameof(ent.Instrument))));
+    });
 
     #endregion
   }
@@ -142,19 +145,21 @@ public class CandleSrv_AddCandles_Test : BaseTest<CandleSrv_AddCandles_Test>
     };
     #endregion
 
-
     #region Act
     this.logger.LogDebug("Test ACT");
-
+    var assertedResult = await assertedSrv.AddCandlesAsync(mockInstrument.Id, 99, usedUploadDto);
     #endregion
 
 
     #region Assert
     this.logger.LogDebug("Test ASSERT");
-
-    Expect("Throw exception", () => Assert.ThrowsAsync<IdNotFoundException>(async () => await assertedSrv.AddCandlesAsync(mockInstrument.Id, 99, usedUploadDto)).GetAwaiter().GetResult(), out var assertedException);
-    Expect("Entity is TimeFrame", () => Assert.Equal(nameof(TimeFrame), assertedException.Entity));
-    Expect("Id is TimeFrame id", () => Assert.Equal(99.ToString(), assertedException.Id));
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Error count is 1", () => Assert.Equal(1, assertedResult.Errors.Count()));
+      Expect("Error is TimeFrame", () => Assert.True(assertedResult.Errors.Contains(nameof(TimeFrame))));
+    });
 
     #endregion
   }
@@ -311,8 +316,8 @@ public class CandleSrv_AddCandles_For_ExistData_Test : BaseTest<CandleSrv_AddCan
     this.logger.LogDebug("Test ASSERT");
 
     Expect("Result is sucess", () => Assert.False(assertedResult.IsSuccess));
-    Expect("Result is Invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
-    Expect("Result has one validation error", () => Assert.Single(assertedResult.ValidationErrors), out var assertedError);
+    Expect("Result is Invalid", () => Assert.Equal(ResultStatus.Error, assertedResult.Status));
+    Expect("Result has one validation error", () => Assert.Single(assertedResult.Errors), out var assertedError);
     #endregion
   }
 

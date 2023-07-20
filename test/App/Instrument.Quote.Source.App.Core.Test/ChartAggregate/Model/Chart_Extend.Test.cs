@@ -22,10 +22,10 @@ public class Chart_Extend_Test : ExpectationsTestBase
   IEnumerable<Candle> baseCandles;
   MockChartFactory mockChartFactory = new MockChartFactory();
   MockCandleFactory mockCandleFactory;
-  IServiceProvider sp = Substitute.For<IServiceProvider>();
-  IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
+  //IServiceProvider sp = Substitute.For<IServiceProvider>();
+  //IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
 
-  MockChartFactory mockChartFactory2 = new MockChartFactory();
+  //MockChartFactory mockChartFactory2 = new MockChartFactory();
 
   public Chart_Extend_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
   {
@@ -34,10 +34,10 @@ public class Chart_Extend_Test : ExpectationsTestBase
 
     assertedChart = mockChartFactory.CreateChart(initId: true);
 
-    sp.GetService(Arg.Is(typeof(IReadRepository<ent.Instrument>))).Returns(instrumentRep);
-    sp.GetService(Arg.Is(typeof(IDecimalPartLongCheckerFactory))).Returns(new DecimalToStoreIntConverterFactory());
-    instrumentRep.Table.Returns(new[] { mockChartFactory.instrument, mockChartFactory2.instrument }.BuildMock());
-    assertedChart.SetServiceProvider(sp);
+    //sp.GetService(Arg.Is(typeof(IReadRepository<ent.Instrument>))).Returns(instrumentRep);
+    //sp.GetService(Arg.Is(typeof(IDecimalPartLongCheckerFactory))).Returns(new DecimalToStoreIntConverterFactory());
+    //instrumentRep.Table.Returns(new[] { mockChartFactory.instrument, mockChartFactory2.instrument }.BuildMock());
+    //assertedChart.SetServiceProvider(sp);
 
     mockCandleFactory = new MockCandleFactory(assertedChart);
     baseCandles = mockCandleFactory.CreateCandles(assertedChart.FromDate, assertedChart.UntillDate);
@@ -74,7 +74,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
     }
     var newChart = mockChartFactory.CreateChart(fromDt, untillDt, false);
     var expectedCandles = mockCandleFactory.CreateCandles(newChart.FromDate, newChart.UntillDate);
-    newChart.SetServiceProvider(sp);
+    //newChart.SetServiceProvider(sp);
     newChart.AddCandles(expectedCandles);
 
     #endregion
@@ -116,9 +116,9 @@ public class Chart_Extend_Test : ExpectationsTestBase
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
-    var newChart = mockChartFactory2.CreateChart(assertedChart.FromDate.AddDays(-10), assertedChart.FromDate);
+    var newChart = new MockChartFactory().CreateChart(assertedChart.FromDate.AddDays(-10), assertedChart.FromDate);
     var newCandles = mockCandleFactory.CreateCandles(newChart.FromDate, newChart.UntillDate);
-    newChart.SetServiceProvider(sp);
+    //newChart.SetServiceProvider(sp);
     newChart.AddCandles(newCandles);
 
     #endregion
@@ -155,7 +155,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
     var usedMockChartFactory = new MockChartFactory(mockInstrument, TimeFrame.Enum.H1.ToEntity());
     var newChart = usedMockChartFactory.CreateChart(assertedChart.FromDate.AddDays(-10), assertedChart.FromDate);
     var newCandles = mockCandleFactory.CreateCandles(newChart.FromDate, newChart.UntillDate);
-    newChart.SetServiceProvider(sp);
+    //newChart.SetServiceProvider(sp);
     newChart.AddCandles(newCandles);
 
     #endregion
@@ -191,7 +191,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
 
     var newChart = mockChartFactory.CreateChart(assertedChart.FromDate.AddDays(-10), assertedChart.FromDate, initId: true);
     var newCandles = mockCandleFactory.CreateCandles(newChart.FromDate, newChart.UntillDate);
-    newChart.SetServiceProvider(sp);
+    //newChart.SetServiceProvider(sp);
     newChart.AddCandles(newCandles);
 
     #endregion
@@ -258,7 +258,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
 
     var newChart = mockChartFactory.CreateChart(fromDt, untillDt);
     var newCandles = mockCandleFactory.CreateCandles(newChart.FromDate, newChart.UntillDate);
-    newChart.SetServiceProvider(sp);
+    //newChart.SetServiceProvider(sp);
     newChart.AddCandles(newCandles);
 
     #endregion
@@ -318,7 +318,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
     }
     var newChart = mockChartFactory.CreateChart(fromDt, untillDt);
     var newCandles = mockCandleFactory.CreateCandles(newChart.FromDate, newChart.UntillDate);
-    newChart.SetServiceProvider(sp);
+    //newChart.SetServiceProvider(sp);
     newChart.AddCandles(newCandles);
     #endregion
 

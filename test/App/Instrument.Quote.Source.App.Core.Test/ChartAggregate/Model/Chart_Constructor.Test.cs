@@ -21,9 +21,11 @@ public class Chart_Constructor_Test : BaseTest<Chart_Constructor_Test>
 {
   private ent.Instrument usedInstrument = MockInstrument.Create();
   private TimeFrame usedTf = TimeFrame.Enum.D1.ToEntity();
+ // private IServiceProvider sp = Substitute.For<IServiceProvider>();
+  //private Chart.Factory chartFactory;
   public Chart_Constructor_Test(ITestOutputHelper output) : base(output)
   {
-
+   // chartFactory = new Chart.Factory(sp);
   }
 
   [Fact]

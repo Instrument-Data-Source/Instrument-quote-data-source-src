@@ -34,14 +34,36 @@ public class CandlesSrv : ICandlesSrv
     this.chartRep = chartRep;
     this.logger = logger;
   }
+  public async Task<Result<(ent.Instrument, TimeFrame)>> getEntityAsync(int instrumentId, int timeFrameId, CancellationToken cancellationToken)
+  {
+    var instrument = await instrumentRep.TryGetByIdAsync(instrumentId, cancellationToken);
+    var timeframe = await timeframeRep.TryGetByIdAsync(timeFrameId, cancellationToken);
+    var notFound = new List<string>();
+
+    if (instrument == null)
+      notFound.Add(nameof(ent.Instrument));
+    if (timeframe == null)
+      notFound.Add(nameof(TimeFrame));
+
+    if (notFound.Count != 0)
+      return Result.NotFound(notFound.ToArray());
+
+    return Result.Success((instrument!, timeframe!));
+  }
   public async Task<Result<int>> AddCandlesAsync(int instrumentId, int timeFrameId, UploadedCandlesDto uploadedCandlesDto, CancellationToken cancellationToken = default)
   {
     logger.LogDebug("Get related entities");
+    var getEntityResult = await getEntityAsync(instrumentId, timeFrameId, cancellationToken);
+    if (!getEntityResult.IsSuccess)
+      return getEntityResult.Repack<int>();
     var instrument = await instrumentRep.GetByIdAsync(instrumentId, cancellationToken);
     var timeframe = await timeframeRep.GetByIdAsync(timeFrameId, cancellationToken);
 
     logger.LogDebug("Convert dto");
-    var newChart = uploadedCandlesDto.ToEntity(instrument, timeframe);
+    var mapResult = uploadedCandlesDto.ToEntity(instrument, timeframe);
+    if (!mapResult.IsSuccess)
+      return mapResult.Repack<int>();
+    var newChart = mapResult.Value;
 
     logger.LogDebug("Searching exist period");
     var existChart = await chartRep.TryGetForAsync(instrumentId, timeFrameId, cancellationToken);
@@ -68,7 +90,7 @@ public class CandlesSrv : ICandlesSrv
     logger.LogDebug("Load exist chart");
     var chartResult = await GetExistChartAsync(instrumentId, timeFrameId, cancellationToken);
     if (!chartResult.IsSuccess)
-      return chartResult.Repack<Chart, IEnumerable<CandleDto>>();
+      return chartResult.Repack<IEnumerable<CandleDto>>();
     var chart = chartResult.Value;
 
     if (from < chart.FromDate || untill > chart.UntillDate)
@@ -89,7 +111,12 @@ public class CandlesSrv : ICandlesSrv
     var chart = await chartRep.Table.Include(c => c.Instrument).SingleOrDefaultAsync(e => e.TimeFrameId == timeFrameId && e.InstrumentId == instrumentId, cancellationToken);
     if (chart == null)
     {
-      return Result.NotFound(nameof(Chart));
+      var notFound = new List<string>() { nameof(Chart) };
+      if (!await instrumentRep.ContainIdAsync(instrumentId, cancellationToken))
+        notFound.Add(nameof(ent.Instrument));
+      if (!await timeframeRep.ContainIdAsync(timeFrameId, cancellationToken))
+        notFound.Add(nameof(TimeFrame));
+      return Result.NotFound(notFound.ToArray());
     }
 
     return Result.Success(chart);

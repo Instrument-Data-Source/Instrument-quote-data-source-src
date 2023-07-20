@@ -14,14 +14,16 @@ public abstract class EntityBase
 
 public abstract class EntityBaseValidation : EntityBase
 {
-  private IServiceProvider? _sp;
+  /*
+  public IServiceProvider? serviceProvider { get; private set; }
   public void SetServiceProvider(IServiceProvider sp)
   {
-    this._sp = sp;
+    this.serviceProvider = sp;
   }
+  */
   private ValidationContext CreateValidationContext()
   {
-    return new ValidationContext(this, _sp, new Dictionary<object, object?>());
+    return new ValidationContext(this);//, serviceProvider, new Dictionary<object, object?>());
   }
   public bool IsValid(out ICollection<System.ComponentModel.DataAnnotations.ValidationResult>? validationResults)
   {

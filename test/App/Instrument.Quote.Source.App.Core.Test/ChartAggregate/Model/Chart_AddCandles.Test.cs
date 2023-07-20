@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Model;
 
+using Ardalis.Result;
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Mapper;
@@ -18,15 +19,15 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
 {
   MockChartFactory mockChartFactory = new MockChartFactory();
   Chart assertedChart;
-  IServiceProvider sp = Substitute.For<IServiceProvider>();
-  IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
+  //IServiceProvider sp = Substitute.For<IServiceProvider>();
+  //IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
   public Chart_AddCandles_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
   {
     assertedChart = mockChartFactory.CreateChart();
-    sp.GetService(Arg.Is(typeof(IReadRepository<ent.Instrument>))).Returns(instrumentRep);
-    sp.GetService(Arg.Is(typeof(IDecimalPartLongCheckerFactory))).Returns(new DecimalToStoreIntConverterFactory());
-    instrumentRep.Table.Returns(new[] { mockChartFactory.instrument }.BuildMock());
-    assertedChart.SetServiceProvider(sp);
+    //sp.GetService(Arg.Is(typeof(IReadRepository<ent.Instrument>))).Returns(instrumentRep);
+    //sp.GetService(Arg.Is(typeof(IDecimalPartLongCheckerFactory))).Returns(new DecimalToStoreIntConverterFactory());
+    //instrumentRep.Table.Returns(new[] { mockChartFactory.instrument }.BuildMock());
+
   }
 
   [Fact]
@@ -121,13 +122,16 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
     #region Act
     Logger.LogDebug("Test ACT");
 
+    var assertedResult = assertedChart.AddCandles(usedCandles);
+
     #endregion
 
 
     #region Assert
     Logger.LogDebug("Test ASSERT");
-    Expect("Get Validation Exception", () => Assert.Throws<ValidationException>(() => assertedChart.AddCandles(usedCandles)), out var assertedException);
-    Expect("Exception ValidationResult is ExtendedType", () => Assert.IsType<ValidationResultExtended>(assertedException.ValidationResult));
+
+    Expect("Result is not Successfull", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status not valid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
     #endregion
   }
   [Theory]
@@ -141,9 +145,9 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
     DateTime usedFromDt = assertedChart.UntillDate;
     DateTime usedUntillDt = assertedChart.FromDate;
     if (rightSide)
-      usedUntillDt = usedFromDt + new TimeSpan(3, 0, 0, 0);
+      usedUntillDt = usedFromDt + new TimeSpan(1, 0, 0, 0);
     else
-      usedFromDt = usedUntillDt - new TimeSpan(3, 0, 0, 0);
+      usedFromDt = usedUntillDt - new TimeSpan(1, 0, 0, 0);
 
     var usedCandles = new MockCandleFactory(assertedChart).CreateCandles(usedFromDt, usedUntillDt);
 
@@ -153,13 +157,21 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
     #region Act
     Logger.LogDebug("Test ACT");
 
+    var assertedResult = assertedChart.AddCandles(usedCandles);
+
     #endregion
 
 
     #region Assert
     Logger.LogDebug("Test ASSERT");
-    Expect("Get Validation Exception", () => Assert.Throws<ValidationException>(() => assertedChart.AddCandles(usedCandles)), out var assertedException);
-    Expect("Exception ValidationResult is ExtendedType", () => Assert.IsType<ValidationResultExtended>(assertedException.ValidationResult));
+
+    Expect("Result is not Successfull", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status not valid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Errors count 1", () => Assert.Single(assertedResult.ValidationErrors), out var assertedError);
+      Expect("Field DateTime", () => Assert.True(assertedError.Identifier.Contains("DateTime")));
+    });
     #endregion
   }
 
@@ -179,18 +191,21 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
     #region Act
     Logger.LogDebug("Test ACT");
 
+    var assertedResult = assertedChart.AddCandles(usedCandles);
+
     #endregion
 
 
     #region Assert
     Logger.LogDebug("Test ASSERT");
 
-    Expect("Get Validation Exception", () =>
-      Assert.Throws<ValidationException>(() => assertedChart.AddCandles(usedCandles)),
-      out var assertedException);
-    Expect("Exception ValidationResult is ExtendedType", () =>
-      Assert.IsType<ValidationResultExtended>(assertedException.ValidationResult));
-
+    Expect("Result is not Successfull", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status not valid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Errors count 1", () => Assert.Single(assertedResult.ValidationErrors), out var assertedError);
+      Expect("Field DateTime", () => Assert.True(assertedError.Identifier.Contains("DateTime")));
+    });
 
     #endregion
   }
@@ -214,17 +229,21 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
     #region Act
     Logger.LogDebug("Test ACT");
 
+    var assertedResult = assertedChart.AddCandles(usedCandles);
+
     #endregion
 
 
     #region Assert
     Logger.LogDebug("Test ASSERT");
 
-    Expect("Get Validation Exception", () =>
-      Assert.Throws<ValidationException>(() => assertedChart.AddCandles(usedCandles)),
-      out var assertedException);
-    Expect("Exception ValidationResult is ExtendedType", () =>
-      Assert.IsType<ValidationResult>(assertedException.ValidationResult));
+    Expect("Result is not Successfull", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status not valid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Errors count 1", () => Assert.Single(assertedResult.ValidationErrors), out var assertedError);
+      Expect("Field DateTime", () => Assert.True(assertedError.Identifier.Contains("DateTime")));
+    });
 
 
     ExpectGroup("Exist candles doesn't changed", () =>
@@ -250,17 +269,21 @@ public class Chart_AddCandles_Test : ExpectationsTestBase
     #region Act
     Logger.LogDebug("Test ACT");
 
+    var assertedResult = assertedChart.AddCandles(usedCandles);
+
     #endregion
 
 
     #region Assert
     Logger.LogDebug("Test ASSERT");
 
-    Expect("Get Validation Exception", () =>
-      Assert.Throws<ValidationException>(() => assertedChart.AddCandles(usedCandles)),
-      out var assertedException);
-    Expect("Exception ValidationResult is ExtendedType", () =>
-      Assert.IsType<ValidationResult>(assertedException.ValidationResult));
+    Expect("Result is not Successfull", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status not valid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Errors count 1", () => Assert.Single(assertedResult.ValidationErrors), out var assertedError);
+      Expect("Field DateTime", () => Assert.True(assertedError.Identifier.Contains("DateTime")));
+    });
 
     #endregion
   }

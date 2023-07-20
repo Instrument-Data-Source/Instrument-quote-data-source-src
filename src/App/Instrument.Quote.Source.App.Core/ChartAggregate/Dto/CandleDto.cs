@@ -10,29 +10,23 @@ public class CandleDto : IEquatable<CandleDto>
 {
   [Required]
   [UTCKind]
-  [FitTimeFrameAttribute("TimeFrameId")]
   public DateTime DateTime { get; set; }
   [Required]
   [CompareTo(CompType.GE, nameof(Low))]
   [CompareTo(CompType.LE, nameof(High))]
-  [PriceFitDecimalLenAttribute("InstumentId")]
   public decimal Open { get; set; }
   [Required]
   [CompareTo(CompType.GE, nameof(Open), nameof(Low), nameof(Close))]
-  [PriceFitDecimalLenAttribute("InstumentId")]
   public decimal High { get; set; }
   [Required]
   [CompareTo(CompType.LE, nameof(Open), nameof(High), nameof(Close))]
-  [PriceFitDecimalLenAttribute("InstumentId")]
   public decimal Low { get; set; }
   [Required]
   [CompareTo(CompType.GE, nameof(Low))]
   [CompareTo(CompType.LE, nameof(High))]
-  [PriceFitDecimalLenAttribute("InstumentId")]
   public decimal Close { get; set; }
   [Required]
   [Range(0, int.MaxValue)]
-  [VolumeFitDecimalLenAttribute("InstumentId")]
   public decimal Volume { get; set; }
 
   public bool Equals(CandleDto? other)

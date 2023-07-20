@@ -20,7 +20,7 @@ namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Service;
 
 public class ChartSrv_GetLoadedPeriods_Test : BaseTest<ChartSrv_GetLoadedPeriods_Test>
 {
-  IChartSrv assertedSrv;
+  ChartSrv assertedSrv;
   IReadRepository<Chart> usedChartRep = Substitute.For<IReadRepository<Chart>>();
   IReadRepository<ent.Instrument> usedInstrumuntRep = Substitute.For<IReadRepository<ent.Instrument>>();
   MockChartFactory mockChartFactory1;

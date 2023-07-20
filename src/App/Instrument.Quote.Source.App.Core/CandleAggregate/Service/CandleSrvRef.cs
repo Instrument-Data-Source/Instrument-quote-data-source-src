@@ -60,7 +60,7 @@ public class CandleSrvRef
       logger.LogInformation("Extend exist period");
       var addedPeriodRes = existLoadedPer.TryExtend(newLoadedPer);
       if (!addedPeriodRes.IsSuccess)
-        return addedPeriodRes.Repack<LoadedPeriod, int>();
+        return addedPeriodRes.Repack<int>();
 
       await loadedPeriodRep.SaveChangesAsync(cancellationToken);
       return Result.Success(addedPeriodRes.Value.Candles.Count());
@@ -72,7 +72,7 @@ public class CandleSrvRef
     logger.LogDebug("Load exist period");
     var existPeriodRes = await GetExistPeriodAsync(instrumentId, timeFrameId, cancellationToken);
     if (!existPeriodRes.IsSuccess)
-      return existPeriodRes.Repack<PeriodResponseDto, IEnumerable<CandleDto>>();
+      return existPeriodRes.Repack<IEnumerable<CandleDto>>();
 
     var loadedPer = existPeriodRes.Value;
 

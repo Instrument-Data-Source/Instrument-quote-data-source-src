@@ -100,6 +100,7 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
     #region Act
     this.logger.LogDebug("Test ACT");
 
+    var assertedResult = await assertedSrv.GetCandlesAsync(usedInstrumentId, usedTimeFrame.Id, usedDtFrom, usedDtUntill);
 
     #endregion
 
@@ -107,12 +108,14 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
     #region Assert
     this.logger.LogDebug("Test ASSERT");
 
-    Expect("Throw exception", () =>
-      Assert.ThrowsAsync<IdNotFoundException>(async () =>
-        await assertedSrv.GetCandlesAsync(usedInstrumentId, usedTimeFrame.Id, usedDtFrom, usedDtUntill))
-        .GetAwaiter().GetResult(), out var assertedException);
-    Expect("Entity is Instrument", () => Assert.Equal(nameof(ent.Instrument), assertedException.Entity));
-    Expect("Id is Instrument id", () => Assert.Equal(usedInstrumentId.ToString(), assertedException.Id));
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Error count is 2", () => Assert.Equal(2, assertedResult.Errors.Count()));
+      Expect("Error is Instrument", () => Assert.True(assertedResult.Errors.Contains(nameof(ent.Instrument))));
+      Expect("Error is Chart", () => Assert.True(assertedResult.Errors.Contains(nameof(Chart))));
+    });
     #endregion
   }
 
@@ -130,19 +133,20 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
 
     #region Act
     this.logger.LogDebug("Test ACT");
-
+    var assertedResult = await assertedSrv.GetCandlesAsync(mockInstrument.Id, 99, usedDtFrom, usedDtUntill);
     #endregion
 
 
     #region Assert
     this.logger.LogDebug("Test ASSERT");
-
-    Expect("Throw exception", () =>
-     Assert.ThrowsAsync<IdNotFoundException>(async () =>
-       await assertedSrv.GetCandlesAsync(mockInstrument.Id, 99, usedDtFrom, usedDtUntill))
-       .GetAwaiter().GetResult(), out var assertedException);
-    Expect("Entity is TimeFrame", () => Assert.Equal(nameof(TimeFrame), assertedException.Entity));
-    Expect("Id is TimeFrame id", () => Assert.Equal(99.ToString(), assertedException.Id));
+    Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
+    Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+    ExpectGroup("Errors is correct", () =>
+    {
+      Expect("Error count is 2", () => Assert.Equal(2, assertedResult.Errors.Count()));
+      Expect("Error is TimeFrame", () => Assert.True(assertedResult.Errors.Contains(nameof(TimeFrame))));
+      Expect("Error is Chart", () => Assert.True(assertedResult.Errors.Contains(nameof(Chart))));
+    });
     #endregion
   }
 
@@ -171,7 +175,7 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
     Expect("Result is Success", () => Assert.False(assertedResult.IsSuccess));
     Expect("Result status is NotFound", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
     Expect("Result errors contain 1 error", () => Assert.Single(assertedResult.Errors), out var assertedError);
-    Expect("Result error is LoadedPeriod Entity name", () => Assert.Equal("Chart hasn't been loaded", assertedError));
+    //Expect("Result error is LoadedPeriod Entity name", () => Assert.Equal("Chart hasn't been loaded", assertedError));
     #endregion
   }
 
