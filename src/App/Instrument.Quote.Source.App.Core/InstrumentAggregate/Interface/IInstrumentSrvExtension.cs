@@ -16,12 +16,15 @@ public static class IInstrumentSrvExtension
     var result = await service.GetByAsync(instrumentStr, cancellationToken);
 
     if (result.IsSuccess)
-      return await service.RemoveAsync(result.Value.Id, cancellationToken);
+      if (result.Value.Count() != 1)
+        return Result.Error("Cann't define which instrument must be deleted");
+      else
+        return await service.RemoveAsync(result.Value.ElementAt(0).Id, cancellationToken);
 
     if (Int32.TryParse(instrumentStr, out int instrumentId))
       return await service.RemoveAsync(instrumentId, cancellationToken);
 
-    return Result.NotFound();
+    return Result.NotFound(nameof(ent.Instrument));
   }
   /// <summary>
   /// Get instrument by code
@@ -29,16 +32,21 @@ public static class IInstrumentSrvExtension
   /// <param name="instrumentCode">Instrument Code</param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  public static async Task<Result<InstrumentResponseDto>> GetInstrumentByIdOrCodeAsync(this IInstrumentSrv service, string instrumentStr, CancellationToken cancellationToken = default)
+  public static async Task<Result<InstrumentResponseDto>> GetInstrumentByIdOrCodeAsync(this IReadInstrumentSrv service, string instrumentStr, CancellationToken cancellationToken = default)
   {
     var result = await service.GetByAsync(instrumentStr, cancellationToken);
 
     if (result.IsSuccess)
-      return result;
+      if (result.Value.Count() != 1)
+        return Result.Error("Cann't define which instrument must be deleted");
+      else
+        return Result.Success(result.Value.ElementAt(0));
 
     if (Int32.TryParse(instrumentStr, out int instrumentId))
-      return await service.GetByAsync(instrumentId);
-
-    return Result.NotFound();
+    {
+      var idResult = await service.GetByAsync(instrumentId);
+      return idResult;
+    }
+    return Result.NotFound(nameof(ent.Instrument));
   }
 }

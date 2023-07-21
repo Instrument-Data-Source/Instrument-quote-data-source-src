@@ -26,18 +26,18 @@ public class InstrumentTypeSrv : IInstrumentTypeSrv
 
   public async Task<Result<InstrumentTypeResponseDto>> GetByAsync(int Id, CancellationToken cancellationToken = default)
   {
-    var result = await rep.Table.Select(e => e.ToDto()).SingleOrDefaultAsync(e => e.Id == Id, cancellationToken);
+    var result = await rep.Table.SingleOrDefaultAsync(e => e.Id == Id, cancellationToken);
     if (result == null)
-      return Result.NotFound();
-    return Result.Success(result);
+      return Result.NotFound(nameof(ent.InstrumentType));
+    return Result.Success(result.ToDto());
   }
 
   public async Task<Result<InstrumentTypeResponseDto>> GetByAsync(string Code, CancellationToken cancellationToken = default)
   {
     var lower_code = Code.ToLower();
-    var result = await rep.Table.Select(e => e.ToDto()).SingleOrDefaultAsync(e => e.Name.ToLower() == lower_code, cancellationToken);
+    var result = await rep.Table.SingleOrDefaultAsync(e => e.Name.ToLower() == lower_code, cancellationToken);
     if (result == null)
-      return Result.NotFound();
-    return Result.Success(result);
+      return Result.NotFound(nameof(ent.InstrumentType));
+    return Result.Success(result.ToDto());
   }
 }

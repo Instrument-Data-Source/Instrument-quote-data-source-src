@@ -1,9 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Microsoft.Extensions.Logging;
-
-namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Model;
-
 using Ardalis.Result;
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
@@ -14,6 +11,8 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
+
+namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Model;
 
 public class Chart_AddCandles_Test : ExpectationsTestBase
 {

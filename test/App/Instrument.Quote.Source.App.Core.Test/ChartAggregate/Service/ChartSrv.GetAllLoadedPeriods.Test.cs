@@ -54,7 +54,7 @@ public class ChartSrv_GetAllLoadedPeriods_Test : BaseTest<ChartSrv_GetAllLoadedP
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await assertedSrv.GetAllLoadedPeriodsAsync();
+    var assertedResult = await assertedSrv.GetAllAsync();
 
     #endregion
 
@@ -89,7 +89,7 @@ public class ChartSrv_GetAllLoadedPeriods_Test : BaseTest<ChartSrv_GetAllLoadedP
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await assertedSrv.GetAllLoadedPeriodsAsync();
+    var assertedResult = await assertedSrv.GetAllAsync();
 
     #endregion
 

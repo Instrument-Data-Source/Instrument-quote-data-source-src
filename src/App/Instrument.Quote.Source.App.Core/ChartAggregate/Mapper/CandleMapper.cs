@@ -36,7 +36,7 @@ public class CandleMapper
       High = decMapper.PriceToDecimal(entity.High),
       Low = decMapper.PriceToDecimal(entity.Low),
       Close = decMapper.PriceToDecimal(entity.Close),
-      Volume = decMapper.PriceToDecimal(entity.Volume)
+      Volume = decMapper.VolumeToDecimal(entity.Volume)
     };
   }
 

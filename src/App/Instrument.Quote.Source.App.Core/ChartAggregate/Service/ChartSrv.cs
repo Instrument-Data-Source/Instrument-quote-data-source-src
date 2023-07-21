@@ -24,13 +24,13 @@ public class ChartSrv : IChartSrv
     this.logger = logger;
   }
 
-  public async Task<Result<IEnumerable<ChartDto>>> GetAllLoadedPeriodsAsync(CancellationToken cancellationToken = default)
+  public async Task<Result<IEnumerable<ChartDto>>> GetAllAsync(CancellationToken cancellationToken = default)
   {
     IEnumerable<ChartDto> _ret = await chartRep.Table.Select(e => e.ToDto()).ToArrayAsync(cancellationToken);
     return Result.Success(_ret);
   }
 
-  public async Task<Result<IEnumerable<ChartDto>>> GetLoadedPeriodsAsync(int instrumentId, CancellationToken cancellationToken = default)
+  public async Task<Result<IEnumerable<ChartDto>>> GetAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
     IEnumerable<ChartDto> _ret = await chartRep.Table.Where(c => c.InstrumentId == instrumentId).Select(e => e.ToDto()).ToArrayAsync(cancellationToken);
 
@@ -39,4 +39,5 @@ public class ChartSrv : IChartSrv
 
     return Result.Success(_ret);
   }
+
 }

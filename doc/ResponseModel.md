@@ -1,12 +1,13 @@
 # Model of service responses
 
-| Category             | Error      | BP Error | Model Error | Solution            |
-| -------------------- | ---------- | -------- | ----------- | ------------------- |
-| Success process      | Success    |          |             |                     |
-| Business logic error | NotFound   | X        |             | Create entity       |
-| Business logic error | Error      | X        |             | Use another BP flow |
-| Business logic error | Validation | X        | X           | Change DTO          |
-| Code error           | Exception  |          |             | Bugfix              |
+| Category             | Error        | BP Error | Model Error | Solution                   |
+| -------------------- | ------------ | -------- | ----------- | -------------------------- |
+| Success process      | Success      |          |             |                            |
+| Business logic error | NotFound     | X        | X           | Create entity Or Change ID |
+| Business logic error | Error        | X        |             | Use another BP flow        |
+| Business logic error | DataModel VE |          | X           | Change DTO                 |
+| Business logic error | BP ValidErr  | X        |             | Change DTO                 |
+| Code error           | Exception    |          |             | Bugfix                     |
 
 
 ## Error category
@@ -18,7 +19,8 @@
 - [Success](#success-200)
 - [NotFound](#notfound)
 - [Error](#error)
-- [ValidationError](#validation-error)
+- [Data model validation Error](#data-model-validation-error)
+- [Busines process validation Error](#busines-process-validation-error)
 - [Exception](#exception)
 
 ## Description
@@ -33,7 +35,8 @@ Success case of call, status code 200
 Error described and predicted by business process OR made by external user actions
 - [NotFound](#notfound)
 - [Error](#error)
-- [ValidationError](#validation-error)
+- [Data model validation Error](#data-model-validation-error)
+- [Busines process validation Error](#busines-process-validation-error)
 
 #### NotFound
 Use non existed ID in call
@@ -50,13 +53,22 @@ Errors predicted by **business process**
   - Repeat call later
 - Can not make a call, because entity has wrong status
 
-#### Validation Error
-Error in data model
+#### Data model validation Error
+Error in structure of data model
 
 **Example**
-- Error in getted data
-	- Change dto
-	- Doesn't change if you change call order
+- Errors in getted data: 
+  - Field with count of candles in row is negative
+  - Candle DateTime is out of chart bounds
+  - High price is lower than open price
+	
+#### Busines process validation Error
+Error in validation by business flow function
+Difference to [Data model validation](#data-model-validation-error) that data model validation could be check with out connection to the service, using only data of DTO
+
+**Example**
+- Error in getted data:
+	- Price decimal is too long for this instrument
 
 ### Code error
 #### Exception

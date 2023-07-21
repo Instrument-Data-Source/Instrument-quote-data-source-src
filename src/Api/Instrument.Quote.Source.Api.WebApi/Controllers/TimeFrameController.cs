@@ -1,4 +1,5 @@
 using Ardalis.Result;
+using Instrument.Quote.Source.Api.WebApi.Tools;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Dto;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -29,13 +30,7 @@ public class TimeFrameController : ControllerBase
   public async Task<ActionResult<IEnumerable<TimeFrameResponseDto>>> GetAll()
   {
     var result = await timeFrameSrv.GetAllAsync();
-    switch (result.Status)
-    {
-      case ResultStatus.Ok:
-        return Ok(result.Value);
-      default:
-        throw new ApplicationException("Unexpected result status");
-    }
+    return result.MapToActionResult();
   }
 
   /// <summary>
@@ -47,18 +42,10 @@ public class TimeFrameController : ControllerBase
   /// <response code="404">Timeframe not found</response>
   [HttpGet("{timeframeStr}")]
   [ProducesResponseType(typeof(TimeFrameResponseDto), StatusCodes.Status200OK)]
-  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
   public async Task<ActionResult<TimeFrameResponseDto>> GetByIdOrCode(string timeframeStr)
   {
     var result = await timeFrameSrv.GetByIdOrCodeAsync(timeframeStr);
-    switch (result.Status)
-    {
-      case ResultStatus.Ok:
-        return Ok(result.Value);
-      case ResultStatus.NotFound:
-        return NotFound("Timeframe not found");
-      default:
-        throw new ApplicationException("Unexpected result status");
-    }
+    return result.MapToActionResult();
   }
 }

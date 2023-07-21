@@ -277,12 +277,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
 
     Expect("Result is not Success", () => Assert.False(assertedResult.IsSuccess));
 
-    Expect("Result Status is conflict", () => Assert.Equal(ResultStatus.Conflict, assertedResult.Status));
-
-    ExpectGroup("Validation error is correct", () =>
-    {
-      Expect("Has one error", () => Assert.Single(assertedResult.Errors), out var assertedError);
-    });
+    Expect("Result Status is conflict", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
 
     ExpectGroup("Candles is not damaged", () =>
     {
@@ -336,12 +331,7 @@ public class Chart_Extend_Test : ExpectationsTestBase
 
     Expect("Result is not Success", () => Assert.False(assertedResult.IsSuccess));
 
-    Expect("Result Status is invalid", () => Assert.Equal(ResultStatus.Error, assertedResult.Status));
-
-    ExpectGroup("Validation error is correct", () =>
-    {
-      Expect("Has one error", () => Assert.Single(assertedResult.Errors), out var validationError);
-    });
+    Expect("Result Status is invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
 
     ExpectGroup("Candles is not damaged", () =>
     {

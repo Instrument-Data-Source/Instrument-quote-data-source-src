@@ -14,13 +14,13 @@ public class ValidationExceptionFilter : IActionFilter, IOrderedFilter
 
   public void OnActionExecuted(ActionExecutedContext context)
   {
-    if (context.Exception is ValidationException exception)
+    if (context.Exception != null)
     {
-      context.Result = new ObjectResult(exception.Message) //new BadRequestDto(exception)
-      {
-        StatusCode = StatusCodes.Status508LoopDetected,
-      };
-      context.ExceptionHandled = true;// BadRequest()
+      if (context.Exception is ValidationException exception)
+        context.Result = new BadRequestObjectResult(exception.Message);
+      else
+        context.Result = new StatusCodeResult(500);
+      context.ExceptionHandled = true;
     }
   }
 }

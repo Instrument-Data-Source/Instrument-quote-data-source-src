@@ -77,9 +77,12 @@ public class AddInstrument_Test
     InstrumentTypeRep.Table.Returns(new List<ent.InstrumentType>().BuildMock());
 
     // Act
-
+    var assertedResult = await instrumentService.CreateAsync(requestDto);
     // Assert
-    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await instrumentService.CreateAsync(requestDto));
+    Assert.False(assertedResult.IsSuccess);
+    Assert.Equal(ResultStatus.NotFound, assertedResult.Status);
+    var assertedError = Assert.Single(assertedResult.Errors);
+    Assert.Equal(nameof(ent.InstrumentType), assertedError);
   }
 
 }

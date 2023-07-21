@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
@@ -14,25 +15,16 @@ public static class Mapper
   /// <param name="readRepository">Entity Type Repository</param>
   /// <exception cref="FluentValidation.ValidationException">One of argument has wrong value</exception>
   /// <returns></returns>
-  public static async Task<ent.Instrument> ToEntityAsync(this NewInstrumentRequestDto dto, IReadRepository<ent.InstrumentType> readRepository, CancellationToken cancellationToken = default)
+  public static async Task<Result<ent.Instrument>> ToEntityAsync(this NewInstrumentRequestDto dto, IReadRepository<ent.InstrumentType> readRepository, CancellationToken cancellationToken = default)
   {
-    int typeEnt = await dto.GetInstrumentTypeId(readRepository, cancellationToken);
-    return new ent.Instrument(dto.Name, dto.Code, dto.PriceDecimalLen, dto.VolumeDecimalLen, typeEnt);
+    var instrumentType = await readRepository.TryGetByIdAsync(dto.TypeId, cancellationToken);
+    if (instrumentType == null)
+      return Result.NotFound(nameof(ent.InstrumentType));
+
+    return Result.Success(new ent.Instrument(dto.Name, dto.Code, dto.PriceDecimalLen, dto.VolumeDecimalLen, instrumentType));
   }
 
-  private static async Task<int> GetInstrumentTypeId(this NewInstrumentRequestDto dto, IReadRepository<InstrumentType> readRepository, CancellationToken cancellationToken = default)
-  {
-    InstrumentType? typeByCode = null;
-    if (dto.TypeId != 0)
-      typeByCode = await readRepository.TryGetByIdAsync(dto.TypeId, cancellationToken);
 
-
-    if (typeByCode != null)
-      return typeByCode.Id;
-
-    return -1;
-
-  }
   public static InstrumentResponseDto ToDto(this ent.Instrument entity)
   {
     return new InstrumentResponseDto(entity);

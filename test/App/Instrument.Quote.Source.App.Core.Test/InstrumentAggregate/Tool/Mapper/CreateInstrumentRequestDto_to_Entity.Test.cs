@@ -1,13 +1,14 @@
 namespace Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Tool.Mapper;
 
 using System.Threading.Tasks;
+using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Tool;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
-using ent=Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
+using ent = Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
 public class ToEntity_Test
 {
   IReadRepository<ent.InstrumentType> instrumentTypeRep = Substitute.For<IReadRepository<ent.InstrumentType>>();
@@ -59,14 +60,16 @@ public class ToEntity_Test
     instrumentTypeRep.Table.Returns(using_IntstrumentTypes.BuildMock());
 
     // Act
-    var asserted_ent = await using_Dto.ToEntityAsync(instrumentTypeRep);
+    var asserted_ent_res = await using_Dto.ToEntityAsync(instrumentTypeRep);
 
     // Assert
-    Assert.Equal(using_Dto.Name, asserted_ent.Name);
-    Assert.Equal(using_Dto.Code, asserted_ent.Code);
-    Assert.Equal(using_IntstrumentTypes[0].Id, asserted_ent.InstrumentTypeId);
-    Assert.Equal(using_Dto.PriceDecimalLen, asserted_ent.PriceDecimalLen);
-    Assert.Equal(using_Dto.VolumeDecimalLen, asserted_ent.VolumeDecimalLen);
+    Assert.True(asserted_ent_res.IsSuccess);
+    var assertedValue = asserted_ent_res.Value;
+    Assert.Equal(using_Dto.Name, assertedValue.Name);
+    Assert.Equal(using_Dto.Code, assertedValue.Code);
+    Assert.Equal(using_IntstrumentTypes[0].Id, assertedValue.InstrumentTypeId);
+    Assert.Equal(using_Dto.PriceDecimalLen, assertedValue.PriceDecimalLen);
+    Assert.Equal(using_Dto.VolumeDecimalLen, assertedValue.VolumeDecimalLen);
   }
   /*
   [Fact]
@@ -134,9 +137,12 @@ public class ToEntity_Test
     instrumentTypeRep.Table.Returns(using_IntstrumentTypes.BuildMock());
 
     // Act
-
+    var assertedResult = await using_Dto.ToEntityAsync(instrumentTypeRep);
     // Assert
-    await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () => await using_Dto.ToEntityAsync(instrumentTypeRep));
+    Assert.False(assertedResult.IsSuccess);
+    Assert.Equal(ResultStatus.NotFound, assertedResult.Status);
+    var assertedError = Assert.Single(assertedResult.Errors);
+    Assert.Equal(nameof(ent.InstrumentType), assertedError);
   }
   /*
     [Fact]

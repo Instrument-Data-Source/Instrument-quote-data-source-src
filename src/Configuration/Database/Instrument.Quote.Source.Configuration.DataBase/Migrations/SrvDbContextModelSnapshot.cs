@@ -17,15 +17,12 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
-                .HasAnnotation("Proxies:ChangeTracking", false)
-                .HasAnnotation("Proxies:CheckEquality", false)
-                .HasAnnotation("Proxies:LazyLoading", true)
+                .HasAnnotation("ProductVersion", "7.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.CandleAggregate.Model.Candle", b =>
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Candle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,46 +30,46 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CloseStore")
+                    b.Property<int>("ChartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Close")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("HighStore")
+                    b.Property<int>("High")
                         .HasColumnType("integer");
 
-                    b.Property<int>("InstrumentId")
+                    b.Property<int?>("InstrumentId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("LoadedPeriodId")
+                    b.Property<int>("Low")
                         .HasColumnType("integer");
 
-                    b.Property<int>("LowStore")
+                    b.Property<int>("Open")
                         .HasColumnType("integer");
 
-                    b.Property<int>("OpenStore")
+                    b.Property<int?>("TimeFrameId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TimeFrameId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("VolumeStore")
+                    b.Property<int>("Volume")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LoadedPeriodId");
+                    b.HasIndex("InstrumentId");
 
                     b.HasIndex("TimeFrameId");
 
-                    b.HasIndex("InstrumentId", "TimeFrameId", "DateTime")
+                    b.HasIndex("ChartId", "DateTime")
                         .IsUnique();
 
                     b.ToTable("Candles");
                 });
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.CandleAggregate.Model.LoadedPeriod", b =>
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,7 +96,7 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.HasIndex("InstrumentId", "TimeFrameId")
                         .IsUnique();
 
-                    b.ToTable("LoadedPeriods");
+                    b.ToTable("Charts");
                 });
 
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", b =>
@@ -257,39 +254,35 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.CandleAggregate.Model.Candle", b =>
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Candle", b =>
                 {
-                    b.HasOne("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", "Instrument")
+                    b.HasOne("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", "Chart")
                         .WithMany("Candles")
-                        .HasForeignKey("InstrumentId")
+                        .HasForeignKey("ChartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Instrument.Quote.Source.App.Core.CandleAggregate.Model.LoadedPeriod", null)
+                    b.HasOne("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", null)
                         .WithMany("Candles")
-                        .HasForeignKey("LoadedPeriodId");
+                        .HasForeignKey("InstrumentId");
 
-                    b.HasOne("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", "TimeFrame")
+                    b.HasOne("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", null)
                         .WithMany("Candles")
-                        .HasForeignKey("TimeFrameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("TimeFrameId");
 
-                    b.Navigation("Instrument");
-
-                    b.Navigation("TimeFrame");
+                    b.Navigation("Chart");
                 });
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.CandleAggregate.Model.LoadedPeriod", b =>
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", b =>
                 {
                     b.HasOne("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", "Instrument")
-                        .WithMany("LoadedPeriods")
+                        .WithMany("Charts")
                         .HasForeignKey("InstrumentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", "TimeFrame")
-                        .WithMany("LoadedPeriods")
+                        .WithMany("Charts")
                         .HasForeignKey("TimeFrameId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -310,7 +303,7 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.Navigation("InstrumentType");
                 });
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.CandleAggregate.Model.LoadedPeriod", b =>
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", b =>
                 {
                     b.Navigation("Candles");
                 });
@@ -319,7 +312,7 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                 {
                     b.Navigation("Candles");
 
-                    b.Navigation("LoadedPeriods");
+                    b.Navigation("Charts");
                 });
 
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.InstrumentType", b =>
@@ -331,7 +324,7 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                 {
                     b.Navigation("Candles");
 
-                    b.Navigation("LoadedPeriods");
+                    b.Navigation("Charts");
                 });
 #pragma warning restore 612, 618
         }

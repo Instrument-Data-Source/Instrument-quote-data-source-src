@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Service;
 
-public class CandlesSrv : ICandlesSrv
+public class CandlesSrv : ICandleSrv
 {
   private readonly IReadRepository<ent.Instrument> instrumentRep;
   private readonly IReadRepository<TimeFrame> timeframeRep;
@@ -50,7 +50,7 @@ public class CandlesSrv : ICandlesSrv
 
     return Result.Success((instrument!, timeframe!));
   }
-  public async Task<Result<int>> AddCandlesAsync(int instrumentId, int timeFrameId, UploadedCandlesDto uploadedCandlesDto, CancellationToken cancellationToken = default)
+  public async Task<Result<int>> AddAsync(int instrumentId, int timeFrameId, UploadedCandlesDto uploadedCandlesDto, CancellationToken cancellationToken = default)
   {
     logger.LogDebug("Get related entities");
     var getEntityResult = await getEntityAsync(instrumentId, timeFrameId, cancellationToken);
@@ -85,7 +85,7 @@ public class CandlesSrv : ICandlesSrv
     }
   }
 
-  public async Task<Result<IEnumerable<CandleDto>>> GetCandlesAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, CancellationToken cancellationToken = default)
+  public async Task<Result<IEnumerable<CandleDto>>> GetAsync(int instrumentId, int timeFrameId, DateTime from, DateTime untill, CancellationToken cancellationToken = default)
   {
     logger.LogDebug("Load exist chart");
     var chartResult = await GetExistChartAsync(instrumentId, timeFrameId, cancellationToken);
@@ -94,7 +94,7 @@ public class CandlesSrv : ICandlesSrv
     var chart = chartResult.Value;
 
     if (from < chart.FromDate || untill > chart.UntillDate)
-      return Result.NotFound("Data has not been loaded for this period");
+      return Result.NotFound(nameof(Candle));
 
     var candleMapper = new CandleMapper(chart);
 
@@ -111,11 +111,13 @@ public class CandlesSrv : ICandlesSrv
     var chart = await chartRep.Table.Include(c => c.Instrument).SingleOrDefaultAsync(e => e.TimeFrameId == timeFrameId && e.InstrumentId == instrumentId, cancellationToken);
     if (chart == null)
     {
-      var notFound = new List<string>() { nameof(Chart) };
+      var notFound = new List<string>();
       if (!await instrumentRep.ContainIdAsync(instrumentId, cancellationToken))
         notFound.Add(nameof(ent.Instrument));
       if (!await timeframeRep.ContainIdAsync(timeFrameId, cancellationToken))
         notFound.Add(nameof(TimeFrame));
+      if (notFound.Count() == 0)
+        notFound.Add(nameof(Chart));
       return Result.NotFound(notFound.ToArray());
     }
 

@@ -35,14 +35,9 @@ public partial class Chart
     if (extensionChart.TimeFrameId != this.TimeFrameId)
       throw new ArgumentException($"{nameof(extensionChart)} has different {nameof(Chart.TimeFrameId)} then this", nameof(Chart.TimeFrameId));
 
-    if (extensionChart.FromDate >= this.FromDate && extensionChart.FromDate < this.UntillDate ||
-        extensionChart.UntillDate > this.FromDate && extensionChart.UntillDate <= this.UntillDate ||
-        extensionChart.FromDate <= this.FromDate && extensionChart.UntillDate >= UntillDate)
-      return Result.Conflict("Uploaded data inside exist period");
-
-    if (extensionChart.FromDate != this.UntillDate &&
-        extensionChart.UntillDate != this.FromDate)
-      return Result.Error("Uploaded data doesn't connected to exist period");
+    var validateResult = new ChartExtendChartValidator(this).Validate(extensionChart);
+    if (!validateResult.IsValid)
+      return validateResult.ToResult();
 
     if (extensionChart.FromDate < FromDate)
       FromDate = extensionChart.FromDate;

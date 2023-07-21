@@ -12,7 +12,7 @@ using NSubstitute;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate;
 
-public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
+public class IInstrumentSrv_Create_Test : BaseDbTest
 {
 
   public IInstrumentSrv_Create_Test(ITestOutputHelper output) : base(output)
@@ -24,7 +24,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
   public async void WHEN_request_create_new_instrument_THEN_instrument_created()
   {
     #region Array
-    logger.LogInformation("Test ARRAY");
+    Logger.LogInformation("Test ARRAY");
 
     var usingNewInstrumentRequestDto = new NewInstrumentRequestDto()
     {
@@ -39,7 +39,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 
 
     #region Act
-    logger.LogInformation("Test ACT");
+    Logger.LogInformation("Test ACT");
 
     Result<InstrumentResponseDto> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
@@ -53,7 +53,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 
 
     #region Assert
-    logger.LogInformation("Test ASSERT");
+    Logger.LogInformation("Test ASSERT");
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     ExpectGroup("Return correct dto", () =>
@@ -88,10 +88,10 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
   }
 
   [Fact]
-  public async void WHEN_give_wrong_record_THEN_get_result_with_invalid_status()
+  public async void WHEN_give_wrong_record_THEN_get_exception()
   {
     #region Array
-    this.logger.LogDebug("Test ARRAY");
+    this.Logger.LogDebug("Test ARRAY");
 
     var usingNewInstrumentRequestDto = new NewInstrumentRequestDto()
     {
@@ -104,9 +104,49 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 
     #endregion
 
+    using (var act_scope = this.global_sp.CreateScope())
+    {
+      #region Act
+      this.Logger.LogDebug("Test ACT");
+
+      Result<InstrumentResponseDto> assertedResult;
+
+      var sp = act_scope.ServiceProvider;
+      var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
+
+
+
+      #endregion
+
+
+      #region Assert
+      this.Logger.LogDebug("Test ASSERT");
+
+      var assertedExpection = await ExpectTaskAsync("Get exception", async () => await Assert.ThrowsAnyAsync<Exception>(async () => await usedTimeFrameSrv.CreateAsync(usingNewInstrumentRequestDto)));
+      Logger.LogDebug(assertedExpection.ToString());
+      #endregion
+    }
+  }
+  [Fact]
+  public async void WHEN_give_wrong_typeId_THEN_get_NotFound()
+  {
+    #region Array
+    this.Logger.LogDebug("Test ARRAY");
+
+    var usingNewInstrumentRequestDto = new NewInstrumentRequestDto()
+    {
+      Name = "Test instrument 1",
+      Code = "TI13",
+      TypeId = 99,
+      PriceDecimalLen = 2,
+      VolumeDecimalLen = 3
+    };
+
+    #endregion
+
 
     #region Act
-    this.logger.LogDebug("Test ACT");
+    this.Logger.LogDebug("Test ACT");
 
     Result<InstrumentResponseDto> assertedResult;
     using (var act_scope = this.global_sp.CreateScope())
@@ -120,63 +160,15 @@ public class IInstrumentSrv_Create_Test : BaseDbTest<IInstrumentSrv_Create_Test>
 
 
     #region Assert
-    this.logger.LogDebug("Test ASSERT");
+    this.Logger.LogDebug("Test ASSERT");
 
     Expect("Result is not success", () => Assert.False(assertedResult.IsSuccess));
-    Expect("Status is Invalid", () => Assert.Equal(ResultStatus.Invalid, assertedResult.Status));
-    Expect("Result contain validation errors", () => Assert.NotEmpty(assertedResult.ValidationErrors));
-
-    #endregion
-  }
-}
-
-public class IInstrumentSrv_Remove_Test : BaseDbTest<IInstrumentSrv_Remove_Test>
-{
-  private MockInstrumentFactory mockInstrumentFactory;
-  public IInstrumentSrv_Remove_Test(ITestOutputHelper output) : base(output)
-  {
-    mockInstrumentFactory = new MockInstrumentFactory(global_sp);
-    mockInstrumentFactory.Init();
-  }
-
-  [Fact]
-  public async void WHEN_request_remove_THEN_instrument_removed()
-  {
-    #region Array
-    this.logger.LogDebug("Test ARRAY");
-
-    var usingId = mockInstrumentFactory.mockInstrument1.Id;
-
-    #endregion
-
-
-    #region Act
-    this.logger.LogDebug("Test ACT");
-
-    Result assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    Expect("Status is Invalid", () => Assert.Equal(ResultStatus.NotFound, assertedResult.Status));
+    ExpectGroup("Result error is correct", () =>
     {
-      var sp = act_scope.ServiceProvider;
-      var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
-      assertedResult = await usedTimeFrameSrv.RemoveAsync(usingId);
-    }
-
-    #endregion
-
-
-    #region Assert
-    this.logger.LogDebug("Test ASSERT");
-
-    Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
-    ExpectGroup("Instrument does'n exist in repository", async () =>
-    {
-      using (var assert_scope = this.global_sp.CreateScope())
-      {
-        var sp = assert_scope.ServiceProvider;
-        var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();
-        var assertedEnt = await instrumentRep.TryGetByIdAsync(usingId);
-        Expect("Entity doesn't exist", () => Assert.Null(assertedEnt));
-      }
+      Logger.LogDebug(string.Join("\n", assertedResult.Errors));
+      Expect("Result contain 1 error", () => Assert.Single(assertedResult.Errors), out var assertedError);
+      Expect("Error is TimeFrame", () => Assert.Equal(nameof(ent.InstrumentType), assertedError));
     });
 
     #endregion

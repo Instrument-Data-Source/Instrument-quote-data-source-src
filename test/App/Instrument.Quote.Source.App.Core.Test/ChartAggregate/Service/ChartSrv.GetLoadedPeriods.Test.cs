@@ -58,7 +58,7 @@ public class ChartSrv_GetLoadedPeriods_Test : BaseTest<ChartSrv_GetLoadedPeriods
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await assertedSrv.GetLoadedPeriodsAsync(mockChart2_2.InstrumentId);
+    var assertedResult = await assertedSrv.GetAsync(mockChart2_2.InstrumentId);
 
     #endregion
 
@@ -95,7 +95,7 @@ public class ChartSrv_GetLoadedPeriods_Test : BaseTest<ChartSrv_GetLoadedPeriods
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await assertedSrv.GetLoadedPeriodsAsync(mockInstrument3.Id);
+    var assertedResult = await assertedSrv.GetAsync(mockInstrument3.Id);
 
     #endregion
 
@@ -123,7 +123,7 @@ public class ChartSrv_GetLoadedPeriods_Test : BaseTest<ChartSrv_GetLoadedPeriods
     #region Act
     this.logger.LogDebug("Test ACT");
 
-    var assertedResult = await assertedSrv.GetLoadedPeriodsAsync(usedId);
+    var assertedResult = await assertedSrv.GetAsync(usedId);
 
     #endregion
 

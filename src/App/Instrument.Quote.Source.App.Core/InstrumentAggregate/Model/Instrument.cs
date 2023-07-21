@@ -61,6 +61,7 @@ public class Instrument : EntityBase
   /// <value></value>
   [Required]
   [MaxLength(50)]
+  [MinLength(1)]
   public string Name { get; private set; }
 
   /// <summary>
@@ -69,6 +70,7 @@ public class Instrument : EntityBase
   /// <value></value>
   [Required]
   [MaxLength(10)]
+  [MinLength(1)]
   public string Code { get; private set; }
 
   /// <summary>

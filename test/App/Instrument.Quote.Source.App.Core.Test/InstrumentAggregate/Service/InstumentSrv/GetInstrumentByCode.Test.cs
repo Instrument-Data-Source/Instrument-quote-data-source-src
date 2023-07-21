@@ -20,8 +20,10 @@ public class GetInstrumentIdByCode_Test
     instrumentService = new InstrumentSrv(InstrumentRep, InstrumentTypeRep);
   }
 
-  [Fact]
-  public async void WHEN_request_correct_code_THEN_get_dto()
+  [Theory]
+  [InlineData(false)]
+  [InlineData(true)]
+  public async void WHEN_request_correct_code_THEN_get_dto(bool ToLowerCase)
   {
     // Array
     var instument1 = new ent.Instrument("Inst1", "I1", 2, 3, new ent.InstrumentType(1));
@@ -29,12 +31,17 @@ public class GetInstrumentIdByCode_Test
     InstrumentRep.Table.Returns(new[] { instument1, instument2 }.BuildMock());
 
     var expected_dto = new InstrumentResponseDto() { Id = 0, Name = "Inst1", Code = "I1", TypeId = 1, PriceDecimalLen = 2, VolumeDecimalLen = 3 };
+    var usedCode = "I1";
+    if (ToLowerCase)
+      usedCode = usedCode.ToLower();
+      
     // Act
-    var asseerted_result = await instrumentService.GetByAsync("I1");
+    var asseerted_result = await instrumentService.GetByAsync(usedCode);
 
     // Assert
     Assert.True(asseerted_result.IsSuccess);
-    Assert.Equal(expected_dto, asseerted_result.Value);
+    var assertedDto = Assert.Single(asseerted_result.Value);
+    Assert.Equal(expected_dto, assertedDto);
   }
 
   [Fact]

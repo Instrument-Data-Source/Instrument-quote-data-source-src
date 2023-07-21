@@ -18,9 +18,10 @@ public static class Module
     logger?.LogInformation("Instrument.Quote.Source.App.Core.Module - Registering");
     sc.AddScoped<IInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<IReadInstrumentSrv, InstrumentSrv>();
+    sc.AddScoped<IInstrumentTypeSrv, InstrumentTypeSrv>();
     sc.AddScoped<ITimeFrameSrv, TimeFrameSrv>();
     sc.AddScoped<IChartSrv, ChartSrv>();
-    sc.AddScoped<ICandlesSrv, CandlesSrv>();
+    sc.AddScoped<ICandleSrv, CandlesSrv>();
     logger?.LogInformation("Instrument.Quote.Source.App.Core.Module - Registered");
     return sc;
   }
