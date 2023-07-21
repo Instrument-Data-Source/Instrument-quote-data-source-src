@@ -59,6 +59,7 @@ public class InstrumentController : ControllerBase
   [ProducesResponseType(typeof(InstrumentResponseDto), StatusCodes.Status201Created)]
   [ProducesResponseType(typeof(BadRequestDto), StatusCodes.Status400BadRequest)]
   [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
+  [ApiExplorerSettings(GroupName = SwaggerGenOptionsInit.AdminGroup)]
   public async Task<ActionResult<InstrumentResponseDto>> CreateInstument([FromBody] NewInstrumentRequestDto instrumentRquest,
       CancellationToken cancellationToken = new())
   {
@@ -91,6 +92,7 @@ public class InstrumentController : ControllerBase
   [HttpDelete("{instrumentStr}")]
   [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
   [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+  [ApiExplorerSettings(GroupName = SwaggerGenOptionsInit.AdminGroup)]
   public async Task<ActionResult> RemoveInstrument(string instrumentStr, CancellationToken cancellationToken = default)
   {
     var result = await instrumentSrv.RemoveInstrumentByIdOrStrAsync(instrumentStr, cancellationToken);
