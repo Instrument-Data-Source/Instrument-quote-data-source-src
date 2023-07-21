@@ -9,18 +9,7 @@ env:
 
 jobs:
   testing:
-    runs-on: ubuntu-latest
-    container: mcr.microsoft.com/dotnet/sdk:7.0
-
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-      - name: Run tests
-        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity m --no-restore
+    uses: Instrument-Data-Source/Instrument-quote-data-source-srv/.github/workflows/workflow-1.yml@master
 
   build:
     runs-on: ubuntu-latest
