@@ -6,22 +6,22 @@ on:
 
 env:
   GITHUB_IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv
-  DOCKER_HUB_IMAGE_NAME: docker.io/insonusk/instrument-data-source/instrument-quote-data-source-srv
+  DOCKER_HUB_IMAGE_NAME: docker.io/insonusk/instrument-data-source
 
 jobs:
   testing:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/dotnet/sdk:7.0
-
+  
     services:
       postgres:
         image: postgres:14.3
-
+  
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: postgres
-
+  
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -40,7 +40,7 @@ jobs:
         run: dotnet test --configuration Release --verbosity m --no-restore
         env: 
           ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=postgres"
-
+  
   
   push-to-github-container-registry:
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+  
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
@@ -76,8 +76,8 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_TOKEN }}
-          password: ${{ secrets.DOCKER_HUB_USER }}
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v4
