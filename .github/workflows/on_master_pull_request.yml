@@ -6,4 +6,4 @@ on:
 
 jobs:
   testing:
-    uses: Instrument-Data-Source/Instrument-quote-data-source-srv/.github/workflows/workflow-1.yml@master
+    uses: Instrument-Data-Source/Instrument-quote-data-source-srv/.github/workflows/unit_test.yml@master
