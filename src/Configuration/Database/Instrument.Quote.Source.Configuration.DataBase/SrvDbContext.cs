@@ -1,9 +1,5 @@
 ﻿using System.Reflection;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Config;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
-using Instrument.Quote.Source.App.Core.InstrumentAggregate.Config;
-using Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Config;
-using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Config;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -25,7 +21,7 @@ public class SrvDbContext : DbContext
   public DbSet<ent.InstrumentType> InstrumentTypes { get; set; }
   public DbSet<TimeFrame> TimeFrames { get; set; }
   public DbSet<Candle> Candles { get; set; }
-  public DbSet<LoadedPeriod> LoadedPeriods { get; set; }
+  public DbSet<Chart> Charts { get; set; }
   //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
   //  => optionsBuilder
   //      .UseLazyLoadingProxies();
@@ -56,16 +52,6 @@ public class SrvDbContext : DbContext
     logger?.LogInformation("Apply config in assembly - done");
   }
 
-  private void ManualyUseConfig(ModelBuilder modelBuilder)
-  {
-    logger?.LogInformation("Manualy config entity");
-    new InstrumentConfig().Configure(modelBuilder.Entity<ent.Instrument>());
-    new InstrumentTypeConfig().Configure(modelBuilder.Entity<ent.InstrumentType>());
-    new TimeFrameConfig().Configure(modelBuilder.Entity<TimeFrame>());
-    new CandleConfig().Configure(modelBuilder.Entity<Candle>());
-    new LoadedPeriodConfig().Configure(modelBuilder.Entity<LoadedPeriod>());
-    logger?.LogInformation("Manualy config entity - done");
-  }
   private IEnumerable<Assembly> getUsingAssemblyList()
   {
     logger?.LogInformation("Search assamblies");

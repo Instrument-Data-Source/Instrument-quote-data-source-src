@@ -1,7 +1,6 @@
 using Ardalis.Result;
 using Instrument.Quote.Source.Api.WebApi.Dto;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Dto;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
+using Instrument.Quote.Source.Api.WebApi.Tools;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +13,10 @@ namespace Instrument.Quote.Source.Api.WebApi.Controllers;
 public class InstrumentTypeController : ControllerBase
 {
   public const string Route = "api/instrument-type";
-  private readonly ILogger<InstrumentController> logger;
+  private readonly ILogger<InstrumentTypeController> logger;
   private readonly IInstrumentTypeSrv instrumentTypeSrv;
 
-  public InstrumentTypeController(ILogger<InstrumentController> logger,
+  public InstrumentTypeController(ILogger<InstrumentTypeController> logger,
                              IInstrumentTypeSrv instrumentTypeSrv)
   {
     this.logger = logger;
@@ -33,13 +32,7 @@ public class InstrumentTypeController : ControllerBase
   public async Task<ActionResult<IEnumerable<InstrumentTypeResponseDto>>> GetAll()
   {
     var result = await instrumentTypeSrv.GetAllAsync();
-    switch (result.Status)
-    {
-      case ResultStatus.Ok:
-        return Ok(result.Value);
-      default:
-        throw new ApplicationException("Unexpected result status");
-    }
+    return result.MapToActionResult();
   }
   /// <summary>
   /// Get Instrument type by Name
@@ -50,18 +43,10 @@ public class InstrumentTypeController : ControllerBase
   /// <response code="404">Instrument type not found</response>
   [HttpGet("{instrumentTypeStr}")]
   [ProducesResponseType(typeof(InstrumentTypeResponseDto), StatusCodes.Status200OK)]
-  [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
   public async Task<ActionResult<InstrumentTypeResponseDto>> GetByIdOrName(string instrumentTypeStr)
   {
     var result = await instrumentTypeSrv.GetByIdOrCodeAsync(instrumentTypeStr);
-    switch (result.Status)
-    {
-      case ResultStatus.Ok:
-        return Ok(result.Value);
-      case ResultStatus.NotFound:
-        return NotFound("Timeframe not found");
-      default:
-        throw new ApplicationException("Unexpected result status");
-    }
+    return result.MapToActionResult();
   }
 }

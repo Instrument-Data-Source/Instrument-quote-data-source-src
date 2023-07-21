@@ -7,6 +7,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Repository;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
 using Ardalis.Result;
 using Instrument.Quote.Source.Shared.FluentValidation.Extension;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 
@@ -24,11 +25,10 @@ public class InstrumentSrv : IInstrumentSrv
 
   public async Task<Result<InstrumentResponseDto>> CreateAsync(NewInstrumentRequestDto instrumentRequest, CancellationToken cancellationToken = default)
   {
-    if (!instrumentRequest.IsValid(out var validationResult))
-    {
-      return Result.Invalid(validationResult.Errors.ToErrorList());
-    }
-    ent.Instrument newInstrument = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
+    var newInstrumentResult = await instrumentRequest.ToEntityAsync(instrumentTypeRep, cancellationToken);
+    if (!newInstrumentResult.IsSuccess)
+      return newInstrumentResult.Repack<InstrumentResponseDto>();
+    var newInstrument = newInstrumentResult.Value;
 
     try
     {
@@ -53,19 +53,24 @@ public class InstrumentSrv : IInstrumentSrv
     return result ? Result.Success() : Result.NotFound();
   }
 
-  public async Task<Result<InstrumentResponseDto>> GetByAsync(string instrumentCode, CancellationToken cancellationToken = default)
+  public async Task<Result<IEnumerable<InstrumentResponseDto>>> GetByAsync(string instrumentCode, CancellationToken cancellationToken = default)
   {
-    var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Code == instrumentCode, cancellationToken);
-    if (findedEnt == null) return Result.NotFound();
-    var res_dto = findedEnt.ToDto();
+    var lowerCode = instrumentCode.ToLower();
+    var findedEnt = await instrumentRep.Table
+                .Include(e => e.InstrumentType)
+                .Where(e => e.Code.ToLower() == lowerCode)
+                .ToArrayAsync(cancellationToken);
+    if (findedEnt == null || findedEnt.Count() == 0)
+      return Result.NotFound(nameof(ent.Instrument));
+    IEnumerable<InstrumentResponseDto> res_dto = findedEnt.Select(e => e.ToDto()).ToArray();
     return Result.Success(res_dto);
   }
 
   public async Task<Result<InstrumentResponseDto>> GetByAsync(int instrumentId, CancellationToken cancellationToken = default)
   {
-    var findedEnt = await instrumentRep.Table.Include(e=>e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
+    var findedEnt = await instrumentRep.Table.Include(e => e.InstrumentType).SingleOrDefaultAsync(e => e.Id == instrumentId, cancellationToken);
     if (findedEnt == null)
-      return Result.NotFound();
+      return Result.NotFound(nameof(ent.Instrument));
     var _ret_dto = findedEnt.ToDto();
     return Result.Success(_ret_dto);
   }

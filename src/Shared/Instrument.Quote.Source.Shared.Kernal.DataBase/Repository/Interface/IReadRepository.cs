@@ -1,8 +1,9 @@
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 
-public interface IReadRepository<TEntity> where TEntity : EntityBase
+public interface IReadRepository<out TEntity> where TEntity : EntityBase
 {
-  IQueryable<TEntity> Table { get; }
+  new IQueryable<TEntity> Table { get; }
 }

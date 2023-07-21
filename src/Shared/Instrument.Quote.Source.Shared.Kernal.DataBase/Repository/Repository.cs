@@ -5,6 +5,7 @@ using Ardalis.Specification.EntityFrameworkCore;
 using Ardalis.Specification;
 using Microsoft.Extensions.Logging;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Event;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 
 namespace Instrument.Quote.Source.Shared.Kernal.DataBase.Repository;
 

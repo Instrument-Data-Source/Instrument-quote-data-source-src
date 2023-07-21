@@ -15,7 +15,7 @@ public interface IReadInstrumentSrv
   /// <param name="instrumentCode">Instrument Code</param>
   /// <param name="cancellationToken"></param>
   /// <returns></returns>
-  Task<Result<InstrumentResponseDto>> GetByAsync(string instrumentCode, CancellationToken cancellationToken = default);
+  Task<Result<IEnumerable<InstrumentResponseDto>>> GetByAsync(string instrumentCode, CancellationToken cancellationToken = default);
   /// <summary>
   /// Get instrument by Id
   /// </summary>
