@@ -117,6 +117,7 @@ public class ChartController : ControllerBase
   [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
   [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
   [ProducesResponseType(typeof(BadRequestDto), StatusCodes.Status400BadRequest)]
+  [ApiExplorerSettings(GroupName = SwaggerGenOptionsInit.AdminGroup)]
   public async Task<ActionResult<int>> PostCandles(string instrumentStr, string timeframeStr, [FromBody] UploadedCandlesDto uploadedCandlesDto, CancellationToken cancellationToken = default)
   {
     var instrumentResult = await instrumentSrv.GetInstrumentByIdOrCodeAsync(instrumentStr, cancellationToken);

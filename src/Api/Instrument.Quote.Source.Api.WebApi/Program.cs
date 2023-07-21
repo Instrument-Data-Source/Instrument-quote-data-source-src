@@ -20,24 +20,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-  options.SwaggerDoc("v1", new OpenApiInfo
-  {
-    Version = "v1.2",
-    Title = "Instrument Quote Source API",
-    Description = "An ASP.NET Core Web API service for getting information about instrument quotes",
-    Contact = new OpenApiContact
-    {
-      Name = "InsonusK",
-      Url = new Uri("https://github.com/Instrument-Data-Source/Instrument-quote-data-source-srv")
-    },
-    //TermsOfService = new Uri("https://example.com/terms"),
-
-    //License = new OpenApiLicense
-    //{
-    //  Name = "Example License",
-    //  Url = new Uri("https://example.com/license")
-    //}
-  });
+  options.Init();
   var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
   options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
@@ -59,7 +42,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-  options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+  options.Init();
   options.RoutePrefix = string.Empty;
 });
 //}
