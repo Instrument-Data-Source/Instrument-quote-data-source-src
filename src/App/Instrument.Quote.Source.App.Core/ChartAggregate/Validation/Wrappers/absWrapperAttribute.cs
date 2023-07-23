@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
@@ -31,5 +32,17 @@ public abstract class AbsWrapperAttribute<TWrappedValidationAttribute> : Validat
   protected static Type[] GetParameterTypes(object[] parameters)
   {
     return parameters.Select(p => p.GetType()).ToArray();
+  }
+
+  protected object? GetObjProp(object? obj, string propName)
+  {
+    if (obj == null)
+      return null;
+    Type objectType = obj.GetType();
+    PropertyInfo propertyInfo = objectType.GetProperty(propName);
+    if (propertyInfo == null)
+      throw new ArgumentException($"Property '{propName}' does not exist in type '{objectType.Name}'");
+    var validatedProp = propertyInfo.GetValue(obj);
+    return validatedProp;
   }
 }

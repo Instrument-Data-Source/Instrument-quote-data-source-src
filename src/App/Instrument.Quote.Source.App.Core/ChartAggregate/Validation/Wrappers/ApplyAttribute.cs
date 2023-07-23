@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
 
@@ -34,8 +33,7 @@ public class Apply<TApplyValidationAttribute> : AbsWrapperAttribute<TApplyValida
   {
     if (value == null)
       return ValidationResult.Success;
-
-    var validatedProp = value.GetType().GetProperty(propName)!.GetValue(value);
+    object? validatedProp = GetObjProp(value, propName);
 
     var itemResults = new List<ValidationResult>();
     var context = new ValidationContext(validationContext.ObjectInstance, validationContext, validationContext.Items);
@@ -45,4 +43,6 @@ public class Apply<TApplyValidationAttribute> : AbsWrapperAttribute<TApplyValida
 
     return result;
   }
+
+
 }

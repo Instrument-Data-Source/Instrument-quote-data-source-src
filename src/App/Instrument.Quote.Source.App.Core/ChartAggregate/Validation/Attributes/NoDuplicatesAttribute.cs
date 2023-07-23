@@ -11,7 +11,13 @@ public class NoDuplicatesAttribute : ValidationAttribute
 
   protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
   {
+    if (value == null)
+      return ValidationResult.Success;
+
     var enumerable = (IEnumerable)value;
+    if (enumerable == null)
+      return ValidationResult.Success;
+      
     if (!enumerable.Cast<object>().Any())
       return ValidationResult.Success;
 
