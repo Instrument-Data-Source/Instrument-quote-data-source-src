@@ -1,6 +1,5 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
 /// <summary>
@@ -25,26 +24,38 @@ namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = true)]
 public class Each<TEachValidationAttribute> : AbsWrapperAttribute<TEachValidationAttribute> where TEachValidationAttribute : ValidationAttribute
 {
-  // private readonly string idName;
+  private readonly bool eachMust = false;
+
   public Each(TEachValidationAttribute eachValidationAttribute) : base(eachValidationAttribute)
-  {
-    //this.idName = idName;
-  }
+  { }
   public Each(params object[] eachValidationAtrCostrPar) : base(eachValidationAtrCostrPar)
+  { }
+
+  protected Each(bool eachMust, TEachValidationAttribute eachValidationAttribute) : base(eachValidationAttribute)
   {
-    //this.idName = idName;
+    this.eachMust = eachMust;
+  }
+  protected Each(bool eachMust, params object[] eachValidationAtrCostrPar) : base(eachValidationAtrCostrPar)
+  {
+    this.eachMust = eachMust;
   }
 
   protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
   {
-    var enumerable = (IEnumerable)value!;
+    if (value == null)
+      return ValidationResult.Success;
+
+    var enumerable = (IEnumerable)value;
+    if (enumerable == null)
+      throw new ArgumentException($"Validation object '{validationContext.MemberName}' is not IEnumerable");
+
     var allValid = true;
     int idx = -1;
-    var Results = new List<ValidationResult>();
+    var Results = new Dictionary<int, ValidationResult>();
     foreach (var item in enumerable)
     {
       idx++;
-      if (item == null)
+      if (!eachMust && item == null)
         continue;
 
       //var itemId = item.GetType().GetProperty(idName)!.GetValue(item);
@@ -54,7 +65,7 @@ public class Each<TEachValidationAttribute> : AbsWrapperAttribute<TEachValidatio
 
       if (result != ValidationResult.Success)
       {
-        Results.Add(result!);
+        Results[idx] = result!;
         allValid = false;
       }
     }
@@ -62,6 +73,7 @@ public class Each<TEachValidationAttribute> : AbsWrapperAttribute<TEachValidatio
     if (allValid)
       return ValidationResult.Success;
 
-    return new ValidationResultExtended("Is invalid", validationContext.MemberName!, Results);
+    var detailedText = string.Join(", ", Results.Select(kvp => $"[{kvp.Key}].{kvp.Value.MemberNames}: {kvp.Value.ErrorMessage}"));
+    return new ValidationResult($"Elements is invalid: {detailedText}", new[] { validationContext.MemberName! });
   }
 }

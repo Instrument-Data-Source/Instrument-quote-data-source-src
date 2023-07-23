@@ -58,8 +58,7 @@ public class UploadedCandlesDto_Validation_Test : ExpectationsTestBase
 
     Expect("DTO is not valid", () => Assert.False(assertedIsValid));
     Expect("Result contain one error", () => Assert.Single(assertedResults), out var assertedAbsResult);
-    Expect("Result is extendet type", () => Assert.IsType<ValidationResultExtended>(assertedAbsResult), out var assertedResult);
-    Expect("Result contain 2 sub erros", () => Assert.Equal(2, assertedResult.SubResult!.Count()));
+    Expect("Result is extendet type", () => Assert.IsType<ValidationResult>(assertedAbsResult), out var assertedResult);
     Logger.LogInformation(assertedResult.ToString());
 
     #endregion

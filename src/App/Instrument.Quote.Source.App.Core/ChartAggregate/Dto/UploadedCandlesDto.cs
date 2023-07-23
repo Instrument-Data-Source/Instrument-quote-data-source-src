@@ -19,5 +19,6 @@ public class UploadedCandlesDto
   [EachIsValid<CandleDto>(nameof(CandleDto.DateTime))]
   [Each<Apply<BetweenAttribute>>(nameof(CandleDto.DateTime), new object[] { CompType.GE, nameof(UploadedCandlesDto.FromDate), CompType.LT, nameof(UploadedCandlesDto.UntillDate) })]
   [Map<NoDuplicatesAttribute>(nameof(CandleDto.DateTime))]
+  [EachMust<RequiredAttribute>()]
   public IEnumerable<CandleDto> Candles { get; set; }
 }

@@ -39,30 +39,24 @@ public class Map<TMapValidationAttribute> : AbsWrapperAttribute<TMapValidationAt
   {
     if (value == null)
       return ValidationResult.Success;
-    var enumerable = (IEnumerable)value!;
 
-    var mappedEnumerable = mapValue(enumerable, propName);
+    var enumerable = (IEnumerable)value;
+
+    if (enumerable == null)
+      return ValidationResult.Success;
+
+    var mappedEnumerable = mapValueAsEnumerable(enumerable, propName).ToArray();
 
     var itemResults = new List<ValidationResult>();
     var result = wrappedAttribute.GetValidationResult(mappedEnumerable, validationContext);
     return result;
   }
 
-  public IEnumerable<object> mapValue(IEnumerable objects, string propertyName)
+  public IEnumerable<object?> mapValueAsEnumerable(IEnumerable objects, string propertyName)
   {
     foreach (var obj in objects)
     {
-      Type objectType = obj.GetType();
-      PropertyInfo propertyInfo = objectType.GetProperty(propertyName);
-
-      if (propertyInfo != null)
-      {
-        yield return propertyInfo.GetValue(obj)!;
-      }
-      else
-      {
-        throw new ArgumentException($"Property '{propertyName}' does not exist in type '{objectType.Name}'");
-      }
+      yield return GetObjProp(obj, propertyName);
     }
   }
 
