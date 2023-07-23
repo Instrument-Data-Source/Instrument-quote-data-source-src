@@ -74,7 +74,6 @@ public class Each<TEachValidationAttribute> : AbsWrapperAttribute<TEachValidatio
       return ValidationResult.Success;
 
     var detailedText = string.Join(",", Results.Select(kvp => "{" + $"[{kvp.Key}].{kvp.Value.MemberNames}: {kvp.Value.ErrorMessage}" + "}"));
-
-    return new ValidationResult($"Elemts is invalid: [{detailedText}]", new[] { validationContext.MemberName! });
+    return new ValidationResult($"Elements is invalid: [{detailedText}]", new[] { validationContext.MemberName! });
   }
 }
