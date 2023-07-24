@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+namespace Instrument.Quote.Source.App.Core.Validation;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 public class UTCKindAttribute : ValidationAttribute

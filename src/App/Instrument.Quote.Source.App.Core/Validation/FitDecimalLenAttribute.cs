@@ -4,7 +4,7 @@ using Instrument.Quote.Source.App.Shared.Validation;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+namespace Instrument.Quote.Source.App.Core.Validation;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 public class PriceFitDecimalLenAttribute : FitDecimalLenAttribute
 {

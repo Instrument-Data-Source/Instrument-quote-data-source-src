@@ -1,7 +1,7 @@
 using Ardalis.Result;
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Dto;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Repository;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Repository;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.App.Test.ChartAggregate.Mocks;
@@ -10,6 +10,9 @@ using Instrument.Quote.Source.App.Test.Tools;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Dto;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 
 namespace Instrument.Quote.Source.App.Test.ChartAggregate;
@@ -43,7 +46,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(usedInstrument1.Id, TimeFrame.Enum.D1, TimeFrame.Enum.M, fromDt, untillDt);
     }
 
@@ -93,7 +96,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(usedInstrument1.Id, TimeFrame.Enum.D1, TimeFrame.Enum.M, fromDt, untillDt);
     }
 
@@ -206,7 +209,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(-1, TimeFrame.Enum.D1, TimeFrame.Enum.M, fromDt, untillDt);
     }
 
@@ -248,7 +251,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(usedInstrument1.Id, 99, (int)TimeFrame.Enum.M, fromDt, untillDt);
     }
 
@@ -290,7 +293,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(usedInstrument1.Id, (int)TimeFrame.Enum.D1, 99, fromDt, untillDt);
     }
 
@@ -332,7 +335,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(-1, 99, (int)TimeFrame.Enum.M, fromDt, untillDt);
     }
 
@@ -375,7 +378,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(usedInstrument1.Id, TimeFrame.Enum.H1, TimeFrame.Enum.M, fromDt, untillDt);
     }
 
@@ -417,7 +420,7 @@ public class GetJoinedCandles_Test : BaseDbTest
     using (var act_scope = this.global_sp.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
-      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var usedSrv = sp.GetRequiredService<IReadJoinedCandleSrv>();
       assertedResult = await usedSrv.GetAsync(usedInstrument1.Id, TimeFrame.Enum.D1, TimeFrame.Enum.M, fromDt, untillDt);
     }
 

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
+namespace Instrument.Quote.Source.App.Core.Validation.Wrapper;
 
 /// <summary>
 /// Apply validation attribute to property inside object

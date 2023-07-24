@@ -89,54 +89,6 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.ToTable("Charts");
                 });
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.JoinedCandle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChartId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Close")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("High")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsLast")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Low")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Open")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StepDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("TargetDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("TargetTimeFrameId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Volume")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TargetTimeFrameId");
-
-                    b.HasIndex("ChartId", "TargetTimeFrameId", "StepDateTime")
-                        .IsUnique();
-
-                    b.ToTable("JoinedCandles");
-                });
-
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", b =>
                 {
                     b.Property<int>("Id")
@@ -207,6 +159,79 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                             Id = 3,
                             Name = "CryptoCurrency"
                         });
+                });
+
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedCandle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Close")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("High")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsLast")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("JoinedChartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Low")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Open")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StepDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("TargetDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Volume")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JoinedChartId", "StepDateTime")
+                        .IsUnique();
+
+                    b.ToTable("JoinedCandles");
+                });
+
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedChart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BaseChartId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("FromDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TargetTimeFrameId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UntillDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetTimeFrameId");
+
+                    b.HasIndex("BaseChartId", "TargetTimeFrameId")
+                        .IsUnique();
+
+                    b.ToTable("JoinedCharts");
                 });
 
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", b =>
@@ -322,25 +347,6 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.Navigation("TimeFrame");
                 });
 
-            modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.JoinedCandle", b =>
-                {
-                    b.HasOne("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", "Chart")
-                        .WithMany("JoinedCandles")
-                        .HasForeignKey("ChartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", "TargetTimeFrame")
-                        .WithMany("JoinedCandles")
-                        .HasForeignKey("TargetTimeFrameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Chart");
-
-                    b.Navigation("TargetTimeFrame");
-                });
-
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", b =>
                 {
                     b.HasOne("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.InstrumentType", "InstrumentType")
@@ -352,11 +358,41 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.Navigation("InstrumentType");
                 });
 
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedCandle", b =>
+                {
+                    b.HasOne("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedChart", "JoinedChart")
+                        .WithMany("JoinedCandles")
+                        .HasForeignKey("JoinedChartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JoinedChart");
+                });
+
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedChart", b =>
+                {
+                    b.HasOne("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", "BaseChart")
+                        .WithMany("JoinedCharts")
+                        .HasForeignKey("BaseChartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", "TargetTimeFrame")
+                        .WithMany("JoinedCharts")
+                        .HasForeignKey("TargetTimeFrameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BaseChart");
+
+                    b.Navigation("TargetTimeFrame");
+                });
+
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", b =>
                 {
                     b.Navigation("Candles");
 
-                    b.Navigation("JoinedCandles");
+                    b.Navigation("JoinedCharts");
                 });
 
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.InstrumentAggregate.Model.Instrument", b =>
@@ -369,11 +405,16 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.Navigation("Instruments");
                 });
 
+            modelBuilder.Entity("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedChart", b =>
+                {
+                    b.Navigation("JoinedCandles");
+                });
+
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model.TimeFrame", b =>
                 {
                     b.Navigation("Charts");
 
-                    b.Navigation("JoinedCandles");
+                    b.Navigation("JoinedCharts");
                 });
 #pragma warning restore 612, 618
         }

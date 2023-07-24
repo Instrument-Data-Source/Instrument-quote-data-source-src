@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+using Instrument.Quote.Source.App.Core.Validation;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.FluentValidation;
 using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 using tfEnt = Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;

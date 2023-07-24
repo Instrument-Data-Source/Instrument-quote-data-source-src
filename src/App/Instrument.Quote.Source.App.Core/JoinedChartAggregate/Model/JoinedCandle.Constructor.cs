@@ -1,8 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
-using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Model;
+namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 public partial class JoinedCandle
 {
   protected JoinedCandle(
@@ -14,8 +13,7 @@ public partial class JoinedCandle
                 int close,
                 int volume,
                 bool isLast,
-                int targetTimeFrameId,
-                int chartId)
+                int joinedChartId)
   {
     StepDateTime = stepDateTime;
     TargetDateTime = targetDateTime;
@@ -25,8 +23,7 @@ public partial class JoinedCandle
     Close = close;
     Volume = volume;
     IsLast = isLast;
-    TargetTimeFrameId = targetTimeFrameId;
-    ChartId = chartId;
+    JoinedChartId = joinedChartId;
   }
 
   public JoinedCandle(
@@ -38,11 +35,9 @@ public partial class JoinedCandle
                 int close,
                 int volume,
                 bool isLast,
-                TimeFrame targetTimeFrame,
-                [NotNull] Chart chart) : this(stepDateTime, targetDateTime, open, high, low, close, volume, isLast, targetTimeFrame.Id, chart.Id)
+                [NotNull] JoinedChart joinedChart) : this(stepDateTime, targetDateTime, open, high, low, close, volume, isLast, joinedChart.Id)
   {
-    TargetTimeFrame = targetTimeFrame;
-    Chart = chart;
+    JoinedChart = joinedChart;
     Validate();
   }
 }

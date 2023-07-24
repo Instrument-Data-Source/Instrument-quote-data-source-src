@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+using Instrument.Quote.Source.App.Core.Validation;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Model;
+namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 public partial class JoinedCandle : EntityBaseValidation
 {
   [Required]
@@ -37,58 +37,26 @@ public partial class JoinedCandle : EntityBaseValidation
 
   public bool IsLast { get; private set; }
 
-  #region TimeFrame relation
-  private int _TargetTimeFrameId;
-  /// <summary>
-  /// Id of <see cref="TimeFrame"/> realated to entity
-  /// </summary>
-  /// <value></value>
-  public int TargetTimeFrameId
-  {
-    get => _TargetTimeFrameId;
-    private set
-    {
-      _TargetTimeFrame = null;
-      _TargetTimeFrameId = value;
-    }
-  }
-  private TimeFrame _TargetTimeFrame;
-  /// <summary>
-  /// <see cref="TimeFrame"/> realated to entity
-  /// </summary>
-  /// <value></value>  
-  public virtual TimeFrame TargetTimeFrame
-  {
-    get => _TargetTimeFrame;
-    private set
-    {
-      TargetTimeFrameId = value.Id;
-      _TargetTimeFrame = value;
-    }
-  }
-
-  #endregion
-
   #region Chart relation
 
-  private int _ChartId;
-  public int ChartId
+  private int _JoinedChartId;
+  public int JoinedChartId
   {
-    get => _ChartId;
+    get => _JoinedChartId;
     private set
     {
-      _Chart = null;
-      _ChartId = value;
+      _JoinedChart = null;
+      _JoinedChartId = value;
     }
   }
 
-  private Chart _Chart;
-  public virtual Chart Chart
+  private JoinedChart _JoinedChart;
+  public virtual JoinedChart JoinedChart
   {
-    get => _Chart; private set
+    get => _JoinedChart; private set
     {
-      _ChartId = value.Id;
-      _Chart = value;
+      _JoinedChartId = value.Id;
+      _JoinedChart = value;
     }
   }
 

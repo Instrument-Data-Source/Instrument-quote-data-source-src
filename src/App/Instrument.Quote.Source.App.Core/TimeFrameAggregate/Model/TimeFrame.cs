@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
 namespace Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
@@ -84,9 +85,9 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
   public virtual IEnumerable<Chart> Charts => _charts.AsReadOnly();
   #endregion
 
-  #region Joined Candles relation
-  private readonly List<JoinedCandle> _joinedCandles = new();
-  public virtual IEnumerable<JoinedCandle> JoinedCandles => _joinedCandles.AsReadOnly();
+  #region Joined Chart relation
+  private readonly List<JoinedChart> _joinedCharts = new();
+  public virtual IEnumerable<JoinedChart> JoinedCharts => _joinedCharts.AsReadOnly();
   #endregion
 }
 

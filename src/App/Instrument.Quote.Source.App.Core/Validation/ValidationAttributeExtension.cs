@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation;
+namespace Instrument.Quote.Source.App.Core.Validation;
 public static class ValidationAttributeExtension
 {
   public static bool CheckRequiresValidationContextIn<TValidatedType>()

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+namespace Instrument.Quote.Source.App.Core.Validation;
 public enum CompType
 {
   LT,

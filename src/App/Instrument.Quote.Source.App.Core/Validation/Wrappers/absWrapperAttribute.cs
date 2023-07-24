@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+using Instrument.Quote.Source.App.Core.Validation;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
+namespace Instrument.Quote.Source.App.Core.Validation.Wrapper;
 public abstract class AbsWrapperAttribute<TWrappedValidationAttribute> : ValidationAttribute where TWrappedValidationAttribute : ValidationAttribute
 {
   protected readonly ValidationAttribute wrappedAttribute;

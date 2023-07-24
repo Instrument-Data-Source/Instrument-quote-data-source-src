@@ -2,7 +2,7 @@ using FluentValidation;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Mapper;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+using Instrument.Quote.Source.App.Core.Validation;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.FluentValidation;
 

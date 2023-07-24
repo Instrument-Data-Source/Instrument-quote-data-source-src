@@ -2,7 +2,7 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+namespace Instrument.Quote.Source.App.Core.Validation;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 public class NoDuplicatesAttribute : ValidationAttribute
@@ -17,7 +17,7 @@ public class NoDuplicatesAttribute : ValidationAttribute
     var enumerable = (IEnumerable)value;
     if (enumerable == null)
       return ValidationResult.Success;
-      
+
     if (!enumerable.Cast<object>().Any())
       return ValidationResult.Success;
 

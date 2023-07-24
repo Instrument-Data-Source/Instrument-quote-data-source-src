@@ -13,43 +13,20 @@ using Microsoft.Extensions.Logging;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Service;
 
-public class CandlesSrv : ICandleSrv
+public class CandlesSrv : baseCandleSrv, ICandleSrv
 {
-  private readonly IReadRepository<ent.Instrument> instrumentRep;
-  private readonly IReadRepository<TimeFrame> timeframeRep;
   private readonly IReadRepository<Candle> candleRep;
-  private readonly IRepository<Chart> chartRep;
-  private readonly ILogger<CandlesSrv> logger;
 
   public CandlesSrv(
       IRepository<Chart> chartRep,
       IReadRepository<ent.Instrument> instrumentRep,
       IReadRepository<TimeFrame> timeframeRep,
       IReadRepository<Candle> candleRep,
-      ILogger<CandlesSrv> logger)
+      ILogger<CandlesSrv> logger) : base(chartRep, instrumentRep, timeframeRep, logger)
   {
-    this.instrumentRep = instrumentRep;
-    this.timeframeRep = timeframeRep;
     this.candleRep = candleRep;
-    this.chartRep = chartRep;
-    this.logger = logger;
   }
-  public async Task<Result<(ent.Instrument, TimeFrame)>> getEntityAsync(int instrumentId, int timeFrameId, CancellationToken cancellationToken)
-  {
-    var instrument = await instrumentRep.TryGetByIdAsync(instrumentId, cancellationToken);
-    var timeframe = await timeframeRep.TryGetByIdAsync(timeFrameId, cancellationToken);
-    var notFound = new List<string>();
 
-    if (instrument == null)
-      notFound.Add(nameof(ent.Instrument));
-    if (timeframe == null)
-      notFound.Add(nameof(TimeFrame));
-
-    if (notFound.Count != 0)
-      return Result.NotFound(notFound.ToArray());
-
-    return Result.Success((instrument!, timeframe!));
-  }
   public async Task<Result<int>> AddAsync(int instrumentId, int timeFrameId, UploadedCandlesDto uploadedCandlesDto, CancellationToken cancellationToken = default)
   {
     logger.LogDebug("Get related entities");
@@ -124,21 +101,4 @@ public class CandlesSrv : ICandleSrv
     return Result.Success(chart);
   }
 
-  public async Task<Result<IEnumerable<JoinedCandleDto>>> GetAsync(int instrumentId, int baseTimeFrameId, int chartTimeFrameId, DateTime from, DateTime untill, bool addIntermediateCandles = false, CancellationToken cancellationToken = default)
-  {
-    logger.LogDebug("Load exist chart");
-    var chartResult = await GetExistChartAsync(instrumentId, baseTimeFrameId, cancellationToken);
-    if (!chartResult.IsSuccess)
-      return chartResult.Repack<IEnumerable<JoinedCandleDto>>();
-    var chart = chartResult.Value;
-
-    if (from < chart.FromDate || untill > chart.UntillDate)
-      return Result.NotFound(nameof(Candle));
-
-    var targetTf = await timeframeRep.TryGetByIdAsync(chartTimeFrameId, cancellationToken);
-    if (targetTf == null)
-      return Result.NotFound(nameof(TimeFrame));
-
-    throw new NotImplementedException();
-  }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
 {
     /// <inheritdoc />
-    public partial class AddJoinedCandles : Migration
+    public partial class AddJoinedChartsAggregate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,6 +37,34 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                 table: "Candles");
 
             migrationBuilder.CreateTable(
+                name: "JoinedCharts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FromDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UntillDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TargetTimeFrameId = table.Column<int>(type: "integer", nullable: false),
+                    BaseChartId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JoinedCharts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JoinedCharts_Charts_BaseChartId",
+                        column: x => x.BaseChartId,
+                        principalTable: "Charts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JoinedCharts_TimeFrames_TargetTimeFrameId",
+                        column: x => x.TargetTimeFrameId,
+                        principalTable: "TimeFrames",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "JoinedCandles",
                 columns: table => new
                 {
@@ -50,35 +78,34 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     Low = table.Column<int>(type: "integer", nullable: false),
                     Volume = table.Column<int>(type: "integer", nullable: false),
                     IsLast = table.Column<bool>(type: "boolean", nullable: false),
-                    TargetTimeFrameId = table.Column<int>(type: "integer", nullable: false),
-                    ChartId = table.Column<int>(type: "integer", nullable: false)
+                    JoinedChartId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_JoinedCandles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_JoinedCandles_Charts_ChartId",
-                        column: x => x.ChartId,
-                        principalTable: "Charts",
+                        name: "FK_JoinedCandles_JoinedCharts_JoinedChartId",
+                        column: x => x.JoinedChartId,
+                        principalTable: "JoinedCharts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_JoinedCandles_TimeFrames_TargetTimeFrameId",
-                        column: x => x.TargetTimeFrameId,
-                        principalTable: "TimeFrames",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_JoinedCandles_ChartId_TargetTimeFrameId_StepDateTime",
+                name: "IX_JoinedCandles_JoinedChartId_StepDateTime",
                 table: "JoinedCandles",
-                columns: new[] { "ChartId", "TargetTimeFrameId", "StepDateTime" },
+                columns: new[] { "JoinedChartId", "StepDateTime" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_JoinedCandles_TargetTimeFrameId",
-                table: "JoinedCandles",
+                name: "IX_JoinedCharts_BaseChartId_TargetTimeFrameId",
+                table: "JoinedCharts",
+                columns: new[] { "BaseChartId", "TargetTimeFrameId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoinedCharts_TargetTimeFrameId",
+                table: "JoinedCharts",
                 column: "TargetTimeFrameId");
         }
 
@@ -87,6 +114,9 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
         {
             migrationBuilder.DropTable(
                 name: "JoinedCandles");
+
+            migrationBuilder.DropTable(
+                name: "JoinedCharts");
 
             migrationBuilder.AddColumn<int>(
                 name: "InstrumentId",

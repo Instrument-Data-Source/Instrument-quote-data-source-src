@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Shared.Validation;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+namespace Instrument.Quote.Source.App.Core.Validation;
 
 public abstract class absDependableOfPropAttribute : ValidationAttribute
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Validation;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+using Instrument.Quote.Source.App.Core.Validation;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Model;

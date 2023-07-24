@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
+namespace Instrument.Quote.Source.App.Core.Validation.Wrapper;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = true)]
 public class EachMust<TEachValidationAttribute> : Each<TEachValidationAttribute> where TEachValidationAttribute : ValidationAttribute

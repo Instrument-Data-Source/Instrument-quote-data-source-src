@@ -2,7 +2,7 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
+namespace Instrument.Quote.Source.App.Core.Validation.Wrapper;
 
 /// <summary>
 /// Map property from IEnumerable<object> to pass it into validation attribute

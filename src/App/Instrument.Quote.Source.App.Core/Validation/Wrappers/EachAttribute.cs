@@ -1,7 +1,7 @@
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
-namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Wrapper;
+namespace Instrument.Quote.Source.App.Core.Validation.Wrapper;
 /// <summary>
 /// Apply validation attribute to each element inside IEnumerable property
 /// </summary>
