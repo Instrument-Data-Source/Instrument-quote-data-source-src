@@ -21,6 +21,7 @@ public class SrvDbContext : DbContext
   public DbSet<ent.InstrumentType> InstrumentTypes { get; set; }
   public DbSet<TimeFrame> TimeFrames { get; set; }
   public DbSet<Candle> Candles { get; set; }
+  public DbSet<JoinedCandle> JoinedCandles { get; set; }
   public DbSet<Chart> Charts { get; set; }
   //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
   //  => optionsBuilder

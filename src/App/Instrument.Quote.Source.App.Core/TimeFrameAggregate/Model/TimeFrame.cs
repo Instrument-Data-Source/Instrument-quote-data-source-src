@@ -79,10 +79,15 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
   {
     return (TimeFrame.Enum)Enum.ToObject(typeof(TimeFrame.Enum), id);
   }
+  #region  Chart relation
   private readonly List<Chart> _charts = new();
   public virtual IEnumerable<Chart> Charts => _charts.AsReadOnly();
-  private readonly List<Candle> _candles = new();
-  public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
+  #endregion
+
+  #region Joined Candles relation
+  private readonly List<JoinedCandle> _joinedCandles = new();
+  public virtual IEnumerable<JoinedCandle> JoinedCandles => _joinedCandles.AsReadOnly();
+  #endregion
 }
 
 public static class TimeFrameMapper
