@@ -123,4 +123,22 @@ public class CandlesSrv : ICandleSrv
 
     return Result.Success(chart);
   }
+
+  public async Task<Result<IEnumerable<JoinedCandleDto>>> GetAsync(int instrumentId, int baseTimeFrameId, int chartTimeFrameId, DateTime from, DateTime untill, bool addIntermediateCandles = false, CancellationToken cancellationToken = default)
+  {
+    logger.LogDebug("Load exist chart");
+    var chartResult = await GetExistChartAsync(instrumentId, baseTimeFrameId, cancellationToken);
+    if (!chartResult.IsSuccess)
+      return chartResult.Repack<IEnumerable<JoinedCandleDto>>();
+    var chart = chartResult.Value;
+
+    if (from < chart.FromDate || untill > chart.UntillDate)
+      return Result.NotFound(nameof(Candle));
+
+    var targetTf = await timeframeRep.TryGetByIdAsync(chartTimeFrameId, cancellationToken);
+    if (targetTf == null)
+      return Result.NotFound(nameof(TimeFrame));
+
+    throw new NotImplementedException();
+  }
 }
