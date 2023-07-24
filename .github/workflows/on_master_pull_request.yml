@@ -4,11 +4,38 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  code_path: 'src/**'
+  test_path: 'test/**'
+
 jobs:
+  check_changing:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v3
+    - name: Check does code or test changed
+      uses: dorny/paths-filter@v2
+      id: changed_obj
+      with:
+        # inline YAML or path to separate file (e.g.: .github/filters.yaml)
+        filters: |
+          code:
+            - ${{ env.code_path }}
+          test:
+            - ${{ env.test_path }}
+    
+    outputs:
+      code_changed: ${{ steps.changed_obj.outputs.code }}  
+      test_changed: ${{ steps.changed_obj.outputs.test }}  
+
   testing:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/dotnet/sdk:7.0
-
+    needs: check_changing
+    if: ${{ needs.check_changing.outputs.code_changed == 'true' || needs.check_changing.outputs.test_changed == 'true' }}
+    
     services:
       postgres:
         image: postgres:14.3
