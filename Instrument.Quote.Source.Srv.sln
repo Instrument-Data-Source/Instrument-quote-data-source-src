@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instrument.Quote.Source.Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instrument.Quote.Source.Shared.Test.BaseClass", "test\Shared\Instrument.Quote.Source.Shared.Test.BaseClass\Instrument.Quote.Source.Shared.Test.BaseClass.csproj", "{8596BC9D-7A5F-4700-89FF-3AC9B6D27B1D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instrument.Quote.Source.Shared.Result.Extension", "src\Shared\Instrument.Quote.Source.Shared.Result.Extension\Instrument.Quote.Source.Shared.Result.Extension.csproj", "{D4197450-4C80-417C-B83D-346D6E0E8FD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +120,10 @@ Global
 		{8596BC9D-7A5F-4700-89FF-3AC9B6D27B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8596BC9D-7A5F-4700-89FF-3AC9B6D27B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8596BC9D-7A5F-4700-89FF-3AC9B6D27B1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4197450-4C80-417C-B83D-346D6E0E8FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4197450-4C80-417C-B83D-346D6E0E8FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4197450-4C80-417C-B83D-346D6E0E8FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4197450-4C80-417C-B83D-346D6E0E8FD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{61F4CEA1-34A3-497C-8275-DADE889A7597} = {02D4A369-060B-4C61-89E9-5CCFB2C4E978}
@@ -143,5 +149,6 @@ Global
 		{FD4E9F44-DB0A-48F2-BCF9-614C4C044C07} = {E70BAD54-D6B4-4819-82C8-2B3925563962}
 		{C3BC3021-98FE-41B1-B39E-A6737D9E0056} = {FD4E9F44-DB0A-48F2-BCF9-614C4C044C07}
 		{8596BC9D-7A5F-4700-89FF-3AC9B6D27B1D} = {61F4CEA1-34A3-497C-8275-DADE889A7597}
+		{D4197450-4C80-417C-B83D-346D6E0E8FD2} = {D395DC78-4021-47DF-8F9B-0AECDC1F12B6}
 	EndGlobalSection
 EndGlobal

@@ -58,7 +58,7 @@ public class BetweenAttribute : ValidationAttribute
     var leftValue = validationContext.ObjectType.GetProperty(leftSide)!.GetValue(obj) as IComparable;
     var rightValue = validationContext.ObjectType.GetProperty(rightSide)!.GetValue(obj) as IComparable;
     if (!compareLeftFunc(valueComp!.CompareTo(leftValue)) || !compareRightFunc(valueComp!.CompareTo(rightValue)))
-      return new ValidationResult($"Value must be {Enum.GetName<CompType>(compareLeft)} than {leftSide} and {Enum.GetName<CompType>(compareRight)} than {rightSide}", new string[] { validationContext.MemberName! });
+      return new ValidationResult($"Value {validationContext.MemberName} must be {Enum.GetName<CompType>(compareLeft)} than {leftSide} and {Enum.GetName<CompType>(compareRight)} than {rightSide}", new string[] { validationContext.MemberName! });
 
     return ValidationResult.Success;
   }

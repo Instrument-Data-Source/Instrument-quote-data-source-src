@@ -20,15 +20,15 @@ public static class InitExtension
 
     Interlocked.Increment(ref year);
 
-    return await baseDbTest.InitChartData(instrument, timeframe, expectedFrom, expectedUntill);
+    return await baseDbTest.AddMockChartData(instrument, timeframe, expectedFrom, expectedUntill);
   }
 
-  public static async Task<UploadedCandlesDto> InitChartData(this BaseDbTest baseDbTest, InstrumentResponseDto instrument, TimeFrame.Enum timeframe, DateTime fromDt, DateTime untillDt)
+  public static async Task<UploadedCandlesDto> AddMockChartData(this BaseDbTest baseDbTest, InstrumentResponseDto instrument, TimeFrame.Enum timeframe, DateTime fromDt, DateTime untillDt, TimeSpan? step = null)
   {
 
     var expectedFrom = fromDt.ToUniversalTime();
     var expectedUntill = untillDt.ToUniversalTime();
-    var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
+    var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill, step ?? new TimeSpan(1, 0, 0, 0));
     var uploadedData = new UploadedCandlesDto()
     {
       FromDate = expectedFrom,

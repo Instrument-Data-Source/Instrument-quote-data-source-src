@@ -24,14 +24,14 @@ public static class Module
         var dbSuffix = config["ConnectionStrings:DbSuffix"];
         DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
 
-        if (environment != null)
-        {
-          if (environment.IsDevelopment() || environment.IsEnvironment("Test"))
-          {
-            builder.EnableSensitiveDataLogging();
-            builder.EnableDetailedErrors();
-          }
-        }
+        //if (environment != null)
+        //{
+        //  if (environment.IsDevelopment() || environment.IsEnvironment("Test"))
+        //  {
+        //    builder.EnableSensitiveDataLogging();
+        //    builder.EnableDetailedErrors();
+        //  }
+        //}
 
         if (dbSuffix != null)
           _connectionStringBuilder["Database"] += $"_{dbSuffix}";

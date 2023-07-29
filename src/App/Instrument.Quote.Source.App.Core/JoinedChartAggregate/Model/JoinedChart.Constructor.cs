@@ -7,23 +7,23 @@ public partial class JoinedChart
 {
   protected JoinedChart(DateTime fromDate,
                           DateTime untillDate,
-                          int baseChartId,
+                          int stepChartId,
                           int targetTimeFrameId)
   {
     FromDate = fromDate;
     UntillDate = untillDate;
-    BaseChartId = baseChartId;
+    StepChartId = stepChartId;
     TargetTimeFrameId = targetTimeFrameId;
   }
   public JoinedChart(DateTime from,
                 DateTime untill,
-                Chart baseChart,
-                TimeFrame targetTimeFrame) : this(from, untill, baseChart.Id, targetTimeFrame.Id)
+                Chart stepChart,
+                TimeFrame targetTimeFrame) : this(from, untill, stepChart.Id, targetTimeFrame.Id)
   {
-    BaseChart = baseChart;
+    StepChart = stepChart;
     TargetTimeFrame = targetTimeFrame;
     Validate();
   }
 
-
+ 
 }

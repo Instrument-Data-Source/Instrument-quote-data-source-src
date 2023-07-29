@@ -9,13 +9,14 @@ public class JoinedCandleDto : CandleDto, IEquatable<JoinedCandleDto>
 {
   [Required]
   [UTCKind]
-  public DateTime StepDateTime { get; set; }
+  public DateTime TargetDateTime { get; set; }
   public bool IsLast { get; set; }
+  public bool IsFullCalced { get; set; }
 
   public bool Equals(JoinedCandleDto? other)
   {
     return base.Equals(other) &&
-           this.StepDateTime == other.StepDateTime &&
+           this.TargetDateTime == other.TargetDateTime &&
            this.IsLast == other.IsLast;
   }
 }

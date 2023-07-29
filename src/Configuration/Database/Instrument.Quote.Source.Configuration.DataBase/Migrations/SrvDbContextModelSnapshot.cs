@@ -175,6 +175,9 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                     b.Property<int>("High")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsFullCalc")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsLast")
                         .HasColumnType("boolean");
 
@@ -212,11 +215,11 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BaseChartId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("FromDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StepChartId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TargetTimeFrameId")
                         .HasColumnType("integer");
@@ -228,7 +231,7 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
 
                     b.HasIndex("TargetTimeFrameId");
 
-                    b.HasIndex("BaseChartId", "TargetTimeFrameId")
+                    b.HasIndex("StepChartId", "TargetTimeFrameId")
                         .IsUnique();
 
                     b.ToTable("JoinedCharts");
@@ -371,9 +374,9 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
 
             modelBuilder.Entity("Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model.JoinedChart", b =>
                 {
-                    b.HasOne("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", "BaseChart")
+                    b.HasOne("Instrument.Quote.Source.App.Core.ChartAggregate.Model.Chart", "StepChart")
                         .WithMany("JoinedCharts")
-                        .HasForeignKey("BaseChartId")
+                        .HasForeignKey("StepChartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -383,7 +386,7 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("BaseChart");
+                    b.Navigation("StepChart");
 
                     b.Navigation("TargetTimeFrame");
                 });

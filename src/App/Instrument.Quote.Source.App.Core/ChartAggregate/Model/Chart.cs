@@ -82,13 +82,13 @@ public partial class Chart : EntityBaseValidation
   #endregion
 
   #region Candles relation
-  private readonly List<Candle> _candles = new();
+  private List<Candle> _candles;
 
-  public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
+  public virtual IEnumerable<Candle>? Candles => _candles != null ? _candles.AsReadOnly() : null;
   #endregion
   #region Joined Chartns relation
-  private readonly List<JoinedChart> _joinedChart = new();
+  private readonly List<JoinedChart> _joinedCharts;
 
-  public virtual IEnumerable<JoinedChart> JoinedCharts => _joinedChart.AsReadOnly();
+  public virtual IEnumerable<JoinedChart>? JoinedCharts => _joinedCharts != null ? _joinedCharts.AsReadOnly() : null;
   #endregion
 }

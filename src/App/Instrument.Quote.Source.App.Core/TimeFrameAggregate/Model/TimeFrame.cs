@@ -43,11 +43,127 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
     set
     {
       base.EnumId = value;
-      Seconds = ToSeconds(value);
+      Seconds = value.ToSeconds();
     }
   }
 
-  public static int ToSeconds(TimeFrame.Enum enumId)
+
+  public static TimeFrame.Enum GetEnumFrom(int id)
+  {
+    return (TimeFrame.Enum)Enum.ToObject(typeof(TimeFrame.Enum), id);
+  }
+  #region  Chart relation
+  private readonly List<Chart> _charts;
+  public virtual IEnumerable<Chart>? Charts => _charts != null ? _charts.AsReadOnly() : null;
+  #endregion
+
+  #region Joined Chart relation
+  private readonly List<JoinedChart> _joinedCharts;
+  public virtual IEnumerable<JoinedChart>? JoinedCharts => _joinedCharts != null ? _joinedCharts.AsReadOnly() : null;
+  #endregion
+}
+
+public static class TimeFrameMapper
+{
+
+  public static TimeFrame ToEntity(this TimeFrame.Enum enumValue)
+  {
+    return new TimeFrame(enumValue);
+  }
+  public static DateTime GetUntillDateTimeFor(this TimeFrame.Enum enumValue, DateTime dateTime)
+  {
+    DateTime _retDt = enumValue.GetFromDateTimeFor(dateTime);
+    switch (enumValue)
+    {
+      case TimeFrame.Enum.M:
+        _retDt = _retDt.AddMonths(1);
+        break;
+      case TimeFrame.Enum.W1:
+        _retDt = _retDt.AddDays(7);
+        break;
+      case TimeFrame.Enum.D1:
+        _retDt = _retDt.AddDays(1);
+        break;
+      case TimeFrame.Enum.H4:
+        _retDt = _retDt.AddHours(4);
+        break;
+      case TimeFrame.Enum.H1:
+        _retDt = _retDt.AddHours(1);
+        break;
+      case TimeFrame.Enum.m30:
+        _retDt = _retDt.AddMinutes(30);
+        break;
+      case TimeFrame.Enum.m15:
+        _retDt = _retDt.AddMinutes(15);
+        break;
+      case TimeFrame.Enum.m10:
+        _retDt = _retDt.AddMinutes(10);
+        break;
+      case TimeFrame.Enum.m5:
+        _retDt = _retDt.AddMinutes(5);
+        break;
+      case TimeFrame.Enum.m1:
+        _retDt = _retDt.AddMinutes(1);
+        break;
+      default:
+        throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unexpected value of {nameof(TimeFrame.Enum)}");
+    }
+
+    return _retDt;
+  }
+  public static DateTime GetFromDateTimeFor(this TimeFrame.Enum enumValue, DateTime dateTime)
+  {
+    DateTime _retDt;
+    switch (enumValue)
+    {
+      case TimeFrame.Enum.M:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, 1);
+        break;
+      case TimeFrame.Enum.W1:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day) - new TimeSpan(CalcSubstractDaysToGetMonday(dateTime.DayOfWeek), 0, 0, 0);
+        break;
+      case TimeFrame.Enum.D1:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
+        break;
+      case TimeFrame.Enum.H4:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour.GetFirstOf(4), 0, 0);
+        break;
+      case TimeFrame.Enum.H1:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0);
+        break;
+      case TimeFrame.Enum.m30:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute.GetFirstOf(30), 0);
+        break;
+      case TimeFrame.Enum.m15:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute.GetFirstOf(15), 0);
+        break;
+      case TimeFrame.Enum.m10:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute.GetFirstOf(10), 0);
+        break;
+      case TimeFrame.Enum.m5:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute.GetFirstOf(5), 0);
+        break;
+      case TimeFrame.Enum.m1:
+        _retDt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
+        break;
+      default:
+        throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unexpected value of {nameof(TimeFrame.Enum)}");
+    }
+
+    return _retDt.ToUniversalTime();
+  }
+
+  private static int GetFirstOf(this int value, int groupSize)
+  {
+    return value / groupSize * groupSize;
+  }
+
+  public static int CalcSubstractDaysToGetMonday(DayOfWeek dayOfWeek)
+  {
+    return (((int)dayOfWeek - 1) + 7) % 7;
+  }
+
+  public static int ToSeconds(this TimeFrame.Enum enumId)
   {
 
     switch (enumId)
@@ -75,27 +191,5 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
       default:
         throw new ArgumentOutOfRangeException(nameof(enumId), enumId, "Unexpected type of TimeFrame");
     }
-  }
-  public static TimeFrame.Enum GetEnumFrom(int id)
-  {
-    return (TimeFrame.Enum)Enum.ToObject(typeof(TimeFrame.Enum), id);
-  }
-  #region  Chart relation
-  private readonly List<Chart> _charts = new();
-  public virtual IEnumerable<Chart> Charts => _charts.AsReadOnly();
-  #endregion
-
-  #region Joined Chart relation
-  private readonly List<JoinedChart> _joinedCharts = new();
-  public virtual IEnumerable<JoinedChart> JoinedCharts => _joinedCharts.AsReadOnly();
-  #endregion
-}
-
-public static class TimeFrameMapper
-{
-
-  public static TimeFrame ToEntity(this TimeFrame.Enum enumValue)
-  {
-    return new TimeFrame(enumValue);
   }
 }

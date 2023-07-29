@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
+using MediatR;
 
 namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Service;
 
@@ -25,6 +26,7 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
   private IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
   private IRepository<Chart> chartRep = Substitute.For<IRepository<Chart>>();
   private IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
+  private IMediator mediator = Substitute.For<IMediator>();
   private Chart usedChart;
   private MockChartFactory mockChartFactory;
   private MockCandleFactory mockCandleFactory;
@@ -32,7 +34,7 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
   private IEnumerable<CandleDto> baseDtos;
   public CandleSrv_GetCandles_Test(ITestOutputHelper output) : base(output)
   {
-    assertedSrv = new CandlesSrv(chartRep, instrumentRep, timeframeRep, candleRep, output.BuildLoggerFor<CandlesSrv>());
+    assertedSrv = new CandlesSrv(chartRep, instrumentRep, timeframeRep, candleRep, mediator, output.BuildLoggerFor<CandlesSrv>());
 
     mockChartFactory = new MockChartFactory();
     mockInstrument = mockChartFactory.instrument;

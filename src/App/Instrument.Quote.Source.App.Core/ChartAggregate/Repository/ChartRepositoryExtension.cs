@@ -6,7 +6,7 @@ namespace Instrument.Quote.Source.App.Core.ChartAggregate.Repository;
 public static class ChartRepository
 {
 
-  public static async Task<Chart> GetForAsync(this IReadRepository<Chart> loadedPeriodRep, int instrumentId, int timeFrameId, CancellationToken cancellationToken = default)
+  public static async Task<Chart> GetByAsync(this IReadRepository<Chart> loadedPeriodRep, int instrumentId, int timeFrameId, CancellationToken cancellationToken = default)
   {
     var loadedPer = await loadedPeriodRep.TryGetForAsync(instrumentId, timeFrameId, cancellationToken);
     if (loadedPer == null)

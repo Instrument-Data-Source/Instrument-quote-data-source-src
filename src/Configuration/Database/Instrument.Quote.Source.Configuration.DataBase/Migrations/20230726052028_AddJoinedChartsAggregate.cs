@@ -44,21 +44,21 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FromDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UntillDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TargetTimeFrameId = table.Column<int>(type: "integer", nullable: false),
-                    BaseChartId = table.Column<int>(type: "integer", nullable: false)
+                    TimeFrameId = table.Column<int>(type: "integer", nullable: false),
+                    ChartId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_JoinedCharts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_JoinedCharts_Charts_BaseChartId",
-                        column: x => x.BaseChartId,
+                        name: "FK_JoinedCharts_Charts_ChartId",
+                        column: x => x.ChartId,
                         principalTable: "Charts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_JoinedCharts_TimeFrames_TargetTimeFrameId",
-                        column: x => x.TargetTimeFrameId,
+                        name: "FK_JoinedCharts_TimeFrames_TimeFrameId",
+                        column: x => x.TimeFrameId,
                         principalTable: "TimeFrames",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -98,15 +98,15 @@ namespace Instrument.Quote.Source.Configuration.DataBase.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_JoinedCharts_BaseChartId_TargetTimeFrameId",
+                name: "IX_JoinedCharts_ChartId_TimeFrameId",
                 table: "JoinedCharts",
-                columns: new[] { "BaseChartId", "TargetTimeFrameId" },
+                columns: new[] { "ChartId", "TimeFrameId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_JoinedCharts_TargetTimeFrameId",
+                name: "IX_JoinedCharts_TimeFrameId",
                 table: "JoinedCharts",
-                column: "TargetTimeFrameId");
+                column: "TimeFrameId");
         }
 
         /// <inheritdoc />

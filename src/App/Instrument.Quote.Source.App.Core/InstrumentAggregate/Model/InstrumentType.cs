@@ -25,6 +25,6 @@ public class InstrumentType : EnumEntity<InstrumentType.Enum>
   {
   }
 
-  private readonly List<model.Instrument> _instruments = new();
-  public virtual IEnumerable<model.Instrument> Instruments => _instruments.AsReadOnly();
+  private readonly List<model.Instrument> _instruments;
+  public virtual IEnumerable<model.Instrument>? Instruments => _instruments != null ? _instruments.AsReadOnly() : null;
 }

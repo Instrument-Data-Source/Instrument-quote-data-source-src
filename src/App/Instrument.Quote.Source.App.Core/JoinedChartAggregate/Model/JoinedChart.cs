@@ -22,7 +22,7 @@ public partial class JoinedChart : EntityBaseValidation
   #region TimeFrame relation
   private int _targetTimeFrameId;
   /// <summary>
-  /// Id of <see cref="TimeFrame"/> realated to entity
+  /// Id of <see cref="TimeFrameAggregate.Model.TimeFrame"/> realated to entity
   /// </summary>
   /// <value></value>
   public int TargetTimeFrameId
@@ -36,7 +36,7 @@ public partial class JoinedChart : EntityBaseValidation
   }
   private TimeFrame _targetTimeFrame;
   /// <summary>
-  /// <see cref="TimeFrame"/> realated to entity
+  /// <see cref="TimeFrameAggregate.Model.TimeFrame"/> realated to entity
   /// </summary>
   /// <value></value>  
   public virtual TimeFrame TargetTimeFrame
@@ -52,42 +52,43 @@ public partial class JoinedChart : EntityBaseValidation
   #endregion
 
   #region Base Chart relation
-  private int _baseChartId;
+  private int _stepChartId;
   /// <summary>
-  /// Id of <see cref="Chart"/> realated to entity
+  /// Id of <see cref="ChartAggregate.Model.Chart"/> realated to entity
   /// </summary>
   /// <value></value>
 
-  public int BaseChartId
+  public int StepChartId
   {
-    get => _baseChartId;
+    get => _stepChartId;
     private set
     {
-      _baseChart= null;
-      _baseChartId = value;
+      _stepChart = null;
+      _stepChartId = value;
     }
   }
 
-  private Chart _baseChart;
+  private Chart _stepChart;
   /// <summary>
-  /// <see cref="BaseChart"/> realated to entity
+  /// <see cref="StepChart"/> realated to entity
   /// </summary>
   /// <value></value>  
-  public Chart BaseChart
+  public Chart StepChart
   {
-    get => _baseChart;
+    get => _stepChart;
     private set
     {
-      BaseChartId = value.Id;
-      _baseChart = value;
+      StepChartId = value.Id;
+      _stepChart = value;
     }
   }
   #endregion
 
-  #region Candles relation
-  private readonly List<JoinedCandle> _joinedCandles = new();
 
-  public virtual IEnumerable<JoinedCandle> JoinedCandles => _joinedCandles.AsReadOnly();
+  #region Candles relation
+  private List<JoinedCandle> _joinedCandles;
+
+  public virtual IEnumerable<JoinedCandle>? JoinedCandles => _joinedCandles != null ? _joinedCandles.AsReadOnly() : null;
   #endregion
 
 }

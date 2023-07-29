@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.Kernal.DataBase\Instrument.Quote.Source.Shared.Kernal.DataBase.csproj" />
     <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.FluentValidation.Extension\Instrument.Quote.Source.Shared.FluentValidation.Extension.csproj" />
+    <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.Result.Extension\Instrument.Quote.Source.Shared.Result.Extension.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -11,6 +12,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="Ardalis.Result" Version="7.1.0" />

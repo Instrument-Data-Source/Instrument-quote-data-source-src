@@ -6,6 +6,8 @@ using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.App.Test.ChartAggregate.Mocks;
 using Instrument.Quote.Source.App.Test.InstrumentAggregate.Mocks;
 using Instrument.Quote.Source.App.Test.Tools;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -20,13 +22,14 @@ public class GetCandles_Test : BaseDbTest
 
   }
 
+
   [Fact]
   public async Task WHEN_reques_exist_candles_THEN_get_dataAsync()
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
@@ -69,7 +72,7 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
@@ -111,7 +114,7 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
@@ -153,7 +156,7 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
@@ -196,7 +199,7 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
@@ -237,7 +240,7 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate + new TimeSpan(1, 0, 0, 0);
@@ -269,6 +272,55 @@ public class GetCandles_Test : BaseDbTest
       Expect("Expect Instrument error", () => Assert.Equal(nameof(Candle), assertedError));
     });
 
+    #endregion
+  }
+
+  [Theory]
+  [InlineData(false, true)]
+  [InlineData(true, false)]
+  [InlineData(false, false)]
+  public async Task WHEN_request_period_is_not_utc_THEN_get_validation_error(bool fromIsUTC, bool untillIsUTC)
+  {
+    #region Array
+    Logger.LogDebug("Test ARRAY");
+
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    DateTime fromDt;
+    DateTime untillDt;
+    if (fromIsUTC)
+      fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
+    else
+      fromDt = new DateTime(usedUploadedCandles1.FromDate.Year, usedUploadedCandles1.FromDate.Month, usedUploadedCandles1.FromDate.Day) + new TimeSpan(1, 0, 0, 0);
+    if (untillIsUTC)
+      untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
+    else
+      untillDt = new DateTime(usedUploadedCandles1.UntillDate.Year, usedUploadedCandles1.UntillDate.Month, usedUploadedCandles1.UntillDate.Day) - new TimeSpan(1, 0, 0, 0);
+
+    #endregion
+
+    #region Act
+    Logger.LogDebug("Test ACT");
+
+
+
+    #endregion
+
+
+    #region Assert
+    Logger.LogDebug("Test ASSERT");
+    Result<IEnumerable<CandleDto>> assertedResult;
+    using (var act_scope = this.global_sp.CreateScope())
+    {
+      var sp = act_scope.ServiceProvider;
+      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var assertedException = await ExpectTaskAsync<ArgumentException>("Exception", async () =>
+        await Assert.ThrowsAsync<ArgumentException>(async () =>
+          await usedSrv.GetAsync(usedInstrument1.Id, (int)TimeFrame.Enum.D1, fromDt, untillDt)
+        )
+      );
+      Logger.LogDebug(assertedException.Message);
+    }
     #endregion
   }
 }

@@ -10,9 +10,9 @@ public class JoinedChartConfig : IEntityTypeConfiguration<JoinedChart>
   public void Configure(EntityTypeBuilder<JoinedChart> modelBuilder)
   {
     modelBuilder
-      .HasOne(e => e.BaseChart)
+      .HasOne(e => e.StepChart)
       .WithMany(e => e.JoinedCharts)
-      .HasForeignKey(e => e.BaseChartId)
+      .HasForeignKey(e => e.StepChartId)
       .IsRequired()
       .OnDelete(DeleteBehavior.Cascade);
 
@@ -24,7 +24,7 @@ public class JoinedChartConfig : IEntityTypeConfiguration<JoinedChart>
       .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder
-      .HasIndex(e => new { e.BaseChartId, e.TargetTimeFrameId })
+      .HasIndex(e => new { e.StepChartId, e.TargetTimeFrameId })
       .IsUnique();
   }
 }

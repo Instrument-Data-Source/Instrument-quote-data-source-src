@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate.Mocks;
 public static class BaseDbTestExtension
 {
-  public static async Task<(InstrumentResponseDto, InstrumentResponseDto)> InitInstrumentData(this BaseDbTest baseDbTest)
+  public static async Task<(InstrumentResponseDto, InstrumentResponseDto)> AddMockInstrumentData(this BaseDbTest baseDbTest)
   {
     var usingNewInstrumentRequestDto1 = new NewInstrumentRequestDto()
     {

@@ -24,7 +24,7 @@ public class CandleForChartValidator : AbstractValidator<Candle>
       throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(ent.Instrument)}");
     }
     IDecimalPartLongChecker checker = new DecimalToStoreIntConverter(chart.Instrument);
-    var dtArr = chart.Candles.Select(c => c.DateTime);
+    var dtArr = chart.Candles != null ? chart.Candles.Select(c => c.DateTime) : new DateTime[0];
     RuleFor(e => e.DateTime)
       .Must(e => FitTimeFrameAttribute.IsValid(e, chart.TimeFrame.EnumId, out var msg)).WithMessage("Doesn't fit to Chart Timeframe")
       .GreaterThanOrEqualTo(chart.FromDate).WithMessage("DateTime must be greater or equal FromDate")

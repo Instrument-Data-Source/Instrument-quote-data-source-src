@@ -18,8 +18,10 @@ public partial class Chart
     var validateResult = new CandlesForChartValidator(this).Validate(candles);
     if (!validateResult.IsValid)
       return validateResult.ToResult();
+    if (_candles == null)
+      _candles = new();
 
-    var baseCandles = Candles.ToList();
+    //var baseCandles = Candles!.ToList();
     _candles.AddRange(candles);
     return Result.Success();
   }

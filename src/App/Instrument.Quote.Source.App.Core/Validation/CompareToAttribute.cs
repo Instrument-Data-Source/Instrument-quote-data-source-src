@@ -49,7 +49,7 @@ public class CompareToAttribute : ValidationAttribute
     {
       var compValue = validationContext.ObjectType.GetProperty(propName)!.GetValue(obj) as IComparable;
       if (!compareFunc(valueComp!.CompareTo(compValue)))
-        return new ValidationResult($"Value must be {Enum.GetName<CompType>(compareType)} than {propName}", new string[] { validationContext.MemberName! });
+        return new ValidationResult($"Value {validationContext.MemberName} must be {Enum.GetName<CompType>(compareType)} than {propName}", new string[] { validationContext.MemberName! });
     }
 
     return ValidationResult.Success;

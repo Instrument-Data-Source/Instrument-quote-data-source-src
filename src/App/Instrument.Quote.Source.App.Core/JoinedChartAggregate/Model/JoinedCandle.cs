@@ -35,8 +35,8 @@ public partial class JoinedCandle : EntityBaseValidation
   [Range(0, int.MaxValue)]
   public int Volume { get; private set; }
 
-  public bool IsLast { get; private set; }
-
+  public bool IsLast { get; set; }
+  public bool IsFullCalc { get; set; }
   #region Chart relation
 
   private int _JoinedChartId;
