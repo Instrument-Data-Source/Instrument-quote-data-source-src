@@ -6,6 +6,7 @@ using Npgsql;
 using Microsoft.Extensions.Hosting;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.Extensions.Logging;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository;
 
 namespace Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
 
@@ -24,14 +25,14 @@ public static class Module
         var dbSuffix = config["ConnectionStrings:DbSuffix"];
         DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
 
-        //if (environment != null)
-        //{
-        //  if (environment.IsDevelopment() || environment.IsEnvironment("Test"))
-        //  {
-        //    builder.EnableSensitiveDataLogging();
-        //    builder.EnableDetailedErrors();
-        //  }
-        //}
+        if (environment != null)
+        {
+          if (environment.IsDevelopment() || environment.IsEnvironment("Test"))
+          {
+            builder.EnableSensitiveDataLogging();
+            builder.EnableDetailedErrors();
+          }
+        }
 
         if (dbSuffix != null)
           _connectionStringBuilder["Database"] += $"_{dbSuffix}";
@@ -46,6 +47,7 @@ public static class Module
 
     sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
     sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+    sc.AddScoped<ITransactionManager, TransactionManager<SrvDbContext>>();
     return sc;
   }
 

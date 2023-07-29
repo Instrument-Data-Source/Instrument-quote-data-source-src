@@ -22,6 +22,7 @@ public partial class JoinedChart
   {
     StepChart = stepChart;
     TargetTimeFrame = targetTimeFrame;
+
     Validate();
   }
 

@@ -50,4 +50,11 @@ public class TransactionManager<TDbContext> : ITransactionManager where TDbConte
         throw new ApplicationException("Transaction manager has opened transaction while disposing");
     }
   }
+
+  public void RollBack()
+  {
+    transaction?.Rollback();
+    transaction = null;
+    transactionWrapLevel = 0;
+  }
 }

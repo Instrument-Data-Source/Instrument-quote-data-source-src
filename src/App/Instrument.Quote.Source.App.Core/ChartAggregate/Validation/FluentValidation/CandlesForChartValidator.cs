@@ -21,7 +21,11 @@ public class CandleForChartValidator : AbstractValidator<Candle>
   {
     if (chart.Instrument == null)
     {
-      throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(ent.Instrument)}");
+      throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(chart.Instrument)}");
+    }
+    if (chart.TimeFrame == null)
+    {
+      throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(chart.TimeFrame)}");
     }
     IDecimalPartLongChecker checker = new DecimalToStoreIntConverter(chart.Instrument);
     var dtArr = chart.Candles != null ? chart.Candles.Select(c => c.DateTime) : new DateTime[0];

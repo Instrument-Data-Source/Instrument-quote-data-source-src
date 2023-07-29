@@ -12,7 +12,6 @@ public partial class JoinedChart
   public class Manager
   {
     private readonly IReadRepository<Candle> candleRep;
-    private readonly IReadRepository<JoinedChart> joinedChartRep;
     private readonly IRepository<JoinedCandle> joinedCandleRep;
     private readonly IReadRepository<Chart> chartRep;
     private readonly IReadRepository<TimeFrame> timeframeRep;
@@ -20,11 +19,9 @@ public partial class JoinedChart
     public Manager(IReadRepository<TimeFrame> timeframeRep,
                    IReadRepository<Chart> chartRep,
                    IReadRepository<Candle> candleRep,
-                   IRepository<JoinedChart> joinedChartRep,
                    IRepository<JoinedCandle> joinedCandleRep)
     {
       this.candleRep = candleRep;
-      this.joinedChartRep = joinedChartRep;
       this.joinedCandleRep = joinedCandleRep;
       this.chartRep = chartRep;
       this.timeframeRep = timeframeRep;
@@ -54,25 +51,32 @@ public partial class JoinedChart
 
     private async Task Extend(JoinedChart extendedJoinedChart, JoinedChart extensionJoinedChart, CancellationToken cancellationToken = default)
     {
-      // TODO Define validation 
+      List<JoinedCandle> updatedCandles;
       if (extendedJoinedChart._joinedCandles == null)
       {
-        var replacedCandles = await joinedCandleRep.Table.Where(e => e.StepDateTime >= extensionJoinedChart.FromDate &&
-                                                                     e.StepDateTime < extensionJoinedChart.UntillDate)
+        updatedCandles = await joinedCandleRep.Table.Where(e => e.StepDateTime >= extensionJoinedChart.FromDate &&
+                                                                e.StepDateTime < extensionJoinedChart.UntillDate)
                                                           .ToListAsync(cancellationToken);
-        await joinedCandleRep.RemoveRangeAsync(replacedCandles);
+
+        //await joinedCandleRep.RemoveRangeAsync(replacedCandles);
       }
       else
       {
-        var replacedCandles = extendedJoinedChart._joinedCandles.Where(e => e.StepDateTime >= extensionJoinedChart.FromDate && e.StepDateTime < extensionJoinedChart.UntillDate).ToList();
-        replacedCandles.ForEach(c => extendedJoinedChart._joinedCandles.Remove(c));
+        updatedCandles = extendedJoinedChart._joinedCandles.Where(e => e.StepDateTime >= extensionJoinedChart.FromDate && e.StepDateTime < extensionJoinedChart.UntillDate).ToList();
+        //replacedCandles.ForEach(c => extendedJoinedChart._joinedCandles.Remove(c));
       }
-      extendedJoinedChart.AddCandles(extensionJoinedChart.JoinedCandles!);
+      var updatedCandlesStepDT = updatedCandles.Select(c => c.StepDateTime).ToArray();
+
+      var addedCandles = extensionJoinedChart.JoinedCandles!.Where(c => !updatedCandlesStepDT.Contains(c.StepDateTime)).ToArray();
+      updatedCandles.ForEach(c => c.Update(extensionJoinedChart.JoinedCandles!.Single(nc => nc.StepDateTime == c.StepDateTime)));
+      //extendedJoinedChart.AddCandles(addedCandles);
+      await joinedCandleRep.AddRangeAsync(addedCandles.Select(c => new JoinedCandle(c.StepDateTime, c.TargetDateTime, c.Open, c.High, c.Low, c.Close, c.Volume, c.IsLast, c.IsFullCalc, extendedJoinedChart)));
 
       if (extensionJoinedChart.FromDate < extendedJoinedChart.FromDate)
         extendedJoinedChart.FromDate = extensionJoinedChart.FromDate;
       if (extensionJoinedChart.UntillDate > extendedJoinedChart.UntillDate)
         extendedJoinedChart.UntillDate = extensionJoinedChart.UntillDate;
+      await joinedCandleRep.SaveChangesAsync();
     }
   }
 }
@@ -91,6 +95,8 @@ public static class JoinedChartManagerFunction
   {
     if (targetTimeFrame.EnumId.ToSeconds() <= TimeFrame.GetEnumFrom(baseChart.TimeFrameId).ToSeconds())
       throw new ArgumentException("Target TimeFrame must be GT base Chart TimeFrame", nameof(targetTimeFrame));
+    Guard.Against.Null(baseChart.TimeFrame);
+    Guard.Against.Null(baseChart.Instrument);
 
     JoinedChart newJoinedChart = CreateJoinedChart(baseChart, targetTimeFrame, baseChart);
     return newJoinedChart;
@@ -116,6 +122,8 @@ public static class JoinedChartManagerFunction
       throw new ArgumentException("Target TimeFrame must be GT base Chart TimeFrame", nameof(targetTimeFrame));
     Guard.Against.OutOfRange(from, nameof(from), baseChart.FromDate, baseChart.UntillDate, "Out of exist chart data");
     Guard.Against.OutOfRange(untill, nameof(untill), baseChart.FromDate, baseChart.UntillDate, "Out of exist chart data");
+    Guard.Against.Null(baseChart.TimeFrame);
+    Guard.Against.Null(baseChart.Instrument);
 
     var targetUntilltDt = targetTimeFrame.EnumId.GetUntillDateTimeFor(untill);
     var targetFromDt = targetTimeFrame.EnumId.GetFromDateTimeFor(from);
@@ -140,7 +148,9 @@ public static class JoinedChartManagerFunction
   {
     var newJoinedChart = new JoinedChart(usingBaseChart.FromDate, usingBaseChart.UntillDate, linkedBaseChart, targetTimeFrame);
     IEnumerable<JoinedCandle> joinedCandles = Join(usingBaseChart, newJoinedChart);
-    newJoinedChart.AddCandles(joinedCandles);
+    var addResult = newJoinedChart.AddCandles(joinedCandles);
+    if (!addResult.IsSuccess)
+      addResult.Throw();
     return newJoinedChart;
   }
 

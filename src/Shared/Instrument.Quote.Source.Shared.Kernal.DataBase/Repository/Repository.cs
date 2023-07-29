@@ -94,6 +94,6 @@ public class Repository<TEntity, TDbContext> : ReadRepository<TEntity>, IReposit
     {
       ProcessingExceptionOnSave(ex);
     }
-    await SaveChangesAsync(cancellationToken);
+    //await SaveChangesAsync(cancellationToken);
   }
 }

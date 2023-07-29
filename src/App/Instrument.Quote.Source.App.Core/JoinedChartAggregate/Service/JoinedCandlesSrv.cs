@@ -27,6 +27,7 @@ public class JoinedCandlesSrv : IReadJoinedCandleSrv
   private readonly IReadRepository<TimeFrame> timeframeRep;
   private readonly IRepository<JoinedChart> joinedChartRep;
   private readonly IRepository<JoinedCandle> joinedCandleRep;
+  private readonly ITransactionManager transactionManager;
   private readonly ILogger<JoinedCandlesSrv> logger;
 
   public JoinedCandlesSrv(
@@ -36,6 +37,7 @@ public class JoinedCandlesSrv : IReadJoinedCandleSrv
       IReadRepository<TimeFrame> timeframeRep,
       IRepository<JoinedChart> joinedChartRep,
       IRepository<JoinedCandle> joinedCandleRep,
+      ITransactionManager transactionManager,
       ILogger<JoinedCandlesSrv> logger)
   {
     this.candleRep = candleRep;
@@ -44,6 +46,7 @@ public class JoinedCandlesSrv : IReadJoinedCandleSrv
     this.timeframeRep = timeframeRep;
     this.joinedChartRep = joinedChartRep;
     this.joinedCandleRep = joinedCandleRep;
+    this.transactionManager = transactionManager;
     this.logger = logger;
   }
 
@@ -64,10 +67,23 @@ public class JoinedCandlesSrv : IReadJoinedCandleSrv
       var baseChart = await chartRep.GetByAsync(instrumentId, stepTimeFrameId, cancellationToken);
       if (from < baseChart.FromDate || untill > baseChart.UntillDate)
         return Result.NotFound(nameof(Candle));
-      if (joinedChart == null)
-        joinedChart = await CanculateJoinedChart(baseChart.Id, targetTimeFrameId, cancellationToken);
-      else if (from < joinedChart.FromDate || untill > joinedChart.UntillDate)
-        await UpdateJoinedChart(from, untill, joinedChart, baseChart.Id, cancellationToken);
+
+      transactionManager.BeginTransaction();
+      try
+      {
+        if (joinedChart == null)
+          joinedChart = await CanculateJoinedChart(baseChart.Id, targetTimeFrameId, cancellationToken);
+        else if (from < joinedChart.FromDate || untill > joinedChart.UntillDate)
+          await UpdateJoinedChart(from, untill, joinedChart, baseChart.Id, cancellationToken);
+
+        transactionManager.CommitTransaction();
+      }
+      catch (Exception)
+      {
+        transactionManager.RollBack();
+        throw;
+      }
+
     }
 
     IEnumerable<JoinedCandle> arr = await SelectJoinedCandles(from, untill, hideIntermediateCandles, joinedChart!);
@@ -97,7 +113,10 @@ public class JoinedCandlesSrv : IReadJoinedCandleSrv
 
   private async Task<JoinedChart?> CanculateJoinedChart(int chartId, int targetTimeFrameId, CancellationToken cancellationToken)
   {
-    var baseChart = await chartRep.Table.Include(e => e.Candles).Include(e => e.Instrument).GetRep()
+    var baseChart = await chartRep.Table.Include(e => e.Candles)
+                                        .Include(e => e.Instrument)
+                                        .Include(e => e.TimeFrame)
+                                        .GetRep()
                                         .GetByIdAsync(chartId, cancellationToken);
     var targetTimeFrame = await timeframeRep.GetByIdAsync(targetTimeFrameId, cancellationToken);
     var newJoinedChart = baseChart.JoinTo(targetTimeFrame);
@@ -107,7 +126,7 @@ public class JoinedCandlesSrv : IReadJoinedCandleSrv
 
   private async Task UpdateJoinedChart(DateTime from, DateTime untill, JoinedChart joinedChart, int baseChartId, CancellationToken cancellationToken = default)
   {
-    await new JoinedChart.Manager(timeframeRep, chartRep, candleRep, joinedChartRep, joinedCandleRep).UpdateAsync(joinedChart, cancellationToken);
+    await new JoinedChart.Manager(timeframeRep, chartRep, candleRep, joinedCandleRep).UpdateAsync(joinedChart, cancellationToken);
     await joinedChartRep.SaveChangesAsync();
   }
 

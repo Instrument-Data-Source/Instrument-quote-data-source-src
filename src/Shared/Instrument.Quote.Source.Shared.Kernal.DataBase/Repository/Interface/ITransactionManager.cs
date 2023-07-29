@@ -3,4 +3,5 @@ public interface ITransactionManager : IDisposable
 {
   void BeginTransaction();
   void CommitTransaction();
+  void RollBack();
 }
