@@ -8,6 +8,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
 using Ardalis.Result;
 using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
+using Instrument.Quote.Source.Shared.Result.Extension;
 
 namespace Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 

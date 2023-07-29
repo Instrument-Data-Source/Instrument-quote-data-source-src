@@ -21,7 +21,7 @@ public class IInstrumentSrv_GetAll_Test : BaseDbTest
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
-    (var expectedDto1, var expectedDto2) = await this.InitInstrumentData();
+    (var expectedDto1, var expectedDto2) = await this.AddMockInstrumentData();
 
     #endregion
 

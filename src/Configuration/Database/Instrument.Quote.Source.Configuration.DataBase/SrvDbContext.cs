@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,8 +21,12 @@ public class SrvDbContext : DbContext
   public DbSet<ent.Instrument> Instruments { get; set; }
   public DbSet<ent.InstrumentType> InstrumentTypes { get; set; }
   public DbSet<TimeFrame> TimeFrames { get; set; }
-  public DbSet<Candle> Candles { get; set; }
   public DbSet<Chart> Charts { get; set; }
+  public DbSet<Candle> Candles { get; set; }
+  public DbSet<JoinedChart> JoinedCharts { get; set; }
+  public DbSet<JoinedCandle> JoinedCandles { get; set; }
+
+
   //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
   //  => optionsBuilder
   //      .UseLazyLoadingProxies();

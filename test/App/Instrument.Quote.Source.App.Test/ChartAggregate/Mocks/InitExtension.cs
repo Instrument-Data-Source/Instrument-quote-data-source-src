@@ -16,7 +16,19 @@ public static class InitExtension
 
     var expectedFrom = new DateTime(year, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(year, 4, 1).ToUniversalTime();
-    var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
+
+
+    Interlocked.Increment(ref year);
+
+    return await baseDbTest.AddMockChartData(instrument, timeframe, expectedFrom, expectedUntill);
+  }
+
+  public static async Task<UploadedCandlesDto> AddMockChartData(this BaseDbTest baseDbTest, InstrumentResponseDto instrument, TimeFrame.Enum timeframe, DateTime fromDt, DateTime untillDt, TimeSpan? step = null)
+  {
+
+    var expectedFrom = fromDt.ToUniversalTime();
+    var expectedUntill = untillDt.ToUniversalTime();
+    var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill, step ?? new TimeSpan(1, 0, 0, 0));
     var uploadedData = new UploadedCandlesDto()
     {
       FromDate = expectedFrom,
@@ -31,8 +43,6 @@ public static class InitExtension
     var assertedResult = await usedSrv.AddAsync(instrument.Id, (int)timeframe, uploadedData);
     if (!assertedResult.IsSuccess)
       throw new ApplicationException("unexpected behavior on test init");
-
-    Interlocked.Increment(ref year);
 
     return uploadedData;
   }

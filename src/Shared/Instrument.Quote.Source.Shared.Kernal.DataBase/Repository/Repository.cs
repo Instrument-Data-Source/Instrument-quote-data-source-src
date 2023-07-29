@@ -9,12 +9,12 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 
 namespace Instrument.Quote.Source.Shared.Kernal.DataBase.Repository;
 
-public class Repository<TEntity, TDbContext> : IRepository<TEntity> where TEntity : EntityBase where TDbContext : DbContext
+public class Repository<TEntity, TDbContext> : ReadRepository<TEntity>, IRepository<TEntity> where TEntity : EntityBase where TDbContext : DbContext
 {
   private readonly TDbContext dbContext;
   protected readonly ILogger logger;
 
-  public Repository(TDbContext dbContext, ILogger logger)
+  public Repository(TDbContext dbContext, ILogger logger) : base(dbContext.Set<TEntity>().AsQueryable())
   {
     this.dbContext = dbContext;
     this.logger = logger;
@@ -35,7 +35,7 @@ public class Repository<TEntity, TDbContext> : IRepository<TEntity> where TEntit
   {
     try
     {
-      await dbContext.Set<TEntity>().AddAsync(enity);
+      await dbContext.Set<TEntity>().AddAsync(enity, cancellationToken);
     }
     catch (Exception ex)
     {
@@ -48,7 +48,7 @@ public class Repository<TEntity, TDbContext> : IRepository<TEntity> where TEntit
   {
     try
     {
-      await dbContext.Set<TEntity>().AddRangeAsync(entities);
+      await dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken);
     }
     catch (Exception ex)
     {
@@ -84,5 +84,16 @@ public class Repository<TEntity, TDbContext> : IRepository<TEntity> where TEntit
     await SaveChangesAsync(cancellationToken);
   }
 
-  public IQueryable<TEntity> Table => dbContext.Set<TEntity>().AsQueryable();
+  public async Task RemoveRangeAsync(IEnumerable<TEntity> entities, IDbContextTransaction? dbContextTransaction = null, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      dbContext.Set<TEntity>().RemoveRange(entities);
+    }
+    catch (Exception ex)
+    {
+      ProcessingExceptionOnSave(ex);
+    }
+    //await SaveChangesAsync(cancellationToken);
+  }
 }

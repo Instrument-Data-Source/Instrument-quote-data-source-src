@@ -46,46 +46,4 @@ public static class ValidationErrorMappingToResult
       Severity = (ValidationSeverity)vf.Severity
     }).ToList();
   }
-  /*
-    public static Result<TOut> Repack<TIn, TOut>(this Result<TIn> result)
-    {
-      switch (result.Status)
-      {
-        case ResultStatus.Unauthorized:
-          return Result.Unauthorized();
-        case ResultStatus.NotFound:
-          return Result.NotFound(result.Errors.ToArray());
-        case ResultStatus.Invalid:
-          return Result.Invalid(result.ValidationErrors);
-        case ResultStatus.Forbidden:
-          return Result.Forbidden();
-        case ResultStatus.Error:
-          return Result.Error(result.Errors.ToArray());
-        case ResultStatus.Conflict:
-          return Result.Conflict(result.Errors.ToArray());
-        default:
-          throw new ApplicationException("Not supported repack of result");
-      }
-    }
-    */
-  public static Result<TOut> Repack<TOut>(this IResult result)
-  {
-    switch (result.Status)
-    {
-      case ResultStatus.Unauthorized:
-        return Result.Unauthorized();
-      case ResultStatus.NotFound:
-        return Result.NotFound(result.Errors.ToArray());
-      case ResultStatus.Invalid:
-        return Result.Invalid(result.ValidationErrors);
-      case ResultStatus.Forbidden:
-        return Result.Forbidden();
-      case ResultStatus.Error:
-        return Result.Error(result.Errors.ToArray());
-      case ResultStatus.Conflict:
-        return Result.Conflict(result.Errors.ToArray());
-      default:
-        throw new ApplicationException("Not supported repack of result");
-    }
-  }
 }

@@ -22,7 +22,7 @@ public class IInstrumentSrv_GetByCode_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var expectedDto1, var expectedDto2) = await this.InitInstrumentData();
+    (var expectedDto1, var expectedDto2) = await this.AddMockInstrumentData();
     var usedCode = expectedDto1.Code;
     if (changeCase)
     {
@@ -62,7 +62,7 @@ public class IInstrumentSrv_GetByCode_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var expectedDto1, var expectedDto2) = await this.InitInstrumentData();
+    (var expectedDto1, var expectedDto2) = await this.AddMockInstrumentData();
 
     #endregion
 

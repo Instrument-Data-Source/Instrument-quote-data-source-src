@@ -31,7 +31,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var expectedFrom = new DateTime(2020, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 4, 1).ToUniversalTime();
     var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
@@ -98,7 +98,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
 
     var expectedFrom = usedUploadedCandles.UntillDate;
@@ -172,7 +172,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var expectedFrom = new DateTime(2020, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 4, 1).ToUniversalTime();
     var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
@@ -218,7 +218,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var expectedFrom = new DateTime(2020, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 4, 1).ToUniversalTime();
     var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);

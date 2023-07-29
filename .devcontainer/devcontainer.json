@@ -22,7 +22,9 @@
 				"fernandoescolar.vscode-solution-explorer",
 				"ckolkman.vscode-postgres",
 				"k--kato.docomment",
-				"mhutchie.git-graph"
+				"mhutchie.git-graph",
+				"howardzuo.vscode-favorites",
+				"Gruntfuggly.todo-tree"
 			]
 		}
 	},

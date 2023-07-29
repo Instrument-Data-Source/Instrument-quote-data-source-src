@@ -2,7 +2,7 @@ using FluentValidation;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Mapper;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
-using Instrument.Quote.Source.App.Core.ChartAggregate.Validation.Attributes;
+using Instrument.Quote.Source.App.Core.Validation;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Validation.FluentValidation;
 
@@ -21,10 +21,14 @@ public class CandleForChartValidator : AbstractValidator<Candle>
   {
     if (chart.Instrument == null)
     {
-      throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(ent.Instrument)}");
+      throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(chart.Instrument)}");
+    }
+    if (chart.TimeFrame == null)
+    {
+      throw new NullReferenceException($"{nameof(Chart)} must have loaded relative entity {nameof(chart.TimeFrame)}");
     }
     IDecimalPartLongChecker checker = new DecimalToStoreIntConverter(chart.Instrument);
-    var dtArr = chart.Candles.Select(c => c.DateTime);
+    var dtArr = chart.Candles != null ? chart.Candles.Select(c => c.DateTime) : new DateTime[0];
     RuleFor(e => e.DateTime)
       .Must(e => FitTimeFrameAttribute.IsValid(e, chart.TimeFrame.EnumId, out var msg)).WithMessage("Doesn't fit to Chart Timeframe")
       .GreaterThanOrEqualTo(chart.FromDate).WithMessage("DateTime must be greater or equal FromDate")

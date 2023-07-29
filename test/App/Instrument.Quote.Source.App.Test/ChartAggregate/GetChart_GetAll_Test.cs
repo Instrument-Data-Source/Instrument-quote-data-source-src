@@ -25,7 +25,7 @@ public class GetChart_GetAll_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.InitInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
     var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     #endregion

@@ -123,8 +123,8 @@ public class Instrument : EntityBase
       }
     }
   }
-  private readonly List<Chart> _charts = new();
-  public virtual IEnumerable<Chart> Charts => _charts.AsReadOnly();
-  private readonly List<Candle> _candles = new();
-  public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
+  #region Chart relationship
+  private readonly List<Chart> _charts;
+  public virtual IEnumerable<Chart>? Charts => _charts != null ? _charts.AsReadOnly() : null;
+  #endregion
 }

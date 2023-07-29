@@ -6,4 +6,5 @@ public interface IChartSrv
 {
   Task<Result<IEnumerable<ChartDto>>> GetAsync(int instrumentId, CancellationToken cancellationToken = default);
   Task<Result<IEnumerable<ChartDto>>> GetAllAsync(CancellationToken cancellationToken = default);
+  
 }

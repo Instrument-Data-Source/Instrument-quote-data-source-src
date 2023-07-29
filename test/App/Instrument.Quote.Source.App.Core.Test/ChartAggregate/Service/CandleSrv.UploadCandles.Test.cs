@@ -18,6 +18,7 @@ using Instrument.Quote.Source.App.Core.ChartAggregate.Mapper;
 using Microsoft.EntityFrameworkCore.Storage;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace Instrument.Quote.Source.App.Core.Test.ChartAggregate.Service;
 public class CandleSrv_AddCandles_Test : BaseTest<CandleSrv_AddCandles_Test>
@@ -29,9 +30,10 @@ public class CandleSrv_AddCandles_Test : BaseTest<CandleSrv_AddCandles_Test>
   private IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
   private IRepository<Chart> chartRep = Substitute.For<IRepository<Chart>>();
   private IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
+  private IMediator mediator = Substitute.For<IMediator>();
   public CandleSrv_AddCandles_Test(ITestOutputHelper output) : base(output)
   {
-    assertedSrv = new CandlesSrv(chartRep, instrumentRep, timeframeRep, candleRep, output.BuildLoggerFor<CandlesSrv>());
+    assertedSrv = new CandlesSrv(chartRep, instrumentRep, timeframeRep, candleRep, mediator, output.BuildLoggerFor<CandlesSrv>());
     instrumentRep.Table.Returns(new[] { mockInstrument }.BuildMock());
     timeframeRep.Table.Returns(new[] { usedTf }.BuildMock());
     chartRep.Table.Returns(new Chart[] { }.BuildMock());
@@ -210,13 +212,14 @@ public class CandleSrv_AddCandles_For_ExistData_Test : BaseTest<CandleSrv_AddCan
   private IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
   private IRepository<Chart> chartRep = Substitute.For<IRepository<Chart>>();
   private IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
+  private IMediator mediator = Substitute.For<IMediator>();
   private Chart usedChart;
   private MockChartFactory mockChartFactory;
   private MockCandleFactory mockCandleFactory;
   private IEnumerable<Candle> baseCandles;
   public CandleSrv_AddCandles_For_ExistData_Test(ITestOutputHelper output) : base(output)
   {
-    assertedSrv = new CandlesSrv(chartRep, instrumentRep, timeframeRep, candleRep, output.BuildLoggerFor<CandlesSrv>());
+    assertedSrv = new CandlesSrv(chartRep, instrumentRep, timeframeRep, candleRep, mediator, output.BuildLoggerFor<CandlesSrv>());
 
     mockChartFactory = new MockChartFactory();
     mockInstrument = mockChartFactory.instrument;
