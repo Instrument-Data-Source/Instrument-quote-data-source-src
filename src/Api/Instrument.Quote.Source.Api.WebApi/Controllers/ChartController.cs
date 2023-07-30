@@ -113,7 +113,7 @@ public class ChartController : ControllerBase
     if (!targetTimeFrameResult.IsSuccess)
       return targetTimeFrameResult.MapFailToActionResult();
 
-    var result = await joinedCandleSrv.GetAsync(instrumentResult.Value.Id, timeFrameResult.Value.Id, targetTimeFrameResult.Value.Id, from, untill, !onlyLast, cancellationToken);
+    var result = await joinedCandleSrv.GetAsync(instrumentResult.Value.Id, timeFrameResult.Value.Id, targetTimeFrameResult.Value.Id, from, untill, onlyLast, cancellationToken);
     return result.MapToActionResult();
   }
 
