@@ -19,7 +19,7 @@ using Instrument.Quote.Source.Shared.Result.Extension;
 
 namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
 
-public class JoinedCandlesSrv : IReadJoinedCandleSrv
+public class JoinedCandlesSrv : IJoinedCandleSrv
 {
   private readonly IReadRepository<Candle> candleRep;
   private readonly IReadRepository<Chart> chartRep;

@@ -13,7 +13,7 @@ public class TransactionManager<TDbContext> : ITransactionManager where TDbConte
   private IDbContextTransaction? transaction;
   private int transactionWrapLevel = 0;
 
-  public TransactionManager(TDbContext dbContext, ILogger logger)
+  public TransactionManager(TDbContext dbContext, ILogger<TransactionManager<TDbContext>> logger)
   {
     this.dbContext = dbContext;
     this.logger = logger;
