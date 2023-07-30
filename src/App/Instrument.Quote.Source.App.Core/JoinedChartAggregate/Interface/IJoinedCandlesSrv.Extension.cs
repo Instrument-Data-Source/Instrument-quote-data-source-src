@@ -6,7 +6,7 @@ using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.App.Core.Validation;
 
-namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Repository;
+namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 
 public static class JoinedCandlesSrvExtension
 {
