@@ -1,12 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Interface;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Service;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Service;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Service;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
-using Instrument.Quote.Source.Shared.FluentValidation.Extension;
 using Microsoft.Extensions.Logging;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Service;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 
 namespace Instrument.Quote.Source.App.Core;
 
@@ -19,8 +21,13 @@ public static class Module
     logger?.LogInformation("Instrument.Quote.Source.App.Core.Module - Registering");
     sc.AddScoped<IInstrumentSrv, InstrumentSrv>();
     sc.AddScoped<IReadInstrumentSrv, InstrumentSrv>();
+    sc.AddScoped<IInstrumentTypeSrv, InstrumentTypeSrv>();
     sc.AddScoped<ITimeFrameSrv, TimeFrameSrv>();
-    sc.AddScoped<ICandleSrv, CandleSrv>();
+    sc.AddScoped<IChartSrv, ChartSrv>();
+    sc.AddScoped<ICandleSrv, CandlesSrv>();
+    sc.AddScoped<IJoinedCandleSrv, JoinedCandlesSrv>();
+    sc.AddScoped<JoinedChart.Manager>();
+    sc.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Module).Assembly));
     logger?.LogInformation("Instrument.Quote.Source.App.Core.Module - Registered");
     return sc;
   }

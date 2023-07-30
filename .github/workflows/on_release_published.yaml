@@ -5,13 +5,30 @@ on:
     types: released
 
 env:
-  IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv
+  GITHUB_IMAGE_NAME: ghcr.io/instrument-data-source/instrument-quote-data-source-srv
+  DOCKER_HUB_IMAGE_NAME: docker.io/insonusk/instrument-data-source
 
 jobs:
   testing:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/dotnet/sdk:7.0
-
+  
+    services:
+      postgres:
+        image: postgres:14.3
+  
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+  
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -20,27 +37,18 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Run tests
-        run: dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity m --no-restore
-
-  build:
+        run: dotnet test --configuration Release --verbosity m --no-restore
+        env: 
+          ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+  
+  
+  push-to-github-container-registry:
     runs-on: ubuntu-latest
     needs: testing
     steps:
-      - name: Print Image Name
-        run: echo $IMAGE_NAME
-      
       - name: Retrieve release version
         id: release_info
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Display release version
-        run: echo $RELEASE_VERSION
-      
-      - name: TagName
-        run: echo "DOCKER_IMAGE_NAME_WITH_TAG=$(echo ${IMAGE_NAME}:${RELEASE_VERSION} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Display TagName
-        run: echo $DOCKER_IMAGE_NAME_WITH_TAG
     
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -48,11 +56,33 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: |
+            ${{ env.GITHUB_IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+            ${{ env.GITHUB_IMAGE_NAME }}:latest
+
+  push-to-docker-hub:
+    runs-on: ubuntu-latest
+    needs: testing
+    steps:
+      - name: Retrieve release version
+        id: release_info
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+    
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
-            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKER_HUB_IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+            ${{ env.DOCKER_HUB_IMAGE_NAME }}:latest

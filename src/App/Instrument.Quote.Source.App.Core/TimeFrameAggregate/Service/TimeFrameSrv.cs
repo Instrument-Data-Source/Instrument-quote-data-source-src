@@ -26,7 +26,7 @@ public class TimeFrameSrv : ITimeFrameSrv
   {
     var ret_tf = await tfRep.Table.SingleOrDefaultAsync(e => e.Name == Code, cancellationToken);
 
-    if (ret_tf == null) return Result.NotFound();
+    if (ret_tf == null) return Result.NotFound(nameof(TimeFrame));
 
     return Result.Success(ret_tf.ToDto());
   }
@@ -35,7 +35,7 @@ public class TimeFrameSrv : ITimeFrameSrv
   {
     var ret_tf = await tfRep.Table.SingleOrDefaultAsync(e => e.Id == Id, cancellationToken);
 
-    if (ret_tf == null) return Result.NotFound();
+    if (ret_tf == null) return Result.NotFound(nameof(TimeFrame));
 
     return Result.Success(ret_tf.ToDto());
   }

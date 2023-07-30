@@ -1,2 +1,12 @@
 {
+  "favorites.resources": [
+    {
+      "filePath": "src/App/Instrument.Quote.Source.App.Core/JoinedChartAggregate",
+      "group": "Default"
+    },
+    {
+      "filePath": "test/App/Instrument.Quote.Source.App.Core.Test/JoinedChartAggregate",
+      "group": "Default"
+    }
+  ]
 }

@@ -1,3 +1,4 @@
+using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,10 +9,12 @@ using NSubstitute;
 using Xunit.Abstractions;
 
 namespace Instrument.Quote.Source.App.Test.Tools;
-public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTest<T>
+public abstract class BaseDbTest : ExpectationsTestBase, IDisposable
 {
-  protected IServiceProvider global_sp;
+  private static int magicNumber = 0;
+  public readonly IServiceProvider global_sp;
   private int number = 1;
+  protected readonly string dbSufix;
   private static IConfiguration GetConfig(string dbSuffix)
   {
     var _configurationBuilder = new ConfigurationBuilder();
@@ -21,6 +24,7 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
 
   private static void setupConfigBuider(string dbSuffix, IConfigurationBuilder _configurationBuilder)
   {
+
     _configurationBuilder.AddJsonFile("./appsettings.test.json");
     _configurationBuilder.AddEnvironmentVariables();
     var dict = new Dictionary<string, string>
@@ -34,10 +38,18 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
     Console.WriteLine("Db Suffix: " + dbSuffix);
   }
 
+  private string GetDbSufix()
+  {
+    Interlocked.Increment(ref BaseDbTest.magicNumber);
+    var timeStamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
+    var sufix = $"{this.GetType().Name}_{magicNumber.ToString()}_{timeStamp}";
+    return sufix;
+  }
   public BaseDbTest(ITestOutputHelper output) : base(output)
   {
+    dbSufix = GetDbSufix();
     var host = new HostBuilder()
-          .ConfigureHostConfiguration(config => setupConfigBuider(typeof(T).Name, config))
+          .ConfigureHostConfiguration(config => setupConfigBuider(dbSufix, config))
           .ConfigureServices((hostContext, services) =>
           {
             // Add required services to the ServiceCollection
@@ -45,7 +57,7 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
             hostEnvironment.EnvironmentName.Returns("Test");
 
             services.AddSingleton<IHostEnvironment>(hostEnvironment);
-            services.AddSingleton<IConfiguration>(GetConfig(typeof(T).Name));
+            services.AddSingleton<IConfiguration>(GetConfig(dbSufix));
             services.AddLogging(builder =>
                   {
                     builder.AddXunit(output); // Add the xUnit logger

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
-using Instrument.Quote.Source.App.Core.CandleAggregate.Model;
+using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Validator.Instrument;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +61,7 @@ public class Instrument : EntityBase
   /// <value></value>
   [Required]
   [MaxLength(50)]
+  [MinLength(1)]
   public string Name { get; private set; }
 
   /// <summary>
@@ -69,6 +70,7 @@ public class Instrument : EntityBase
   /// <value></value>
   [Required]
   [MaxLength(10)]
+  [MinLength(1)]
   public string Code { get; private set; }
 
   /// <summary>
@@ -121,8 +123,8 @@ public class Instrument : EntityBase
       }
     }
   }
-  private readonly List<LoadedPeriod> _loadedPeriods = new();
-  public virtual IEnumerable<LoadedPeriod> LoadedPeriods => _loadedPeriods.AsReadOnly();
-  private readonly List<Candle> _candles = new();
-  public virtual IEnumerable<Candle> Candles => _candles.AsReadOnly();
+  #region Chart relationship
+  private readonly List<Chart> _charts;
+  public virtual IEnumerable<Chart>? Charts => _charts != null ? _charts.AsReadOnly() : null;
+  #endregion
 }
