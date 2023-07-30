@@ -4,6 +4,8 @@ using Instrument.Quote.Source.Api.WebApi.Tools;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Dto;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Dto;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,13 +19,19 @@ public class ChartController : ControllerBase
   private readonly IChartSrv chartSrv;
   private readonly IReadInstrumentSrv instrumentSrv;
   private readonly ICandleSrv candleSrv;
+  private readonly IJoinedCandleSrv joinedCandleSrv;
   private readonly ITimeFrameSrv timeFrameSrv;
 
-  public ChartController(IChartSrv chartSrv, IReadInstrumentSrv instrumentSrv, ICandleSrv candleSrv, ITimeFrameSrv timeFrameSrv)
+  public ChartController(IChartSrv chartSrv,
+                         IReadInstrumentSrv instrumentSrv,
+                         ICandleSrv candleSrv,
+                         IJoinedCandleSrv joinedCandleSrv,
+                         ITimeFrameSrv timeFrameSrv)
   {
     this.chartSrv = chartSrv;
     this.instrumentSrv = instrumentSrv;
     this.candleSrv = candleSrv;
+    this.joinedCandleSrv = joinedCandleSrv;
     this.timeFrameSrv = timeFrameSrv;
   }
 
@@ -77,6 +85,35 @@ public class ChartController : ControllerBase
       return timeFrameResult.MapFailToActionResult();
 
     var result = await candleSrv.GetAsync(instrumentResult.Value.Id, timeFrameResult.Value.Id, from, untill, cancellationToken);
+    return result.MapToActionResult();
+  }
+
+  /// <summary>
+  /// Get Joined Candles from instrument|timeframe|targetTimeFrame Chart
+  /// </summary>
+  /// <returns>All charts DTO for instrumnent</returns>
+  /// <response code="200">Charts getted</response>
+  [HttpGet("{instrumentStr}/{timeframeStr}/{targetTimeFrame}")]
+  [ProducesResponseType(typeof(IEnumerable<JoinedCandleDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
+  public async Task<ActionResult<IEnumerable<JoinedCandleDto>>> GetJoinedCandles(string instrumentStr, string timeframeStr, string targetTimeFrame,
+                                                                                  [FromQuery] DateTime from, [FromQuery] DateTime untill,
+                                                                                  [FromQuery] bool onlyLast = false,
+                                                                                  CancellationToken cancellationToken = default)
+  {
+    var instrumentResult = await instrumentSrv.GetInstrumentByIdOrCodeAsync(instrumentStr, cancellationToken);
+    if (!instrumentResult.IsSuccess)
+      return instrumentResult.MapFailToActionResult();
+
+    var timeFrameResult = await timeFrameSrv.GetByIdOrCodeAsync(timeframeStr, cancellationToken);
+    if (!timeFrameResult.IsSuccess)
+      return timeFrameResult.MapFailToActionResult();
+
+    var targetTimeFrameResult = await timeFrameSrv.GetByIdOrCodeAsync(targetTimeFrame, cancellationToken);
+    if (!targetTimeFrameResult.IsSuccess)
+      return targetTimeFrameResult.MapFailToActionResult();
+
+    var result = await joinedCandleSrv.GetAsync(instrumentResult.Value.Id, timeFrameResult.Value.Id, targetTimeFrameResult.Value.Id, from, untill, !onlyLast, cancellationToken);
     return result.MapToActionResult();
   }
 
