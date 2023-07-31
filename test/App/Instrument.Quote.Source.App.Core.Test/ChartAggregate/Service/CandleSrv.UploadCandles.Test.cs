@@ -29,7 +29,7 @@ public class CandleSrv_AddCandles_Test : BaseTest<CandleSrv_AddCandles_Test>
   private IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
   private IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
   private IRepository<Chart> chartRep = Substitute.For<IRepository<Chart>>();
-  private IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
+  private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IMediator mediator = Substitute.For<IMediator>();
   public CandleSrv_AddCandles_Test(ITestOutputHelper output) : base(output)
   {
@@ -211,7 +211,7 @@ public class CandleSrv_AddCandles_For_ExistData_Test : BaseTest<CandleSrv_AddCan
   private IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
   private IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
   private IRepository<Chart> chartRep = Substitute.For<IRepository<Chart>>();
-  private IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
+  private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IMediator mediator = Substitute.For<IMediator>();
   private Chart usedChart;
   private MockChartFactory mockChartFactory;
@@ -234,6 +234,7 @@ public class CandleSrv_AddCandles_For_ExistData_Test : BaseTest<CandleSrv_AddCan
     instrumentRep.Table.Returns(new[] { mockInstrument }.BuildMock());
     timeframeRep.Table.Returns(new[] { usedTimeFrame }.BuildMock());
     chartRep.Table.Returns(new Chart[] { usedChart }.BuildMock());
+    candleRep.Table.Returns(baseCandles.BuildMock());
   }
 
   [Fact]
@@ -275,13 +276,6 @@ public class CandleSrv_AddCandles_For_ExistData_Test : BaseTest<CandleSrv_AddCan
       Expect("Untill date is extend correctly", () => Assert.Equal(expectedUntilDate, usedChart.UntillDate));
     });
 
-
-    ExpectGroup("Candles exptend correctly", () =>
-    {
-      Expect("Count is summed", () => Assert.Equal(baseCandles.Count() + expectedCandles.Count(), usedChart.Candles.Count()));
-      Expect("Candles contain base candles", () => Assert.True(baseCandles.All(c => usedChart.Candles.Contains(c))));
-      Expect("Candles contain new candles", () => Assert.True(expectedCandles.Select(c => c.DateTime).All(c => usedChart.Candles.Select(c => c.DateTime).Contains(c))));
-    });
 
     Expect("LoadedPeriod Repository was called to save new period", () =>
       chartRep.Received().SaveChangesAsync(Arg.Any<CancellationToken>()).Wait()

@@ -23,7 +23,7 @@ public class CandlesSrv : ICandleSrv
   private readonly IRepository<Chart> chartRep;
   private readonly IReadRepository<ent.Instrument> instrumentRep;
   private readonly IReadRepository<TimeFrame> timeframeRep;
-  private readonly IReadRepository<Candle> candleRep;
+  private readonly IRepository<Candle> candleRep;
   private readonly IMediator mediator;
   private readonly ILogger<CandlesSrv> logger;
 
@@ -31,7 +31,7 @@ public class CandlesSrv : ICandleSrv
       IRepository<Chart> chartRep,
       IReadRepository<ent.Instrument> instrumentRep,
       IReadRepository<TimeFrame> timeframeRep,
-      IReadRepository<Candle> candleRep,
+      IRepository<Candle> candleRep,
       IMediator mediator,
       ILogger<CandlesSrv> logger)
   {
@@ -72,7 +72,7 @@ public class CandlesSrv : ICandleSrv
     else
     {
       logger.LogInformation("Extend exist period");
-      var extendRes = existChart.Extend(newChart);
+      var extendRes = await new Chart.Manager(candleRep).Extend(existChart, newChart);
       if (!extendRes.IsSuccess)
         return extendRes;
 
