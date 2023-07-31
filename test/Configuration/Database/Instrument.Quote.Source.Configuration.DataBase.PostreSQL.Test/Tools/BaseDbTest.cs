@@ -32,8 +32,8 @@ public abstract class BaseDbTest<T> : BaseTest<T>, IDisposable where T : BaseTes
       };
     _configurationBuilder.AddInMemoryCollection(dict);
 
-    Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
-    Console.WriteLine("Db Suffix: " + dbSuffix);
+    //Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
+    //Console.WriteLine("Db Suffix: " + dbSuffix);
   }
   public BaseDbTest(ITestOutputHelper output, Func<IServiceCollection, IServiceCollection> serviceRegistration) :
     this(output, (sc) => { serviceRegistration(sc);})
