@@ -354,6 +354,92 @@ public class UploadChart_Test : BaseDbTest
   }
 
   [Fact]
+  public async void WHEN_upload_data_inside_period_THEN_no_data_uploaded()
+  {
+    #region Array
+    Logger.LogDebug("Test ARRAY");
+
+    Logger.LogDebug("Init first part");
+    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    var From_part1 = new DateTime(2020, 3, 1).ToUniversalTime();
+    var Untill_part1 = new DateTime(2020, 4, 1).ToUniversalTime();
+    var Candles_part1 = new MockCandleDtoFactory().CreateCandleDtos(From_part1, Untill_part1);
+    var uploadedData_part1 = new UploadedCandlesDto()
+    {
+      FromDate = From_part1,
+      UntillDate = Untill_part1,
+      Candles = Candles_part1
+    };
+    using (var act_scope = this.global_sp.CreateScope())
+    {
+      var sp = act_scope.ServiceProvider;
+      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      var firstPartResult = await usedSrv.AddAsync(usedInstrument1.Id, (int)TimeFrame.Enum.D1, uploadedData_part1);
+      Assert.True(firstPartResult.IsSuccess);
+    }
+
+    Logger.LogDebug("Prepare test data");
+    var usedFrom = new DateTime(2020, 3, 10).ToUniversalTime();
+    var usedUntill = new DateTime(2020, 3, 20).ToUniversalTime();
+    var usedCandles = Candles_part1.Where(c => c.DateTime >= usedFrom && c.DateTime < usedUntill).ToList();
+    var usedUploadedData = new UploadedCandlesDto()
+    {
+      FromDate = usedFrom,
+      UntillDate = usedUntill,
+      Candles = usedCandles
+    };
+    #endregion
+
+
+    #region Act
+    Logger.LogDebug("Test ACT");
+
+    Result<int> assertedResult;
+    using (var act_scope = this.global_sp.CreateScope())
+    {
+      var sp = act_scope.ServiceProvider;
+      var usedSrv = sp.GetRequiredService<ICandleSrv>();
+      assertedResult = await usedSrv.AddAsync(usedInstrument1.Id, (int)TimeFrame.Enum.D1, usedUploadedData);
+    }
+
+    #endregion
+
+
+    #region Assert
+
+    Logger.LogDebug("Test ASSERT");
+
+    Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
+    Expect("Result value equal to count of candles", () => Assert.Equal(0, assertedResult.Value));
+    ExpectGroup("Instrument exist in repository", () =>
+    {
+      using (var assert_scope = this.global_sp.CreateScope())
+      {
+        var sp = assert_scope.ServiceProvider;
+        var chartRep = sp.GetRequiredService<IReadRepository<Chart>>();
+        var assertedChart = chartRep.Table.Include(e => e.Candles).Single(e => e.InstrumentId == usedInstrument1.Id && e.TimeFrameId == (int)TimeFrame.Enum.D1);
+        ExpectGroup("Chart is correct saved", () =>
+        {
+          Expect("From is correct", () => Assert.Equal(From_part1, assertedChart.FromDate));
+          Expect("Untill is correct", () => Assert.Equal(Untill_part1, assertedChart.UntillDate));
+        });
+        ExpectGroup("Candles is uploaded", () =>
+        {
+          Expect("Count of candles is correct", () => Assert.Equal(Candles_part1.Count(), assertedChart.Candles.Count()));
+          Expect("Each candle saved", () =>
+          {
+            foreach (var expectedCandle in Candles_part1)
+            {
+              Assert.Single(assertedChart.Candles.Where(e => e.DateTime == expectedCandle.DateTime));
+            }
+          });
+        });
+      }
+    });
+    #endregion
+  }
+
+  [Fact]
   public async void WHEN_upload_data_for_same_period_and_data_has_been_changed_THEN_exception()
   {
     #region Array
