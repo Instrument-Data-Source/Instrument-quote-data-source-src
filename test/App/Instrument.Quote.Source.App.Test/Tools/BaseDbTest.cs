@@ -34,8 +34,8 @@ public abstract class BaseDbTest : ExpectationsTestBase, IDisposable
       };
     _configurationBuilder.AddInMemoryCollection(dict);
 
-    Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
-    Console.WriteLine("Db Suffix: " + dbSuffix);
+    //Console.WriteLine(_configurationBuilder.Build().GetConnectionString("DefaultConnection"));
+    //Console.WriteLine("Db Suffix: " + dbSuffix);
   }
 
   private string GetDbSufix()

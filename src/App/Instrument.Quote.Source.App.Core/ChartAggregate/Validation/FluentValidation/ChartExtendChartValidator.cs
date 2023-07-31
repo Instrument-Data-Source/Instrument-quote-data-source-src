@@ -8,8 +8,8 @@ public class ChartExtendChartValidator : AbstractValidator<Chart>
   public ChartExtendChartValidator(Chart extendedChart)
   {
     RuleFor(e => e)
-      .Must(e => !IsCrossed(e, extendedChart)).WithMessage("Uploaded data inside exist period")
-      .Must(e=>IsJoined(e, extendedChart)).WithMessage("Uploaded data doesn't connected to exist period");
+      //.Must(e => !IsCrossed(e, extendedChart)).WithMessage("Uploaded data inside exist period")
+      .Must(e => IsJoined(e, extendedChart) || IsCrossed(e, extendedChart)).WithMessage("Uploaded data doesn't connected to exist period");
   }
   private static bool IsCrossed(Chart newChart, Chart extendedChart)
   {

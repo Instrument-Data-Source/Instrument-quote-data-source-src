@@ -25,7 +25,7 @@ public class CandleSrv_GetCandles_Test : BaseTest<CandleSrv_GetCandles_Test>
   private IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
   private IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
   private IRepository<Chart> chartRep = Substitute.For<IRepository<Chart>>();
-  private IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
+  private IRepository<Candle> candleRep = Substitute.For<IRepository<Candle>>();
   private IMediator mediator = Substitute.For<IMediator>();
   private Chart usedChart;
   private MockChartFactory mockChartFactory;
