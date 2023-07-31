@@ -30,12 +30,12 @@ public partial class Chart
       if (uploadedChart.TimeFrameId != extendedChart.TimeFrameId)
         throw new ArgumentException($"{nameof(uploadedChart)} has different {nameof(Chart.TimeFrameId)} then this", nameof(Chart.TimeFrameId));
 
-      var uploadedCandleDt = uploadedChart.Candles!.Select(c => c.DateTime).ToList();
+      var uploadedCandles = uploadedChart.Candles!.ToDictionary(c => c.DateTime, c => c);
 
-      var existCandles = await candleRep.Table.Where(c => uploadedCandleDt.Contains(c.DateTime)).ToListAsync();
+      var existCandles = await candleRep.Table.Where(c => uploadedCandles.Keys.Contains(c.DateTime)).ToListAsync();
       foreach (var existCandle in existCandles)
       {
-        var uploadedCandle = uploadedChart.Candles!.Single(c => c.DateTime == existCandle.DateTime);
+        var uploadedCandle = uploadedCandles[existCandle.DateTime];
         if (uploadedCandle.Open != existCandle.Open ||
             uploadedCandle.High != existCandle.High ||
             uploadedCandle.Low != existCandle.Low ||
