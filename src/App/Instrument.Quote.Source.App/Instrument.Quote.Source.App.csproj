@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Instrument.Quote.Source.App.Core\Instrument.Quote.Source.App.Core.csproj" />
     <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.Kernal.DataBase\Instrument.Quote.Source.Shared.Kernal.DataBase.csproj" />
     <ProjectReference Include="..\..\Configuration\Database\Instrument.Quote.Source.Configuration.DataBase.PostreSQL\Instrument.Quote.Source.Configuration.DataBase.PostreSQL.csproj" />
+    <ProjectReference Include="..\..\Configuration\Jobs\Instrument.Quote.Source.Configuration.Jobs.QuartzModule\Instrument.Quote.Source.Configuration.Jobs.QuartzModule.csproj" />
   </ItemGroup>
 
 </Project>

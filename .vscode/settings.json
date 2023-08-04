@@ -5,8 +5,9 @@
       "group": "Default"
     },
     {
-      "filePath": "test/App/Instrument.Quote.Source.App.Core.Test/JoinedChartAggregate",
+      "filePath": "src/App/Instrument.Quote.Source.App.Core.JoinedChartAggregate",
       "group": "Default"
     }
-  ]
+  ],
+  "favorites.sortOrder": "MANUAL"
 }

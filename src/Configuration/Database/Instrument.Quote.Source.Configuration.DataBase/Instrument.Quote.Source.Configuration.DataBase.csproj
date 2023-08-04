@@ -6,11 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\App\Instrument.Quote.Source.App.Core\Instrument.Quote.Source.App.Core.csproj" />
+    <ProjectReference Include="..\..\Jobs\Instrument.Quote.Source.Configuration.Jobs.QuartzModule\Instrument.Quote.Source.Configuration.Jobs.QuartzModule.csproj" />
   </ItemGroup>
 
 </Project>

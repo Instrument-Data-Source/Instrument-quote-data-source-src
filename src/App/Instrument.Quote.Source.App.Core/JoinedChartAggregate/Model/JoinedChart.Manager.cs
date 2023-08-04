@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Instrument.Quote.Source.Shared.DateTimePeriod;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Instrument.Quote.Source.Shared.Result.Extension;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +14,19 @@ public partial class JoinedChart
   {
     private readonly IReadRepository<Candle> candleRep;
     private readonly IRepository<JoinedCandle> joinedCandleRep;
+    private readonly int maxBaseCount;
     private readonly IReadRepository<Chart> chartRep;
     private readonly IReadRepository<TimeFrame> timeframeRep;
 
     public Manager(IReadRepository<TimeFrame> timeframeRep,
                    IReadRepository<Chart> chartRep,
                    IReadRepository<Candle> candleRep,
-                   IRepository<JoinedCandle> joinedCandleRep)
+                   IRepository<JoinedCandle> joinedCandleRep,
+                   int maxBaseCount = 1000)
     {
       this.candleRep = candleRep;
       this.joinedCandleRep = joinedCandleRep;
+      this.maxBaseCount = maxBaseCount;
       this.chartRep = chartRep;
       this.timeframeRep = timeframeRep;
     }
@@ -35,17 +39,11 @@ public partial class JoinedChart
                                           .GetByIdAsync(joinedChart.StepChartId, cancellationToken);
 
       var targetTimeFrame = await timeframeRep.GetByIdAsync(joinedChart.TargetTimeFrameId, cancellationToken);
-
-      if (baseChart.FromDate < joinedChart.FromDate)
+      var periods = SplitOnChunks(baseChart, joinedChart, maxBaseCount);
+      foreach (var period in periods)
       {
-        var fromSideNewJoinedChart = baseChart.JoinTo(targetTimeFrame, baseChart.FromDate, joinedChart.FromDate, candleRep);
+        var fromSideNewJoinedChart = baseChart.JoinTo(targetTimeFrame, period.From, period.Untill, candleRep);
         await Extend(joinedChart, fromSideNewJoinedChart, cancellationToken);
-
-      }
-      if (baseChart.UntillDate > joinedChart.UntillDate)
-      {
-        var untillSideNewJoinedChart = baseChart.JoinTo(targetTimeFrame, joinedChart.UntillDate, baseChart.UntillDate, candleRep);
-        await Extend(joinedChart, untillSideNewJoinedChart, cancellationToken);
       }
     }
 
@@ -77,6 +75,62 @@ public partial class JoinedChart
       if (extensionJoinedChart.UntillDate > extendedJoinedChart.UntillDate)
         extendedJoinedChart.UntillDate = extensionJoinedChart.UntillDate;
       await joinedCandleRep.SaveChangesAsync();
+    }
+
+    public static IEnumerable<DateTimePeriod> SplitOnChunks(Chart baseChart, JoinedChart joinedChart, int maxBaseCandles = 1)
+    {
+      var _ret_periods = new List<DateTimePeriod>();
+
+      if (baseChart.FromDate < joinedChart.FromDate)
+      {
+        var periods = SplitPeriodOnChunks(new DateTimePeriod(baseChart.FromDate, joinedChart.FromDate),
+                                    TimeFrame.GetEnumFrom(baseChart.TimeFrameId),
+                                    TimeFrame.GetEnumFrom(joinedChart.TargetTimeFrameId),
+                                    maxBaseCandles);
+        _ret_periods.AddRange(periods.OrderByDescending(dtp => dtp.From));
+      }
+      if (baseChart.UntillDate > joinedChart.UntillDate)
+      {
+        var periods = SplitPeriodOnChunks(new DateTimePeriod(joinedChart.UntillDate, baseChart.UntillDate),
+                                   TimeFrame.GetEnumFrom(baseChart.TimeFrameId),
+                                   TimeFrame.GetEnumFrom(joinedChart.TargetTimeFrameId),
+                                   maxBaseCandles);
+        _ret_periods.AddRange(periods.OrderBy(dtp => dtp.From));
+      }
+
+      return _ret_periods;
+    }
+
+    public static IEnumerable<DateTimePeriod> SplitPeriodOnChunks(DateTimePeriod splittedPeriod, TimeFrame.Enum baseTimeFrame, TimeFrame.Enum targetTimeFrame, int maxBaseCandles = 1)
+    {
+      var _ret_periods = new List<DateTimePeriod>();
+      if (splittedPeriod.IsEmpty())
+        return _ret_periods;
+
+      var period = BuildPeriod(splittedPeriod.From, baseTimeFrame, targetTimeFrame, maxBaseCandles);
+      while (period.Untill < splittedPeriod.Untill)
+      {
+        _ret_periods.Add(period);
+        period = BuildPeriod(period.Untill, baseTimeFrame, targetTimeFrame, maxBaseCandles);
+      }
+      _ret_periods.Add(new DateTimePeriod(period.From, splittedPeriod.Untill));
+      return _ret_periods;
+    }
+
+    private static DateTimePeriod BuildPeriod(DateTime from, TimeFrame.Enum baseTimeFrame, TimeFrame.Enum targetTimeFrame, int maxBaseCandles = 1)
+    {
+      var period_from = from;
+      var period_untill_next = targetTimeFrame.GetUntillDateTimeFor(period_from);
+      var period_untill = period_untill_next;
+
+      var baseCount = (period_untill_next - period_from).TotalSeconds / baseTimeFrame.ToSeconds();
+      while (baseCount < maxBaseCandles)
+      {
+        period_untill = period_untill_next;
+        period_untill_next = targetTimeFrame.GetUntillDateTimeFor(period_untill);
+        baseCount = (period_untill_next - period_from).TotalSeconds / baseTimeFrame.ToSeconds();
+      }
+      return new DateTimePeriod(period_from, period_untill);
     }
   }
 }

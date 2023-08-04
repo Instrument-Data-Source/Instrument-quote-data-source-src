@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Instrument.Quote.Source.Shared.Validations\Instrument.Quote.Source.Shared.Validations.csproj" />
+    <ProjectReference Include="..\Instrument.Quote.Source.App.Core\Instrument.Quote.Source.App.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.1.1" />
+    <PackageReference Include="Quartz" Version="3.6.3" />
+  </ItemGroup>
+</Project>

@@ -17,6 +17,13 @@ public static class JoinedCandlesSrvExtension
     return await srv.GetAsync(instrumentId, (int)baseTimeFrameEnum, (int)chartTimeFrameEnum, from, untill, hideIntermediateCandles, cancellationToken);
   }
 
+  public static async Task<Result<JoinedCandleResponse>> RequestAsync(this IJoinedCandleSrv srv,
+      int instrumentId, TimeFrame.Enum baseTimeFrameEnum, TimeFrame.Enum chartTimeFrameEnum,
+      [UTCKind] DateTime from, [UTCKind] DateTime untill, bool hideIntermediateCandles = false, CancellationToken cancellationToken = default)
+  {
+    return await srv.RequestAsync(instrumentId, (int)baseTimeFrameEnum, (int)chartTimeFrameEnum, from, untill, hideIntermediateCandles, cancellationToken);
+  }
+
   public static async Task<Result<IEnumerable<JoinedCandleDto>>> GetAsync(this IJoinedCandleSrv srv,
     ent.Instrument instrumentEnt, TimeFrame.Enum baseTimeFrameEnum,
     TimeFrame.Enum chartTimeFrameEnum,

@@ -57,10 +57,6 @@ public class TimeFrame : EnumEntity<TimeFrame.Enum>
   public virtual IEnumerable<Chart>? Charts => _charts != null ? _charts.AsReadOnly() : null;
   #endregion
 
-  #region Joined Chart relation
-  private readonly List<JoinedChart> _joinedCharts;
-  public virtual IEnumerable<JoinedChart>? JoinedCharts => _joinedCharts != null ? _joinedCharts.AsReadOnly() : null;
-  #endregion
 }
 
 public static class TimeFrameMapper
@@ -70,6 +66,11 @@ public static class TimeFrameMapper
   {
     return new TimeFrame(enumValue);
   }
+  public static DateTime GetUntillDateTimeFor(this TimeFrame timeFrame, DateTime dateTime)
+  {
+    return timeFrame.EnumId.GetUntillDateTimeFor(dateTime);
+  }
+
   public static DateTime GetUntillDateTimeFor(this TimeFrame.Enum enumValue, DateTime dateTime)
   {
     DateTime _retDt = enumValue.GetFromDateTimeFor(dateTime);
@@ -111,6 +112,11 @@ public static class TimeFrameMapper
 
     return _retDt;
   }
+  public static DateTime GetFromDateTimeFor(this TimeFrame entitiy, DateTime dateTime)
+  {
+    return entitiy.EnumId.GetFromDateTimeFor(dateTime);
+  }
+
   public static DateTime GetFromDateTimeFor(this TimeFrame.Enum enumValue, DateTime dateTime)
   {
     DateTime _retDt;

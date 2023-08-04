@@ -12,6 +12,16 @@ namespace Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
 
 public static class Module
 {
+
+  public static DbConnectionStringBuilder GetConnectionStringBuilder(this IConfiguration configuration)
+  {
+    var _defConnection = configuration.GetConnectionString("DefaultConnection");
+    var dbSuffix = configuration["ConnectionStrings:DbSuffix"];
+    DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
+    if (dbSuffix != null)
+      _connectionStringBuilder["Database"] += $"_{dbSuffix}";
+    return _connectionStringBuilder;
+  }
   public static IServiceCollection Register(this IServiceCollection sc)
   {
     using var sp = sc.BuildServiceProvider();
@@ -20,10 +30,6 @@ public static class Module
       {
         var config = provider.GetService<IConfiguration>();
         var environment = provider.GetService<IHostEnvironment>();
-
-        var _defConnection = config.GetConnectionString("DefaultConnection");
-        var dbSuffix = config["ConnectionStrings:DbSuffix"];
-        DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
 
         if (environment != null)
         {
@@ -34,11 +40,9 @@ public static class Module
           }
         }
 
-        if (dbSuffix != null)
-          _connectionStringBuilder["Database"] += $"_{dbSuffix}";
-
-        logger?.LogInformation("PG db - " + _connectionStringBuilder["Database"]);
-        builder.UseNpgsql(_connectionStringBuilder.ConnectionString);
+        var conStrBuilder = config.GetConnectionStringBuilder();
+        logger?.LogInformation("PG db - " + conStrBuilder["Database"]);
+        builder.UseNpgsql(conStrBuilder.ConnectionString);
       });
 
     logger?.LogInformation("Migration - begin");

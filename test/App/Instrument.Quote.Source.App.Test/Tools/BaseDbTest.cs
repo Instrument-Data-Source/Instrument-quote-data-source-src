@@ -1,6 +1,5 @@
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

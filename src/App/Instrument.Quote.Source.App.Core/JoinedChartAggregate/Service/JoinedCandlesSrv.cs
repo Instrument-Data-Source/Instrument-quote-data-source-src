@@ -156,4 +156,26 @@ public class JoinedCandlesSrv : IJoinedCandleSrv
 
     return Result.Success(joinedChart);
   }
+
+  public async Task<Result<JoinedCandleResponse>> RequestAsync(int instrumentId, int stepTimeFrameId, int targetTimeFrameId, DateTime from, DateTime untill, bool hideIntermediateCandles = false, CancellationToken cancellationToken = default)
+  {
+    Guard.Against.AgainstExpression(UTCKindAttribute.IsUTC, from, $"{nameof(from)} must be in UTC kind");
+    Guard.Against.AgainstExpression(UTCKindAttribute.IsUTC, untill, $"{nameof(untill)} must be in UTC kind");
+
+    logger.LogDebug("Load exist joined chart");
+    var joinedChartResult = await GetExistJoinedChartAsync(instrumentId, stepTimeFrameId, targetTimeFrameId, cancellationToken);
+    if (!joinedChartResult.IsSuccess)
+      return joinedChartResult.Repack<JoinedCandleResponse>();
+
+    var joinedChart = joinedChartResult.Value;
+    if (joinedChart == null || from < joinedChart.FromDate || untill > joinedChart.UntillDate)
+    {
+      var baseChart = await chartRep.GetByAsync(instrumentId, stepTimeFrameId, cancellationToken);
+      if (from < baseChart.FromDate || untill > baseChart.UntillDate)
+        return Result.NotFound(nameof(Candle));
+
+
+    }
+    throw new NotImplementedException();
+  }
 }

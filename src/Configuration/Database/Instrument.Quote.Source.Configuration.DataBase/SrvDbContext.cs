@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
+using Instrument.Quote.Source.Configuration.Jobs.QuartzModule;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ent = Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
+
 namespace Instrument.Quote.Source.Configuration.DataBase;
 public class SrvDbContext : DbContext
 {
@@ -35,7 +37,7 @@ public class SrvDbContext : DbContext
   {
     base.OnModelCreating(modelBuilder);
     AutoUseConfig(modelBuilder);
-    //ManualyUseConfig(modelBuilder);
+    modelBuilder.AddSrvQuartz();
   }
 
   private void AutoUseConfig(ModelBuilder modelBuilder)
