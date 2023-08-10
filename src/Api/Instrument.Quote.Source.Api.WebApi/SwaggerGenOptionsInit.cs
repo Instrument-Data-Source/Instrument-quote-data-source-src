@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 namespace Instrument.Quote.Source.Api.WebApi;
 public static class SwaggerGenOptionsInit
 {
-  public const string Version = "v2.1";
+  public const string Version = "v3.0";
   public const string UserGroup = "User";
   public const string AdminGroup = "Admin";
 
