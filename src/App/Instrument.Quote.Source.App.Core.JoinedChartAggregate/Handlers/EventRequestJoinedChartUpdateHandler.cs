@@ -6,20 +6,20 @@ using Quartz;
 
 namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Handlers;
 
-public class JoinedChartUpdateRequestedHandler : INotificationHandler<JoinedChartUpdateRequested>
+public class EventRequestJoinedChartUpdateHandler : INotificationHandler<EventRequestJoinedChartUpdate>
 {
   private readonly ISchedulerFactory schedulerFactory;
   private readonly IJoinedChartManager joinedChartManager;
-  private readonly ILogger<JoinedChartUpdateRequestedHandler> logger;
+  private readonly ILogger<EventRequestJoinedChartUpdateHandler> logger;
 
-  public JoinedChartUpdateRequestedHandler(ISchedulerFactory schedulerFactory, IJoinedChartManager joinedChartManager, ILogger<JoinedChartUpdateRequestedHandler> logger)
+  public EventRequestJoinedChartUpdateHandler(ISchedulerFactory schedulerFactory, IJoinedChartManager joinedChartManager, ILogger<EventRequestJoinedChartUpdateHandler> logger)
   {
     this.schedulerFactory = schedulerFactory;
     this.joinedChartManager = joinedChartManager;
     this.logger = logger;
   }
 
-  public async Task Handle(JoinedChartUpdateRequested notification, CancellationToken cancellationToken)
+  public async Task Handle(EventRequestJoinedChartUpdate notification, CancellationToken cancellationToken)
   {
     if (notification.background)
       await RunBackground(notification);
@@ -27,7 +27,7 @@ public class JoinedChartUpdateRequestedHandler : INotificationHandler<JoinedChar
       await joinedChartManager.UpdateAsync(notification.JoinedChartId, cancellationToken);
   }
 
-  private async Task RunBackground(JoinedChartUpdateRequested notification)
+  private async Task RunBackground(EventRequestJoinedChartUpdate notification)
   {
     var scheduler = await schedulerFactory.GetScheduler();
 

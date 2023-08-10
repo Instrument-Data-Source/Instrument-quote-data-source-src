@@ -71,7 +71,7 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
         responseStatus = GetJoinedCandleResponseDto.EnumStatus.PartlyReady;
       }
 
-      await mediator.Publish(new JoinedChartUpdateRequested(joinedChart.Id), cancellationToken);
+      await mediator.Publish(new EventRequestJoinedChartUpdate(joinedChart.Id), cancellationToken);
     }
     else
       responseStatus = GetJoinedCandleResponseDto.EnumStatus.Ready;
