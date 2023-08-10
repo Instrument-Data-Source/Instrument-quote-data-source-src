@@ -32,8 +32,16 @@ public class ChartJoiner : IChartJoiner
   {
     if (targetTimeFrame.EnumId.ToSeconds() <= TimeFrame.GetEnumFrom(baseChart.TimeFrameId).ToSeconds())
       throw new ArgumentException("Target TimeFrame must be GT base Chart TimeFrame", nameof(targetTimeFrame));
+    if (joinPeriod.From < baseChart.FromDate || joinPeriod.Untill > baseChart.UntillDate)
+    {
+      throw new ArgumentOutOfRangeException(nameof(joinPeriod), "Not in range of base chart");
+    }
+    var targetUntilltDt = targetTimeFrame.EnumId.GetUntillDateTimeFor(joinPeriod.Untill);
+    var targetFromDt = targetTimeFrame.EnumId.GetFromDateTimeFor(joinPeriod.From);
 
-    var usingBaseChart = await BuildUsingChart(baseChart, joinPeriod, cancellationToken);
+    var usedUntillDt = targetUntilltDt < baseChart.UntillDate ? targetUntilltDt : baseChart.UntillDate;
+    var usedStartDt = targetFromDt > baseChart.FromDate ? targetFromDt : baseChart.FromDate;
+    var usingBaseChart = await BuildUsingChart(baseChart, new DateTimePeriod(usedStartDt, usedUntillDt), cancellationToken);
 
     JoinedChart newJoinedChart = await CreateJoinedChart(baseChart, targetTimeFrame, usingBaseChart);
 

@@ -1,16 +1,25 @@
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
 using Instrument.Quote.Source.App.Core.Test.ChartAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Xunit.Abstractions;
 
-namespace Instrument.Quote.Source.App.Core.Test.JoinedChartAggregate.Model;
+namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Test.Service;
+
 public class JoinedChart_Factory_JoinTo_Full_Test : ExpectationsTestBase
 {
   ent.Instrument usingInstrument;
+  IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
+  IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
+  IReadRepository<Chart> chartRep = Substitute.For<IReadRepository<Chart>>();
+  IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
 
   public JoinedChart_Factory_JoinTo_Full_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
   {
@@ -21,7 +30,7 @@ public class JoinedChart_Factory_JoinTo_Full_Test : ExpectationsTestBase
   [Theory]
   [InlineData(true)]
   [InlineData(false)]
-  public void WHEN_give_candle_array_THEN_convert_correct(bool isShuffled)
+  public async void WHEN_give_candle_array_THEN_convert_correct(bool isShuffled)
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
@@ -43,13 +52,14 @@ public class JoinedChart_Factory_JoinTo_Full_Test : ExpectationsTestBase
     var arrayReslut = usedChart.AddCandles(usedCandles);
     Assert.True(arrayReslut.IsSuccess, "Array wasn't succesfull");
 
+    IChartJoiner chartJoiner = new ChartJoiner(timeframeRep, instrumentRep, chartRep, candleRep);
     #endregion
 
 
     #region Act
     Logger.LogDebug("Test ACT");
 
-    var assertedJoinedChart = JoinedChartManagerFunction.JoinTo(usedChart, TimeFrame.Enum.D1.ToEntity());
+    var assertedJoinedChart = await chartJoiner.JoinToAsync(usedChart, TimeFrame.Enum.D1.ToEntity());
     var assertedJoinedCandles = assertedJoinedChart.JoinedCandles.ToArray();
 
     #endregion
@@ -238,7 +248,7 @@ public class JoinedChart_Factory_JoinTo_Full_Test : ExpectationsTestBase
   [Theory]
   [InlineData(TimeFrame.Enum.H1)]
   [InlineData(TimeFrame.Enum.H4)]
-  public void WHEN_give_timeframe_is_LE_than_chart_timeframe_THEN_exception(TimeFrame.Enum usedFailEnum)
+  public async void WHEN_give_timeframe_is_LE_than_chart_timeframe_THEN_exception(TimeFrame.Enum usedFailEnum)
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
@@ -249,6 +259,8 @@ public class JoinedChart_Factory_JoinTo_Full_Test : ExpectationsTestBase
     List<Candle> usedCandles = MockCandles(usedChart);
     var arrayReslut = usedChart.AddCandles(usedCandles);
     Assert.True(arrayReslut.IsSuccess, "Array wasn't succesfull");
+
+    IChartJoiner chartJoiner = new ChartJoiner(timeframeRep, instrumentRep, chartRep, candleRep);
     #endregion
 
 
@@ -262,44 +274,12 @@ public class JoinedChart_Factory_JoinTo_Full_Test : ExpectationsTestBase
 
     #region Assert
     Logger.LogDebug("Test ASSERT");
-
-    Expect("Get exception",
-      () => Assert.Throws<ArgumentException>(() => JoinedChartManagerFunction.JoinTo(usedChart, usedFailEnum.ToEntity())),
-      out var assertedException);
+    var assertedException = await ExpectTaskAsync("Get exception",
+      async () => await Assert.ThrowsAsync<ArgumentException>(async () => await chartJoiner.JoinToAsync(usedChart, usedFailEnum.ToEntity())));
     Expect("Parameter is TimeFrame", () => Assert.Equal("targetTimeFrame", assertedException.ParamName));
 
     #endregion
   }
 
-  [Fact]
-  public void WHEN_candles_did_not_loaded_that_error_THEN_exception()
-  {
-    #region Array
-    Logger.LogDebug("Test ARRAY");
-    var usedFromDt = new DateTime(2020, 2, 4, 0, 0, 1).ToUniversalTime();
-    var usedUntillDt = new DateTime(2020, 2, 6, 23, 59, 59).ToUniversalTime();
-    var usedChart = new MockChartFactory(usingInstrument, new TimeFrame(TimeFrame.Enum.H4))
-                            .CreateChart(usedFromDt, usedUntillDt, true);
-    List<Candle> usedCandles = MockCandles(usedChart);
-    #endregion
 
-
-    #region Act
-    Logger.LogDebug("Test ACT");
-
-
-
-    #endregion
-
-
-    #region Assert
-    Logger.LogDebug("Test ASSERT");
-
-    Expect("Get exception",
-      () => Assert.Throws<ArgumentNullException>(() => JoinedChartManagerFunction.JoinTo(usedChart, TimeFrame.Enum.D1.ToEntity())),
-      out var assertedException);
-    //Expect("Parameter is TimeFrame", () => Assert.Equal("Candles", assertedException.ParamName));
-
-    #endregion
-  }
 }

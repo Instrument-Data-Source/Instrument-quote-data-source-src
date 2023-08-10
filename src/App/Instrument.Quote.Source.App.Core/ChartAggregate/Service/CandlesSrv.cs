@@ -59,7 +59,7 @@ public class CandlesSrv : ICandleSrv
     var newChart = mapResult.Value;
 
     logger.LogDebug("Searching exist period");
-    var existChart = await chartRep.TryGetForAsync(instrumentId, timeFrameId, cancellationToken);
+    var existChart = await chartRep.TryGetByAsync(instrumentId, timeFrameId, cancellationToken);
 
     Result<int> result;
     if (existChart == null)

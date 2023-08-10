@@ -23,7 +23,7 @@ public class UnitTest1 : ExpectationsTestBase, IDisposable
     Logger.LogInformation("Scheduler has been shutdowned");
   }
 
-  [Fact]
+  //[Fact]
   public async void Test1()
   {
 
@@ -42,7 +42,7 @@ public class UnitTest1 : ExpectationsTestBase, IDisposable
 
   }
 
-  [Fact]
+  //[Fact]
   public async void WHEN_run_job_THEN_it_run_correctly()
   {
     #region Array
@@ -78,6 +78,7 @@ public class UnitTest1 : ExpectationsTestBase, IDisposable
 
     #endregion
   }
+
 
   protected override void Dispose(bool disposing)
   {

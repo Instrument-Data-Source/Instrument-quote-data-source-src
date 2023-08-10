@@ -90,7 +90,6 @@ public partial class JoinedChart
       if (extensionJoinedChart.UntillDate > extendedJoinedChart.UntillDate)
         extendedJoinedChart.UntillDate = extensionJoinedChart.UntillDate;
 
-
       await transactionManager.SaveChangesAsync(cancellationToken);
     }
   }

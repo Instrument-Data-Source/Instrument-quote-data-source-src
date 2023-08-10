@@ -26,9 +26,16 @@ public static class Module
   {
     using var sp = sc.BuildServiceProvider();
     var logger = sp.GetService<ILogger>();
+
+    sc.AddSingleton<IConnectionStringSource, PGConnectionStringSource>();
+    sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+    sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+
+    sc.AddScoped<ITransactionManager, TransactionManager<SrvDbContext>>();
+
     sc.AddDbContext<SrvDbContext>((provider, builder) =>
       {
-        var config = provider.GetService<IConfiguration>();
+        var connectionStringSource = provider.GetRequiredService<IConnectionStringSource>();
         var environment = provider.GetService<IHostEnvironment>();
 
         if (environment != null)
@@ -40,18 +47,13 @@ public static class Module
           }
         }
 
-        var conStrBuilder = config.GetConnectionStringBuilder();
-        logger?.LogInformation("PG db - " + conStrBuilder["Database"]);
-        builder.UseNpgsql(conStrBuilder.ConnectionString);
+        logger?.LogInformation("PG host: {0}, db: {1}", connectionStringSource.Host, connectionStringSource.DataBase);
+        builder.UseNpgsql(connectionStringSource.ConnectionString);
       });
 
     logger?.LogInformation("Migration - begin");
     sc.BuildServiceProvider().GetService<SrvDbContext>()!.Database.Migrate();
     logger?.LogInformation("Migration - done");
-
-    sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-    sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
-    sc.AddScoped<ITransactionManager, TransactionManager<SrvDbContext>>();
     return sc;
   }
 

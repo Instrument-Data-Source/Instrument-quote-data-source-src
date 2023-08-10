@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Instrument.Quote.Source.App.Test.ChartAggregate;
 
-public class GetCandles_Test : BaseDbTest
+public class GetCandles_Test : BaseTest
 {
 
   public GetCandles_Test(ITestOutputHelper output) : base(output)
@@ -29,9 +29,9 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
-    var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    var usedUploadedCandles2 = await hostFixture.Services.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
     var expectedCandles = usedUploadedCandles1.Candles.Where(e => e.DateTime >= fromDt && e.DateTime < untillDt).ToList();
@@ -42,7 +42,7 @@ public class GetCandles_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -72,9 +72,9 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
-    var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    var usedUploadedCandles2 = await hostFixture.Services.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
     #endregion
@@ -84,7 +84,7 @@ public class GetCandles_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -114,9 +114,9 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
-    var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    var usedUploadedCandles2 = await hostFixture.Services.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
     #endregion
@@ -126,7 +126,7 @@ public class GetCandles_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -156,9 +156,9 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
-    var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    var usedUploadedCandles2 = await hostFixture.Services.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
     #endregion
@@ -168,7 +168,7 @@ public class GetCandles_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -199,8 +199,8 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate - new TimeSpan(1, 0, 0, 0);
     #endregion
@@ -210,7 +210,7 @@ public class GetCandles_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -240,8 +240,8 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     var fromDt = usedUploadedCandles1.FromDate + new TimeSpan(1, 0, 0, 0);
     var untillDt = usedUploadedCandles1.UntillDate + new TimeSpan(1, 0, 0, 0);
     #endregion
@@ -251,7 +251,7 @@ public class GetCandles_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -284,8 +284,8 @@ public class GetCandles_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     DateTime fromDt;
     DateTime untillDt;
     if (fromIsUTC)
@@ -310,7 +310,7 @@ public class GetCandles_Test : BaseDbTest
     #region Assert
     Logger.LogDebug("Test ASSERT");
     Result<IEnumerable<CandleDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();

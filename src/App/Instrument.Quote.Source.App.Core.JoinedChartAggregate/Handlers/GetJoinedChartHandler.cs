@@ -6,11 +6,9 @@ using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Repository;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Repository;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
-using Instrument.Quote.Source.Shared.Result.Extension;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
-using Microsoft.EntityFrameworkCore;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Events;
 
 namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Handlers;
@@ -22,10 +20,9 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
   private readonly IReadRepository<Chart> chartRep;
   private readonly IReadRepository<JoinedChart> joinedChartRep;
   private readonly IReadRepository<JoinedCandle> joinedCandleRep;
-  private readonly IJoindeCandleMapper joindeCandleMapper;
   private readonly IJoinedChartManager joinedChartManager;
   private readonly IMediator mediator;
-  private readonly JoinedChart.Factory joinedChartFactory;
+  private readonly IJoinedChartFactory joinedChartFactory;
   private readonly ILogger<GetJoinedChartHandler> logger;
 
   public GetJoinedChartHandler(
@@ -34,10 +31,9 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
    IReadRepository<Chart> chartRep,
    IReadRepository<JoinedChart> joinedChartRep,
    IReadRepository<JoinedCandle> joinedCandleRep,
-   IJoindeCandleMapper joindeCandleMapper,
    IJoinedChartManager joinedChartManager,
    IMediator mediator,
-   JoinedChart.Factory joinedChartFactory,
+   IJoinedChartFactory joinedChartFactory,
    ILogger<GetJoinedChartHandler> logger)
   {
     this.timeframeRep = timeframeRep;
@@ -45,7 +41,6 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
     this.chartRep = chartRep;
     this.joinedChartRep = joinedChartRep;
     this.joinedCandleRep = joinedCandleRep;
-    this.joindeCandleMapper = joindeCandleMapper;
     this.joinedChartManager = joinedChartManager;
     this.mediator = mediator;
     this.joinedChartFactory = joinedChartFactory;
@@ -54,16 +49,15 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
   public async Task<Result<GetJoinedCandleResponseDto>> Handle(GetJoinedChartRequestDto request, CancellationToken cancellationToken)
   {
     logger.LogDebug("Load exist joined chart");
-    var joinedChartResult = await GetExistJoinedChartAsync(request.instrumentId, request.stepTimeFrameId, request.targetTimeFrameId, cancellationToken);
-    if (!joinedChartResult.IsSuccess)
-      return joinedChartResult.Repack<GetJoinedCandleResponseDto>();
+    var joinedChart = await joinedChartRep.TryGetByAsync(request.instrumentId, request.stepTimeFrameId, request.targetTimeFrameId, cancellationToken);
 
-    var joinedChart = joinedChartResult.Value;
     GetJoinedCandleResponseDto.EnumStatus responseStatus;
     if (joinedChart == null || request.from < joinedChart.FromDate || request.untill > joinedChart.UntillDate)
     {
+      var baseChart = await chartRep.TryGetByAsync(request.instrumentId, request.stepTimeFrameId, cancellationToken);
+      if (baseChart == null)
+        return Result.NotFound(nameof(Chart));
 
-      var baseChart = await chartRep.GetByAsync(request.instrumentId, request.stepTimeFrameId, cancellationToken);
       if (request.from < baseChart.FromDate || request.untill > baseChart.UntillDate)
         return Result.NotFound(nameof(Candle));
 
@@ -82,7 +76,7 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
     else
       responseStatus = GetJoinedCandleResponseDto.EnumStatus.Ready;
 
-    IEnumerable<JoinedCandleDto> candlesArr = await SelectJoinedCandles(request.from, request.untill, request.hideIntermediateCandles, joinedChart!);
+    IEnumerable<JoinedCandleDto> candlesArr = await joinedCandleRep.GetCandlesAsDtoAsync(request.from, request.untill, request.hideIntermediateCandles, joinedChart!);
 
     return Result.Success(
       new GetJoinedCandleResponseDto()
@@ -91,16 +85,6 @@ public class GetJoinedChartHandler : IRequestHandler<GetJoinedChartRequestDto, R
         JoinedCandles = candlesArr
       }
     );
-  }
-
-  private async Task<IEnumerable<JoinedCandleDto>> SelectJoinedCandles(DateTime from, DateTime untill, bool hideIntermediateCandles, JoinedChart joinedChart)
-  {
-    var query = joinedCandleRep.Table.Where(e => e.JoinedChartId == joinedChart.Id &&
-                                                     e.StepDateTime >= from &&
-                                                     e.StepDateTime < untill);
-    if (hideIntermediateCandles)
-      query = query.Where(e => e.IsLast);
-    return (await query.ToArrayAsync()).Select(this.joindeCandleMapper.map);
   }
 
   public async Task<Result<JoinedChart?>> GetExistJoinedChartAsync(int instrumentId, int stepTimeFrameId, int targetTimeFrameId, CancellationToken cancellationToken)

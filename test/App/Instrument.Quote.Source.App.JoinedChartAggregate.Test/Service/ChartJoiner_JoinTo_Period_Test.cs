@@ -1,6 +1,8 @@
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
 using Instrument.Quote.Source.App.Core.Test.ChartAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.Test.InstrumentAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
@@ -10,10 +12,15 @@ using MockQueryable.Moq;
 using NSubstitute;
 using Xunit.Abstractions;
 
-namespace Instrument.Quote.Source.App.Core.Test.JoinedChartAggregate.Model;
+namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Test.Service;
+
 public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
 {
   ent.Instrument usingInstrument;
+  IReadRepository<TimeFrame> timeframeRep = Substitute.For<IReadRepository<TimeFrame>>();
+  IReadRepository<ent.Instrument> instrumentRep = Substitute.For<IReadRepository<ent.Instrument>>();
+  IReadRepository<Chart> chartRep = Substitute.For<IReadRepository<Chart>>();
+  IReadRepository<Candle> candleRep = Substitute.For<IReadRepository<Candle>>();
 
   public JoinedChart_Factory_JoinTo_Period_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
   {
@@ -42,7 +49,7 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
 
   [Theory]
   [MemberData(nameof(TestCases))]
-  public void WHEN_give_candle_array_THEN_convert_correct(bool isShuffled, int periodShift, bool isCandleFromRep)
+  public async void WHEN_give_candle_array_THEN_convert_correct(bool isShuffled, int periodShift, bool isCandleFromRep)
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
@@ -77,13 +84,14 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
       Assert.True(arrayResult.IsSuccess, "Array wasn't succesfull");
     }
 
+    IChartJoiner chartJoiner = new ChartJoiner(timeframeRep, instrumentRep, chartRep, candleRep);
     #endregion
 
 
     #region Act
     Logger.LogDebug("Test ACT");
 
-    var assertedJoinedChart = JoinedChartManagerFunction.JoinTo(usedChart, TimeFrame.Enum.D1.ToEntity(), usedJoiningFromDt, usedJoiningUntillDt, candleRep);
+    var assertedJoinedChart = await chartJoiner.JoinToAsync(usedChart, TimeFrame.Enum.D1.ToEntity(), usedJoiningFromDt, usedJoiningUntillDt);
     var assertedJoinedCandles = assertedJoinedChart.JoinedCandles!.ToArray();
 
     #endregion
@@ -271,7 +279,7 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
   [Theory]
   [InlineData(TimeFrame.Enum.H1)]
   [InlineData(TimeFrame.Enum.H4)]
-  public void WHEN_give_timeframe_is_LE_than_chart_timeframe_THEN_exception(TimeFrame.Enum usedFailEnum)
+  public async void WHEN_give_timeframe_is_LE_than_chart_timeframe_THEN_exception(TimeFrame.Enum usedFailEnum)
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
@@ -285,6 +293,8 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
 
     var arrayReslut = usedChart.AddCandles(usedCandles);
     Assert.True(arrayReslut.IsSuccess, "Array wasn't succesfull");
+
+    IChartJoiner chartJoiner = new ChartJoiner(timeframeRep, instrumentRep, chartRep, candleRep);
     #endregion
 
 
@@ -299,9 +309,8 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
     #region Assert
     Logger.LogDebug("Test ASSERT");
 
-    Expect("Get exception",
-      () => Assert.Throws<ArgumentException>(() => JoinedChartManagerFunction.JoinTo(usedChart, usedFailEnum.ToEntity(), usedFromDt, usedUntillDt, candleRep)),
-      out var assertedException);
+    var assertedException = await ExpectTaskAsync("Get exception",
+      async () => await Assert.ThrowsAsync<ArgumentException>(async () => await chartJoiner.JoinToAsync(usedChart, usedFailEnum.ToEntity(), usedFromDt, usedUntillDt)));
     Expect("Parameter is TimeFrame", () => Assert.Equal("targetTimeFrame", assertedException.ParamName));
 
     #endregion
@@ -312,7 +321,7 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
   [InlineData(true, true)]
   [InlineData(true, false)]
   [InlineData(false, true)]
-  public void WHEN_give_from_or_untill_out_of_bounds_of_chart_THEN_exception(bool fromOut, bool untillOut)
+  public async void WHEN_give_from_or_untill_out_of_bounds_of_chart_THEN_exception(bool fromOut, bool untillOut)
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
@@ -335,6 +344,7 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
     if (untillOut)
       usedUntillDt = usedUntillDt + new TimeSpan(1);
 
+    IChartJoiner chartJoiner = new ChartJoiner(timeframeRep, instrumentRep, chartRep, candleRep);
     #endregion
 
 
@@ -349,10 +359,9 @@ public class JoinedChart_Factory_JoinTo_Period_Test : ExpectationsTestBase
     #region Assert
     Logger.LogDebug("Test ASSERT");
 
-    Expect("Get exception",
-      () => Assert.Throws<ArgumentOutOfRangeException>(() => JoinedChartManagerFunction.JoinTo(usedChart, TimeFrame.Enum.D1.ToEntity(), usedFromDt, usedUntillDt, candleRep)),
-      out var assertedException);
-    Expect("Parameter is From or Untill", () => Assert.True("from" == assertedException.ParamName || "untill" == assertedException.ParamName));
+    var assertedException = await ExpectTaskAsync("Get exception",
+      async () => await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await chartJoiner.JoinToAsync(usedChart, TimeFrame.Enum.D1.ToEntity(), usedFromDt, usedUntillDt)));
+    Expect("Parameter is From or Untill", () => Assert.True("joinPeriod" == assertedException.ParamName));
 
     #endregion
   }

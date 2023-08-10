@@ -51,6 +51,39 @@ public class JoinedChart_Constructor_Test : ExpectationsTestBase
     #endregion
   }
 
+  [Fact]
+  public void WHEN_create_new_empty_chart_with_equals_dt_THEN_ok()
+  {
+
+
+    #region Array
+    Logger.LogDebug("Test ARRAY");
+
+    var usedFromDt = new DateTime(2020, 1, 1).ToUniversalTime();
+    var usedTillDt = new DateTime(2020, 1, 1).ToUniversalTime();
+
+    #endregion
+
+
+    #region Act
+    Logger.LogDebug("Test ACT");
+
+    var assertedChart = new JoinedChart(usedFromDt, usedTillDt, usedChart, usedTimeFrame);
+
+    #endregion
+
+
+    #region Assert
+    Logger.LogDebug("Test ASSERT");
+
+    Expect("From Date is correct", () => Assert.Equal(usedFromDt, assertedChart.FromDate));
+    Expect("Untill Date is correct", () => Assert.Equal(usedTillDt, assertedChart.UntillDate));
+    Expect("Chart is correct", () => Assert.Equal(usedChart.Id, assertedChart.StepChartId));
+    Expect("TimeFrame is correc", () => Assert.Equal(usedTimeFrame.Id, assertedChart.TargetTimeFrameId));
+
+    #endregion
+  }
+
   public static IEnumerable<object[]> IncorrectDates
   {
     get
@@ -60,7 +93,6 @@ public class JoinedChart_Constructor_Test : ExpectationsTestBase
       yield return new object[] { "Until NOT UTC", new DateTime(2020, 1, 1).ToUniversalTime(), new DateTime(2020, 5, 1) };
       yield return new object[] { "From NOT UTC", new DateTime(2020, 1, 1), new DateTime(2020, 5, 1).ToUniversalTime() };
       yield return new object[] { "From > Untill", new DateTime(2021, 1, 1).ToUniversalTime(), new DateTime(2020, 5, 1).ToUniversalTime() };
-      yield return new object[] { "From = Untill", new DateTime(2020, 1, 1).ToUniversalTime(), new DateTime(2020, 1, 1).ToUniversalTime() };
     }
   }
 

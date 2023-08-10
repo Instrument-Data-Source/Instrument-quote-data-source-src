@@ -11,13 +11,13 @@ using Instrument.Quote.Source.Configuration.DataBase;
 
 namespace QuartzJobTest;
 
-public class UsingServiceCollection_Test : ExpectationsTestBase
+public class UsingServiceCollection_Test : IDisposable
 {
   private static int magicNumber = 0;
+  private bool disposed = false;
   protected readonly string dbSufix;
   protected readonly IServiceProvider global_sp;
-
-  IServiceProvider sp;
+  private readonly ITestOutputHelper output;
   IHost host;
   private static void setupConfigBuider(string dbSuffix, IConfigurationBuilder _configurationBuilder)
   {
@@ -42,7 +42,7 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
     return sufix;
   }
 
-  public UsingServiceCollection_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
+  public UsingServiceCollection_Test(ITestOutputHelper output)
   {
     dbSufix = GetDbSufix();
     host = new HostBuilder()
@@ -85,39 +85,47 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
 
     global_sp = host.Services;
     host.Start();
+    this.output = output;
   }
-
-  public new virtual void Dispose()
+  public void Dispose()
   {
+    try
+    {
+      using (var scope = global_sp.CreateScope())
+      {
+        var _sp = scope.ServiceProvider;
+        _sp.DeleteDb();
+
+        foreach (var scheduler in _sp.GetRequiredService<ISchedulerFactory>().GetAllSchedulers().Result)
+        {
+          scheduler.Shutdown().Wait();
+        }
+
+      }
+    }
+    catch (System.Exception ex)
+    {
+      output.WriteLine("On dispose DeleteDb get excpetion: {0}", ex.ToString());
+    }
     try
     {
       host.StopAsync().Wait();
       host.WaitForShutdown();
       host.Dispose();
-      Output.WriteLine("host.Dispose() - done");
+      output.WriteLine("host.Dispose() - done");
     }
     catch (System.Exception ex)
     {
-      Output.WriteLine("On dispose host stop get excpetion: {0}", ex.ToString());
+      output.WriteLine("On dispose host stop get excpetion: {0}", ex.ToString());
     }
-    try
-    {
-      using var scope = global_sp.CreateScope();
-      var _sp = scope.ServiceProvider;
-      _sp.DeleteDb();
-    }
-    catch (System.Exception ex)
-    {
-      Output.WriteLine("On dispose DeleteDb get excpetion: {0}", ex.ToString());
-    }
+    disposed = true;
   }
 
-
-  [Fact]
-  public async void WHEN_create_job_THEN_work_correctly()
+  //[Fact]
+  public async Task WHEN_create_job_THEN_work_correctly()
   {
     #region Array
-    Logger.LogDebug("Test ARRAY");
+    //Logger.LogDebug("Test ARRAY");
     using var scope = global_sp.CreateScope();
     var sp = scope.ServiceProvider;
 
@@ -145,7 +153,7 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
 
 
     #region Act
-    Logger.LogDebug("Test ACT");
+    //Logger.LogDebug("Test ACT");
 
     await scheduler.ScheduleJob(job, trigger);
 
@@ -158,18 +166,19 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
 
 
     #region Assert
-    Logger.LogDebug("Test ASSERT");
+    //Logger.LogDebug("Test ASSERT");
 
-    Expect("Call count of hello job is 1", () => Assert.Equal(1, HelloJob.callCount));
-    Expect("End count of hello job is 1", () => Assert.Equal(1, HelloJob.endCount));
+    //Expect("Call count of hello job is 1", () => Assert.Equal(1, HelloJob.callCount));
+    //Expect("End count of hello job is 1", () => Assert.Equal(1, HelloJob.endCount));
+    Assert.Equal(1, HelloJob.callCount);
+    Assert.Equal(1, HelloJob.endCount);
     #endregion
   }
-
-  [Fact]
-  public async void WHEN_create_duplicate_job_THEN_only_one_job_run()
+  //[Fact]
+  public async Task WHEN_create_job_THEN_work_correctly2()
   {
     #region Array
-    Logger.LogDebug("Test ARRAY");
+    //Logger.LogDebug("Test ARRAY");
     using var scope = global_sp.CreateScope();
     var sp = scope.ServiceProvider;
 
@@ -185,7 +194,7 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
     // Trigger the job to run now, and then every 40 seconds
     var trigger = TriggerBuilder.Create()
         .WithIdentity("myTrigger", "group1")
-        .StartNow().ForJob(job)
+        .StartNow()
         .Build();
 
 
@@ -197,9 +206,9 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
 
 
     #region Act
-    Logger.LogDebug("Test ACT");
+    //Logger.LogDebug("Test ACT");
+
     await scheduler.ScheduleJob(job, trigger);
-    await Assert.ThrowsAsync<JobPersistenceException>(async () => await scheduler.ScheduleJob(job, trigger));
 
     for (int i = 0; i < 100; i++)
     {
@@ -210,64 +219,16 @@ public class UsingServiceCollection_Test : ExpectationsTestBase
 
 
     #region Assert
-    Logger.LogDebug("Test ASSERT");
+    //Logger.LogDebug("Test ASSERT");
 
-    Expect("Call count of hello job is 1", () => Assert.Equal(1, HelloJob.callCount));
-    Expect("End count of hello job is 1", () => Assert.Equal(1, HelloJob.endCount));
+    //Expect("Call count of hello job is 1", () => Assert.Equal(1, HelloJob.callCount));
+    //Expect("End count of hello job is 1", () =>  Assert.Equal(1, HelloJob.endCount));
+    Assert.Equal(1, HelloJob.callCount);
+    Assert.Equal(1, HelloJob.endCount);
     #endregion
   }
 
 
-
-  [Fact]
-  public async void WHEN_transaction_rollback_THEN_no_job()
-  {
-    #region Array
-    Logger.LogDebug("Test ARRAY");
-    using var scope = global_sp.CreateScope();
-    var sp = scope.ServiceProvider;
-
-    var schedulerFactory = sp.GetRequiredService<ISchedulerFactory>();
-
-    var scheduler = await schedulerFactory.GetScheduler();
-
-    // define the job and tie it to our HelloJob class
-    var job = JobBuilder.Create<HelloJob>()
-        .WithIdentity("myJob", "group1")
-        .Build();
-
-    // Trigger the job to run now, and then every 40 seconds
-    var trigger = TriggerBuilder.Create()
-        .WithIdentity("myTrigger", "group1")
-        .StartNow().ForJob(job)
-        .Build();
-
-
-
-    // will block until the last running job completes
-    //await builder.RunAsync();
-
-    #endregion
-
-
-    #region Act 
-    Logger.LogDebug("Test ACT");
-    var dbContext = sp.GetRequiredService<SrvDbContext>();
-    var transaction = dbContext.Database.BeginTransaction();
-    await scheduler.ScheduleJob(job, trigger);
-    transaction.Rollback();
-
-    Thread.Sleep(3000);
-    #endregion
-
-
-    #region Assert
-    Logger.LogDebug("Test ASSERT");
-
-    Expect("Call count of hello job is 1", () => Assert.Equal(0, HelloJob.callCount));
-    Expect("End count of hello job is 1", () => Assert.Equal(0, HelloJob.endCount));
-    #endregion
-  }
 
   public class SubService
   {

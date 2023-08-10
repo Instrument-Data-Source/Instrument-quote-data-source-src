@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Instrument.Quote.Source.App.Test.ChartAggregate;
 
-public class GetChart_Get_Test : BaseDbTest
+public class GetChart_Get_Test : BaseTest
 {
 
   public GetChart_Get_Test(ITestOutputHelper output) : base(output)
@@ -24,9 +24,9 @@ public class GetChart_Get_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
-    var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    var usedUploadedCandles2 = await hostFixture.Services.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     #endregion
 
 
@@ -34,7 +34,7 @@ public class GetChart_Get_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<ChartDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<IChartSrv>();
@@ -71,9 +71,9 @@ public class GetChart_Get_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
-    var usedUploadedCandles2 = await this.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    var usedUploadedCandles2 = await hostFixture.Services.InitChartData(usedInstrument2, TimeFrame.Enum.H1);
     #endregion
 
 
@@ -81,7 +81,7 @@ public class GetChart_Get_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<ChartDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<IChartSrv>();
@@ -111,8 +111,8 @@ public class GetChart_Get_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles1 = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles1 = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
     #endregion
 
 
@@ -120,7 +120,7 @@ public class GetChart_Get_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<ChartDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<IChartSrv>();

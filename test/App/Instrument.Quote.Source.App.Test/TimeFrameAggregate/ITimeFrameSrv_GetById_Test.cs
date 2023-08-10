@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Test.TimeFrameAggregate;
-
-public class ITimeFrameSrv_GetById_Test : BaseDbTest
+[Collection("Host collection")]
+public class ITimeFrameSrv_GetById_Test : BaseTest
 {
 
   public ITimeFrameSrv_GetById_Test(ITestOutputHelper output) : base(output)
@@ -29,7 +29,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest
     #region Act
     Logger.LogInformation("Test ACT");
     Result<TimeFrameResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();
@@ -68,7 +68,7 @@ public class ITimeFrameSrv_GetById_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<TimeFrameResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<ITimeFrameSrv>();

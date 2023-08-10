@@ -1,19 +1,21 @@
 using InsonusK.Xunit.ExpectationsTest;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
+using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
 using Instrument.Quote.Source.App.Core.Test.ChartAggregate.Mocks;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.DateTimePeriod;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Xunit.Abstractions;
 using static Instrument.Quote.Source.App.Core.Test.ChartAggregate.Mocks.MockChartFactory;
 
-namespace Instrument.Quote.Source.App.Core.Test.JoinedChartAggregate.Model;
+namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Test.Service;
 
-public class JoinedChart_Manager_SplitOnChunks_Test : ExpectationsTestBase
+public class BasePeriodSplitter_SplitOnChunks_Test : ExpectationsTestBase
 {
 
-  public JoinedChart_Manager_SplitOnChunks_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
+  public BasePeriodSplitter_SplitOnChunks_Test(ITestOutputHelper output, LogLevel logLevel = LogLevel.Debug) : base(output, logLevel)
   {
 
   }
@@ -33,9 +35,8 @@ public class JoinedChart_Manager_SplitOnChunks_Test : ExpectationsTestBase
     JoinedChart joinedChart = new JoinedChart(joinedChartFrom, joinedChartUntill, baseChart, targetTimeFrame.ToEntity());
 
     Logger.LogDebug("Prepare expetcted chunks");
-    /*
-    Chunks must be order from closest to exist joinedChart to the fare
-    */
+    // Chunks must be order from closest to exist joinedChart to the fare
+
     var expectedChunks = new List<DateTimePeriod>(){
       new DateTimePeriod(new DateTime(2020, 2, 1).ToUniversalTime(),new DateTime(2020, 3, 1).ToUniversalTime()),
       new DateTimePeriod(new DateTime(2020, 1, 4).ToUniversalTime(),new DateTime(2020, 2, 1).ToUniversalTime()),
@@ -43,13 +44,15 @@ public class JoinedChart_Manager_SplitOnChunks_Test : ExpectationsTestBase
       new DateTimePeriod(new DateTime(2020, 5, 1).ToUniversalTime(),new DateTime(2020, 6, 1).ToUniversalTime()),
       new DateTimePeriod(new DateTime(2020, 6, 1).ToUniversalTime(),new DateTime(2020, 6, 15).ToUniversalTime()),
     };
+    var config = Options.Create(new Config.JoinedChartModuleConfig() { MaxSplitBaseCandleCount = 15 });
+    var splitter = new BasePeriodSplitter(config, Output.BuildLoggerFor<BasePeriodSplitter>());
 
     #endregion
 
     #region Act
     Logger.LogDebug("Test ACT");
 
-    var assertedChunks = JoinedChart.Manager.SplitOnChunks(baseChart, joinedChart);
+    var assertedChunks = splitter.SplitOnChunks(baseChart, joinedChart);
 
     #endregion
 
@@ -84,21 +87,21 @@ public class JoinedChart_Manager_SplitOnChunks_Test : ExpectationsTestBase
     JoinedChart joinedChart = new JoinedChart(joinedChartFrom, joinedChartUntill, baseChart, targetTimeFrame.ToEntity());
 
     Logger.LogDebug("Prepare expetcted chunks");
-    /*
-    Chunks must be order from closest to exist joinedChart to the fare
-    */
+    //  Chunks must be order from closest to exist joinedChart to the fare
+
     var expectedChunks = new List<DateTimePeriod>(){
       new DateTimePeriod(new DateTime(2020, 1, 4).ToUniversalTime(),new DateTime(2020, 3, 1).ToUniversalTime()),
       new DateTimePeriod(new DateTime(2020, 4, 1).ToUniversalTime(),new DateTime(2020, 6, 1).ToUniversalTime()),
       new DateTimePeriod(new DateTime(2020, 6, 1).ToUniversalTime(),new DateTime(2020, 6, 15).ToUniversalTime()),
     };
-
+    var config = Options.Create(new Config.JoinedChartModuleConfig() { MaxSplitBaseCandleCount = 64 });
+    var splitter = new BasePeriodSplitter(config, Output.BuildLoggerFor<BasePeriodSplitter>());
     #endregion
 
     #region Act
     Logger.LogDebug("Test ACT");
 
-    var assertedChunks = JoinedChart.Manager.SplitOnChunks(baseChart, joinedChart, 64);
+    var assertedChunks = splitter.SplitOnChunks(baseChart, joinedChart);
 
     #endregion
 

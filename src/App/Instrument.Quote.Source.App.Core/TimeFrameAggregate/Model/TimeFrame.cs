@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Model;
-using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
 
 namespace Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;

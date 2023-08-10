@@ -1,3 +1,4 @@
+using Ardalis.GuardClauses;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Mapper;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Dto;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
@@ -6,18 +7,16 @@ using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
-public class JoinedCandleMapper : IJoindeCandleMapper
+public class JoinedCandleMapper 
 {
   private readonly DecimalToStoreIntConverter decMapper;
   private readonly JoinedChart joinChart;
 
-  public JoinedCandleMapper(JoinedChart joinChart, IReadRepository<JoinedChart> joinedChartRep)
+  public JoinedCandleMapper(JoinedChart joinChart)
   {
-    if (joinChart.StepChart == null || joinChart.StepChart.Instrument == null)
-      this.joinChart = joinedChartRep.Table.Include(e => e.StepChart).ThenInclude(e => e.Instrument).Single(e => e.Id == joinChart.Id);
-    else
-      this.joinChart = joinChart;
-
+    Guard.Against.Null(joinChart.StepChart);
+    Guard.Against.Null(joinChart.StepChart.Instrument);
+    this.joinChart = joinChart;
     decMapper = new DecimalToStoreIntConverter(this.joinChart.StepChart.Instrument);
   }
 

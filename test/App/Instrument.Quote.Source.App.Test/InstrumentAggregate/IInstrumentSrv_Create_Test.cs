@@ -12,7 +12,7 @@ using NSubstitute;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate;
 
-public class IInstrumentSrv_Create_Test : BaseDbTest
+public class IInstrumentSrv_Create_Test : BaseTest
 {
 
   public IInstrumentSrv_Create_Test(ITestOutputHelper output) : base(output)
@@ -42,7 +42,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest
     Logger.LogInformation("Test ACT");
 
     Result<InstrumentResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();
@@ -68,7 +68,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest
 
     ExpectGroup("Instrument exist in repository", async () =>
     {
-      using (var assert_scope = this.global_sp.CreateScope())
+      using (var assert_scope = hostFixture.Services.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();
@@ -104,7 +104,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest
 
     #endregion
 
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       #region Act
       this.Logger.LogDebug("Test ACT");
@@ -149,7 +149,7 @@ public class IInstrumentSrv_Create_Test : BaseDbTest
     this.Logger.LogDebug("Test ACT");
 
     Result<InstrumentResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();

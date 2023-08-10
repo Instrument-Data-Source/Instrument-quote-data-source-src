@@ -14,4 +14,7 @@
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.6.3" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.6.3" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Database\Instrument.Quote.Source.Configuration.DataBase\Instrument.Quote.Source.Configuration.DataBase.csproj" />
+  </ItemGroup>
 </Project>

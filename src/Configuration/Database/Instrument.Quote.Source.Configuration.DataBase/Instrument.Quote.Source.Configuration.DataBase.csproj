@@ -9,10 +9,11 @@
     
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.8" />
+    <PackageReference Include="AppAny.Quartz.EntityFrameworkCore.Migrations.PostgreSQL" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\App\Instrument.Quote.Source.App.Core\Instrument.Quote.Source.App.Core.csproj" />
-    <ProjectReference Include="..\..\Jobs\Instrument.Quote.Source.Configuration.Jobs.QuartzModule\Instrument.Quote.Source.Configuration.Jobs.QuartzModule.csproj" />
+    <ProjectReference Include="..\..\..\App\Instrument.Quote.Source.App.Core.JoinedChartAggregate\Instrument.Quote.Source.App.Core.JoinedChartAggregate.csproj" />
   </ItemGroup>
 
 </Project>

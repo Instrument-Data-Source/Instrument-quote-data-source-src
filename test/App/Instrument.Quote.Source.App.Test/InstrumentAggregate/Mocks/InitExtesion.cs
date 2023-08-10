@@ -2,11 +2,13 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Instrument.Quote.Source.App.Test.Tools;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate.Mocks;
 public static class BaseDbTestExtension
 {
-  public static async Task<(InstrumentResponseDto, InstrumentResponseDto)> AddMockInstrumentData(this BaseDbTest baseDbTest)
+ 
+  public static async Task<(InstrumentResponseDto, InstrumentResponseDto)> AddMockInstrumentData(this IServiceProvider services)
   {
     var usingNewInstrumentRequestDto1 = new NewInstrumentRequestDto()
     {
@@ -27,7 +29,7 @@ public static class BaseDbTestExtension
 
     InstrumentResponseDto expectedDto1;
     InstrumentResponseDto expectedDto2;
-    using (var act_scope = baseDbTest.global_sp.CreateScope())
+    using (var act_scope = services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();

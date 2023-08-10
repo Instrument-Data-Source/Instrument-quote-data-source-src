@@ -6,9 +6,6 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Microsoft.Extensions.Logging;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Service;
 using Instrument.Quote.Source.App.Core.ChartAggregate.Interface;
-using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
-using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
-using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 
 namespace Instrument.Quote.Source.App.Core;
 
@@ -25,8 +22,6 @@ public static class Module
     sc.AddScoped<ITimeFrameSrv, TimeFrameSrv>();
     sc.AddScoped<IChartSrv, ChartSrv>();
     sc.AddScoped<ICandleSrv, CandlesSrv>();
-    sc.AddScoped<IJoinedCandleSrv, JoinedCandlesSrv>();
-    sc.AddScoped<JoinedChart.Manager>();
     sc.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Module).Assembly));
     logger?.LogInformation("Instrument.Quote.Source.App.Core.Module - Registered");
     return sc;

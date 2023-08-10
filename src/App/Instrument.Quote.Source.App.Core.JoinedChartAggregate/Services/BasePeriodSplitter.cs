@@ -5,6 +5,7 @@ using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.DateTimePeriod;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Instrument.Quote.Source.App.Core.JoinedChartAggregate.Service;
 
@@ -13,9 +14,9 @@ public class BasePeriodSplitter : IBasePeriodSplitter
   private readonly JoinedChartModuleConfig config;
   private readonly ILogger<BasePeriodSplitter> logger;
 
-  public BasePeriodSplitter(JoinedChartModuleConfig config, ILogger<BasePeriodSplitter> logger)
+  public BasePeriodSplitter(IOptions<JoinedChartModuleConfig> config, ILogger<BasePeriodSplitter> logger)
   {
-    this.config = config;
+    this.config = config.Value;
     this.logger = logger;
   }
   public IEnumerable<DateTimePeriod> SplitOnChunks(Chart baseChart, TimeFrame.Enum targetTimeFrame)

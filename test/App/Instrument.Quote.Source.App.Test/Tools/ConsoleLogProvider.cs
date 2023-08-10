@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Quartz.Logging;
 using Xunit.Abstractions;
 
-namespace QuartzJobTest;
+namespace Instrument.Quote.Source.App.Test.Tools;
 public class ConsoleLogProvider : ILogProvider
 {
   private readonly ITestOutputHelper output;

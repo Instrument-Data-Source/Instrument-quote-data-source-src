@@ -10,7 +10,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Test.InstrumentAggregate.Mocks;
 
-public class IInstrumentSrv_GetAll_Test : BaseDbTest
+public class IInstrumentSrv_GetAll_Test : BaseTest
 {
   public IInstrumentSrv_GetAll_Test(ITestOutputHelper output) : base(output)
   {
@@ -21,7 +21,7 @@ public class IInstrumentSrv_GetAll_Test : BaseDbTest
   {
     #region Array
     Logger.LogDebug("Test ARRAY");
-    (var expectedDto1, var expectedDto2) = await this.AddMockInstrumentData();
+    (var expectedDto1, var expectedDto2) = await hostFixture.Services.AddMockInstrumentData();
 
     #endregion
 
@@ -29,7 +29,7 @@ public class IInstrumentSrv_GetAll_Test : BaseDbTest
     #region Act
     Logger.LogDebug("Test ACT");
     IEnumerable<InstrumentResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();
