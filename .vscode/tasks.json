@@ -48,7 +48,7 @@
       "dependsOn": [
         "Build release"
       ],
-      "command": "dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity m --no-restore",
+      "command": "dotnet test ./Instrument.Quote.Source.Srv.sln --configuration Release --verbosity n --no-restore",
       "group": {
         "kind": "test",
         "isDefault": true

@@ -1,4 +1,6 @@
 using Ardalis.GuardClauses;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Exceptions;
+using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Event;
 using Instrument.Quote.Source.Shared.Kernal.DataBase.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -56,5 +58,22 @@ public class TransactionManager<TDbContext> : ITransactionManager where TDbConte
     transaction?.Rollback();
     transaction = null;
     transactionWrapLevel = 0;
+  }
+
+  public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      await dbContext.SaveChangesAsync(cancellationToken);
+    }
+    catch (Exception ex)
+    {
+      ProcessingExceptionOnSave(ex);
+    }
+  }
+  protected void ProcessingExceptionOnSave(Exception ex)
+  {
+    logger.LogCritical(EventEnum.AddFail.GetEventId(), ex, "Get exception when save data to Database");
+    throw new RepositoryException("Get exception when add entity to Database", ex);
   }
 }

@@ -6,6 +6,7 @@ public interface IRepository<TEntity> : IReadRepository<TEntity> where TEntity :
 {
   Task AddAsync(TEntity entity, IDbContextTransaction? dbContextTransaction = null, CancellationToken cancellationToken = default);
   Task AddRangeAsync(IEnumerable<TEntity> entities, IDbContextTransaction? dbContextTransaction = null, CancellationToken cancellationToken = default);
+  //TODO: remove
   Task SaveChangesAsync(CancellationToken cancellationToken = default);
   Task RemoveAsync(TEntity entity, IDbContextTransaction? dbContextTransaction = null, CancellationToken cancellationToken = default);
   Task RemoveRangeAsync(IEnumerable<TEntity> entities, IDbContextTransaction? dbContextTransaction = null, CancellationToken cancellationToken = default);

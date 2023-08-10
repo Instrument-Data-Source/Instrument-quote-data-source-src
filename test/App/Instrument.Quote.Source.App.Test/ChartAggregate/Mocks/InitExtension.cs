@@ -4,6 +4,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.App.Test.Tools;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Instrument.Quote.Source.App.Test.ChartAggregate.Mocks;
 
@@ -11,7 +12,7 @@ namespace Instrument.Quote.Source.App.Test.ChartAggregate.Mocks;
 public static class InitExtension
 {
   private static int year = 2020;
-  public static async Task<UploadedCandlesDto> InitChartData(this BaseDbTest baseDbTest, InstrumentResponseDto instrument, TimeFrame.Enum timeframe)
+  public static async Task<UploadedCandlesDto> InitChartData(this IServiceProvider services, InstrumentResponseDto instrument, TimeFrame.Enum timeframe)
   {
 
     var expectedFrom = new DateTime(year, 3, 1).ToUniversalTime();
@@ -20,10 +21,12 @@ public static class InitExtension
 
     Interlocked.Increment(ref year);
 
-    return await baseDbTest.AddMockChartData(instrument, timeframe, expectedFrom, expectedUntill);
+    return await services.AddMockChartData(instrument, timeframe, expectedFrom, expectedUntill);
   }
 
-  public static async Task<UploadedCandlesDto> AddMockChartData(this BaseDbTest baseDbTest, InstrumentResponseDto instrument, TimeFrame.Enum timeframe, DateTime fromDt, DateTime untillDt, TimeSpan? step = null)
+ 
+
+  public static async Task<UploadedCandlesDto> AddMockChartData(this IServiceProvider services, InstrumentResponseDto instrument, TimeFrame.Enum timeframe, DateTime fromDt, DateTime untillDt, TimeSpan? step = null)
   {
 
     var expectedFrom = fromDt.ToUniversalTime();
@@ -36,7 +39,7 @@ public static class InitExtension
       Candles = expectedCandles
     };
 
-    using var act_scope = baseDbTest.global_sp.CreateScope();
+    using var act_scope = services.CreateScope();
 
     var sp = act_scope.ServiceProvider;
     var usedSrv = sp.GetRequiredService<ICandleSrv>();

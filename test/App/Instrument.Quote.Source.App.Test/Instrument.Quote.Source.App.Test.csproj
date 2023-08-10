@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Alba" Version="7.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -36,7 +37,7 @@
     <Content Include="./appsettings.test.json">
      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+     <Content Include="xunit.runner.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

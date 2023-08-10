@@ -8,19 +8,21 @@ using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate;
 
-public class IInstrumentSrv_Remove_Test : BaseDbTest
+public class IInstrumentSrv_Remove_Test : BaseTest
 {
   private MockInstrumentFactory mockInstrumentFactory;
   public IInstrumentSrv_Remove_Test(ITestOutputHelper output) : base(output)
   {
-    mockInstrumentFactory = new MockInstrumentFactory(global_sp);
-    mockInstrumentFactory.Init();
+
   }
 
   [Fact]
   public async void WHEN_request_remove_THEN_instrument_removed()
   {
     #region Array
+    mockInstrumentFactory = new MockInstrumentFactory(hostFixture.Services);
+    mockInstrumentFactory.Init();
+
     this.Logger.LogDebug("Test ARRAY");
 
     var usingId = mockInstrumentFactory.mockInstrument1.Id;
@@ -32,7 +34,7 @@ public class IInstrumentSrv_Remove_Test : BaseDbTest
     this.Logger.LogDebug("Test ACT");
 
     Result assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedTimeFrameSrv = sp.GetRequiredService<IInstrumentSrv>();
@@ -48,7 +50,7 @@ public class IInstrumentSrv_Remove_Test : BaseDbTest
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     ExpectGroup("Instrument does'n exist in repository", async () =>
     {
-      using (var assert_scope = this.global_sp.CreateScope())
+      using (var assert_scope = hostFixture.Services.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var instrumentRep = sp.GetRequiredService<IReadRepository<ent.Instrument>>();

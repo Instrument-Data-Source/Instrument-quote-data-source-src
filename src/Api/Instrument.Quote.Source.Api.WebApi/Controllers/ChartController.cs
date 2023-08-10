@@ -7,6 +7,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Interface;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Dto;
 using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Interface;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Interface;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Instrument.Quote.Source.Api.WebApi.Controllers;
@@ -19,19 +20,19 @@ public class ChartController : ControllerBase
   private readonly IChartSrv chartSrv;
   private readonly IReadInstrumentSrv instrumentSrv;
   private readonly ICandleSrv candleSrv;
-  private readonly IJoinedCandleSrv joinedCandleSrv;
+  private readonly IMediator mediator;
   private readonly ITimeFrameSrv timeFrameSrv;
 
   public ChartController(IChartSrv chartSrv,
                          IReadInstrumentSrv instrumentSrv,
                          ICandleSrv candleSrv,
-                         IJoinedCandleSrv joinedCandleSrv,
+                         IMediator mediator,
                          ITimeFrameSrv timeFrameSrv)
   {
     this.chartSrv = chartSrv;
     this.instrumentSrv = instrumentSrv;
     this.candleSrv = candleSrv;
-    this.joinedCandleSrv = joinedCandleSrv;
+    this.mediator = mediator;
     this.timeFrameSrv = timeFrameSrv;
   }
 
@@ -94,9 +95,9 @@ public class ChartController : ControllerBase
   /// <returns>All charts DTO for instrumnent</returns>
   /// <response code="200">Charts getted</response>
   [HttpGet("{instrumentStr}/{timeframeStr}/{targetTimeFrame}")]
-  [ProducesResponseType(typeof(IEnumerable<JoinedCandleDto>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(GetJoinedCandleResponseDto), StatusCodes.Status200OK)]
   [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status404NotFound)]
-  public async Task<ActionResult<IEnumerable<JoinedCandleDto>>> GetJoinedCandles(string instrumentStr, string timeframeStr, string targetTimeFrame,
+  public async Task<ActionResult<GetJoinedCandleResponseDto>> GetJoinedCandles(string instrumentStr, string timeframeStr, string targetTimeFrame,
                                                                                   [FromQuery] DateTime from, [FromQuery] DateTime untill,
                                                                                   [FromQuery] bool onlyLast = false,
                                                                                   CancellationToken cancellationToken = default)
@@ -113,7 +114,16 @@ public class ChartController : ControllerBase
     if (!targetTimeFrameResult.IsSuccess)
       return targetTimeFrameResult.MapFailToActionResult();
 
-    var result = await joinedCandleSrv.GetAsync(instrumentResult.Value.Id, timeFrameResult.Value.Id, targetTimeFrameResult.Value.Id, from, untill, onlyLast, cancellationToken);
+    var requestDto = new GetJoinedChartRequestDto()
+    {
+      instrumentId = instrumentResult.Value.Id,
+      stepTimeFrameId = timeFrameResult.Value.Id,
+      targetTimeFrameId = targetTimeFrameResult.Value.Id,
+      from = from,
+      untill = untill,
+      hideIntermediateCandles = onlyLast
+    };//.Validate(); TODO: add validate
+    var result = await mediator.Send(requestDto, cancellationToken);
     return result.MapToActionResult();
   }
 

@@ -3,7 +3,6 @@ using Instrument.Quote.Source.App.Core.Validation;
 using Instrument.Quote.Source.App.Core.Validation.Wrapper;
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Instrument.Quote.Source.Shared.Kernal.DataBase;
-using Instrument.Quote.Source.App.Core.JoinedChartAggregate.Model;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 
@@ -86,9 +85,5 @@ public partial class Chart : EntityBaseValidation
 
   public virtual IEnumerable<Candle>? Candles => _candles != null ? _candles.AsReadOnly() : null;
   #endregion
-  #region Joined Chartns relation
-  private readonly List<JoinedChart> _joinedCharts;
 
-  public virtual IEnumerable<JoinedChart>? JoinedCharts => _joinedCharts != null ? _joinedCharts.AsReadOnly() : null;
-  #endregion
 }

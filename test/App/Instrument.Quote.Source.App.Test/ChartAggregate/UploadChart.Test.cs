@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Instrument.Quote.Source.App.Test.ChartAggregate;
 
 
-public class UploadChart_Test : BaseDbTest
+public class UploadChart_Test : BaseTest
 {
 
   public UploadChart_Test(ITestOutputHelper output) : base(output)
@@ -31,7 +31,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
     var expectedFrom = new DateTime(2020, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 4, 1).ToUniversalTime();
     var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
@@ -49,7 +49,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -66,7 +66,7 @@ public class UploadChart_Test : BaseDbTest
     Expect("Result value equal to count of candles", () => Assert.Equal(expectedCandles.Count(), assertedResult.Value));
     ExpectGroup("Instrument exist in repository", () =>
     {
-      using (var assert_scope = this.global_sp.CreateScope())
+      using (var assert_scope = hostFixture.Services.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var chartRep = sp.GetRequiredService<IReadRepository<Chart>>();
@@ -99,8 +99,8 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ARRAY");
 
     Logger.LogDebug("Step 1 Init data");
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
-    var usedUploadedCandles = await this.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
+    var usedUploadedCandles = await hostFixture.Services.InitChartData(usedInstrument1, TimeFrame.Enum.D1);
 
     Logger.LogDebug("Init test data");
     var expectedFrom = usedUploadedCandles.UntillDate;
@@ -120,7 +120,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -135,9 +135,9 @@ public class UploadChart_Test : BaseDbTest
 
     Expect("Result is success", () => Assert.True(assertedResult.IsSuccess));
     Expect("Result value equal to count of candles", () => Assert.Equal(expectedCandles.Count(), assertedResult.Value));
-    ExpectGroup("Instrument exist in repository", async () =>
+    ExpectGroup("Instrument exist in repository", () =>
     {
-      using (var assert_scope = this.global_sp.CreateScope())
+      using (var assert_scope = hostFixture.Services.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var chartRep = sp.GetRequiredService<IReadRepository<Chart>>();
@@ -174,7 +174,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
     var expectedFrom = new DateTime(2020, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 4, 1).ToUniversalTime();
     var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
@@ -192,7 +192,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -220,7 +220,7 @@ public class UploadChart_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
     var expectedFrom = new DateTime(2020, 3, 1).ToUniversalTime();
     var expectedUntill = new DateTime(2020, 4, 1).ToUniversalTime();
     var expectedCandles = new MockCandleDtoFactory().CreateCandleDtos(expectedFrom, expectedUntill);
@@ -238,7 +238,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -268,7 +268,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ARRAY");
 
     Logger.LogDebug("Init first part");
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
     var From_part1 = new DateTime(2020, 3, 1).ToUniversalTime();
     var Untill_part1 = new DateTime(2020, 4, 1).ToUniversalTime();
     var Candles_part1 = new MockCandleDtoFactory().CreateCandleDtos(From_part1, Untill_part1);
@@ -278,7 +278,7 @@ public class UploadChart_Test : BaseDbTest
       UntillDate = Untill_part1,
       Candles = Candles_part1
     };
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -305,7 +305,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -323,7 +323,7 @@ public class UploadChart_Test : BaseDbTest
     Expect("Result value equal to count of candles", () => Assert.Equal(usedNewCandles.Count(), assertedResult.Value));
     ExpectGroup("Instrument exist in repository", () =>
     {
-      using (var assert_scope = this.global_sp.CreateScope())
+      using (var assert_scope = hostFixture.Services.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var chartRep = sp.GetRequiredService<IReadRepository<Chart>>();
@@ -360,7 +360,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ARRAY");
 
     Logger.LogDebug("Init first part");
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
     var From_part1 = new DateTime(2020, 3, 1).ToUniversalTime();
     var Untill_part1 = new DateTime(2020, 4, 1).ToUniversalTime();
     var Candles_part1 = new MockCandleDtoFactory().CreateCandleDtos(From_part1, Untill_part1);
@@ -370,7 +370,7 @@ public class UploadChart_Test : BaseDbTest
       UntillDate = Untill_part1,
       Candles = Candles_part1
     };
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -395,7 +395,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -413,7 +413,7 @@ public class UploadChart_Test : BaseDbTest
     Expect("Result value equal to count of candles", () => Assert.Equal(0, assertedResult.Value));
     ExpectGroup("Instrument exist in repository", () =>
     {
-      using (var assert_scope = this.global_sp.CreateScope())
+      using (var assert_scope = hostFixture.Services.CreateScope())
       {
         var sp = assert_scope.ServiceProvider;
         var chartRep = sp.GetRequiredService<IReadRepository<Chart>>();
@@ -446,7 +446,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ARRAY");
 
     Logger.LogDebug("Init first part");
-    (var usedInstrument1, var usedInstrument2) = await this.AddMockInstrumentData();
+    (var usedInstrument1, var usedInstrument2) = await hostFixture.Services.AddMockInstrumentData();
     var From_part1 = new DateTime(2020, 3, 1).ToUniversalTime();
     var Untill_part1 = new DateTime(2020, 4, 1).ToUniversalTime();
     var Candles_part1 = new MockCandleDtoFactory().CreateCandleDtos(From_part1, Untill_part1);
@@ -456,7 +456,7 @@ public class UploadChart_Test : BaseDbTest
       UntillDate = Untill_part1,
       Candles = Candles_part1
     };
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();
@@ -492,7 +492,7 @@ public class UploadChart_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<int> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<ICandleSrv>();

@@ -8,7 +8,7 @@ using Instrument.Quote.Source.App.Core.InstrumentAggregate.Dto;
 using Ardalis.Result;
 using Instrument.Quote.Source.App.Test.InstrumentAggregate.Mocks;
 
-public class IInstrumentSrv_GetByCode_Test : BaseDbTest
+public class IInstrumentSrv_GetByCode_Test : BaseTest
 {
   public IInstrumentSrv_GetByCode_Test(ITestOutputHelper output) : base(output)
   {
@@ -22,7 +22,7 @@ public class IInstrumentSrv_GetByCode_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var expectedDto1, var expectedDto2) = await this.AddMockInstrumentData();
+    (var expectedDto1, var expectedDto2) = await hostFixture.Services.AddMockInstrumentData();
     var usedCode = expectedDto1.Code;
     if (changeCase)
     {
@@ -37,7 +37,7 @@ public class IInstrumentSrv_GetByCode_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<InstrumentResponseDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();
@@ -62,7 +62,7 @@ public class IInstrumentSrv_GetByCode_Test : BaseDbTest
     #region Array
     Logger.LogDebug("Test ARRAY");
 
-    (var expectedDto1, var expectedDto2) = await this.AddMockInstrumentData();
+    (var expectedDto1, var expectedDto2) = await hostFixture.Services.AddMockInstrumentData();
 
     #endregion
 
@@ -71,7 +71,7 @@ public class IInstrumentSrv_GetByCode_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<IEnumerable<InstrumentResponseDto>> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedInstrumentSrv = sp.GetRequiredService<IInstrumentSrv>();

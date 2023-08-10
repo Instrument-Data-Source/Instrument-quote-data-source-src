@@ -12,18 +12,31 @@ namespace Instrument.Quote.Source.Configuration.DataBase.PostreSQL;
 
 public static class Module
 {
+
+  public static DbConnectionStringBuilder GetConnectionStringBuilder(this IConfiguration configuration)
+  {
+    var _defConnection = configuration.GetConnectionString("DefaultConnection");
+    var dbSuffix = configuration["ConnectionStrings:DbSuffix"];
+    DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
+    if (dbSuffix != null)
+      _connectionStringBuilder["Database"] += $"_{dbSuffix}";
+    return _connectionStringBuilder;
+  }
   public static IServiceCollection Register(this IServiceCollection sc)
   {
     using var sp = sc.BuildServiceProvider();
     var logger = sp.GetService<ILogger>();
+
+    sc.AddSingleton<IConnectionStringSource, PGConnectionStringSource>();
+    sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+    sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+
+    sc.AddScoped<ITransactionManager, TransactionManager<SrvDbContext>>();
+
     sc.AddDbContext<SrvDbContext>((provider, builder) =>
       {
-        var config = provider.GetService<IConfiguration>();
+        var connectionStringSource = provider.GetRequiredService<IConnectionStringSource>();
         var environment = provider.GetService<IHostEnvironment>();
-
-        var _defConnection = config.GetConnectionString("DefaultConnection");
-        var dbSuffix = config["ConnectionStrings:DbSuffix"];
-        DbConnectionStringBuilder _connectionStringBuilder = new NpgsqlConnectionStringBuilder(_defConnection);
 
         if (environment != null)
         {
@@ -34,20 +47,13 @@ public static class Module
           }
         }
 
-        if (dbSuffix != null)
-          _connectionStringBuilder["Database"] += $"_{dbSuffix}";
-
-        logger?.LogInformation("PG db - " + _connectionStringBuilder["Database"]);
-        builder.UseNpgsql(_connectionStringBuilder.ConnectionString);
+        logger?.LogInformation("PG host: {0}, db: {1}", connectionStringSource.Host, connectionStringSource.DataBase);
+        builder.UseNpgsql(connectionStringSource.ConnectionString);
       });
 
     logger?.LogInformation("Migration - begin");
     sc.BuildServiceProvider().GetService<SrvDbContext>()!.Database.Migrate();
     logger?.LogInformation("Migration - done");
-
-    sc.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-    sc.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
-    sc.AddScoped<ITransactionManager, TransactionManager<SrvDbContext>>();
     return sc;
   }
 

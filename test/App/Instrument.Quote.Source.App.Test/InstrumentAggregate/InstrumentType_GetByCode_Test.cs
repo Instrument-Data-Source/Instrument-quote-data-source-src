@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace Instrument.Quote.Source.App.Test.InstrumentAggregate;
 
-public class InstrumentType_GetByCode_Test : BaseDbTest
+public class InstrumentType_GetByCode_Test : BaseTest
 {
 
   public InstrumentType_GetByCode_Test(ITestOutputHelper output) : base(output)
@@ -30,7 +30,7 @@ public class InstrumentType_GetByCode_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<InstrumentTypeResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<IInstrumentTypeSrv>();
@@ -65,7 +65,7 @@ public class InstrumentType_GetByCode_Test : BaseDbTest
     Logger.LogDebug("Test ACT");
 
     Result<InstrumentTypeResponseDto> assertedResult;
-    using (var act_scope = this.global_sp.CreateScope())
+    using (var act_scope = hostFixture.Services.CreateScope())
     {
       var sp = act_scope.ServiceProvider;
       var usedSrv = sp.GetRequiredService<IInstrumentTypeSrv>();

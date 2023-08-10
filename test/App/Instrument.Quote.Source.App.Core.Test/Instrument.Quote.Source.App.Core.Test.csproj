@@ -27,11 +27,12 @@
     <PackageReference Include="Divergic.Logging.Xunit" Version="4.2.0" />
     <PackageReference Include="Ardalis.Result" Version="7.1.0" />
     <PackageReference Include="MockQueryable.Moq" Version="7.0.0" />
-    <PackageReference Include="InsonusK.Xunit.ExpectationsTest" Version="1.0.2" />
+    <PackageReference Include="InsonusK.Xunit.ExpectationsTest" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\App\Instrument.Quote.Source.App.Core\Instrument.Quote.Source.App.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Shared\Instrument.Quote.Source.Shared.DateTimePeriod\Instrument.Quote.Source.Shared.DateTimePeriod.csproj" />
   </ItemGroup>
 
 </Project>

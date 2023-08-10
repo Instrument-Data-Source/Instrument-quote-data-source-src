@@ -1,12 +1,17 @@
 {
   "favorites.resources": [
+  //{
+  //  "filePath": "src/App/Instrument.Quote.Source.App.Core/JoinedChartAggregate",
+  //  "group": "Default"
+  //},
+  //{
+  //  "filePath": "src/App/Instrument.Quote.Source.App.Core.JoinedChartAggregate",
+  //  "group": "Default"
+  //},
     {
-      "filePath": "src/App/Instrument.Quote.Source.App.Core/JoinedChartAggregate",
-      "group": "Default"
-    },
-    {
-      "filePath": "test/App/Instrument.Quote.Source.App.Core.Test/JoinedChartAggregate",
+      "filePath": "test/App/Instrument.Quote.Source.App.JoinedChartAggregate.Test",
       "group": "Default"
     }
-  ]
+  ],
+  "favorites.sortOrder": "MANUAL"
 }

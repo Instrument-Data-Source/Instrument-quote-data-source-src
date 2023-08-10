@@ -5,6 +5,9 @@ using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ent = Instrument.Quote.Source.App.Core.InstrumentAggregate.Model;
+using AppAny.Quartz.EntityFrameworkCore.Migrations;
+using AppAny.Quartz.EntityFrameworkCore.Migrations.PostgreSQL;
+
 namespace Instrument.Quote.Source.Configuration.DataBase;
 public class SrvDbContext : DbContext
 {
@@ -35,7 +38,7 @@ public class SrvDbContext : DbContext
   {
     base.OnModelCreating(modelBuilder);
     AutoUseConfig(modelBuilder);
-    //ManualyUseConfig(modelBuilder);
+    modelBuilder.AddQuartz(builder => builder.UsePostgreSql());
   }
 
   private void AutoUseConfig(ModelBuilder modelBuilder)

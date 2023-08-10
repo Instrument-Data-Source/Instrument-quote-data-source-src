@@ -1,4 +1,5 @@
 using Instrument.Quote.Source.App.Core.TimeFrameAggregate.Model;
+using Instrument.Quote.Source.Shared.DateTimePeriod;
 
 namespace Instrument.Quote.Source.App.Core.ChartAggregate.Model;
 
@@ -24,5 +25,8 @@ public partial class Chart
     Validate();
   }
 
+  public Chart(DateTimePeriod period,
+              ent.Instrument instrument,
+              TimeFrame timeFrame) : this(period.From, period.Untill, instrument, timeFrame) { }
 
 }
